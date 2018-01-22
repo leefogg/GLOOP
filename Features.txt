@@ -1,0 +1,67 @@
+Post effects:
+	FXAA
+	Dithering
+	Greyscale
+	Gamma correction
+	Gaussian Blur
+	Tone Mapping
+	
+Lighting:
+	Point light
+		color
+		realistic attenuation/dropoff
+		64 available
+	Spot light
+		color
+		realistic attenuation/dropoff
+		Inner and outer cone penumbra
+		32 available
+	Directional light
+		Color
+		strength
+		8 available
+	Ambient light
+		Color
+		strength
+	(in development) Unlimited lights
+
+Cameras:
+	Perspective
+	Orthographic
+	Flycam (perspective)
+	Perspective with target
+	
+Shaders:
+	Custom shaders and materials
+	Compiler defines before compilation
+	Strongly typed uniforms
+
+Backend:
+	Forward rendering pipeline
+		Custom shaders
+	Deferred rendering pipeline
+		Environment Reflections
+			Reflectivity
+				(In development) Parallax corrected cube maps
+			Refractivity
+				Chromatic Aberration
+		Specular
+			Color
+		Normal mapping
+		Parallax mapping
+		High Dynamic Range (in development)
+	Custom rendering pipeline
+	Editable Geometry (before hardware upload)
+	Blending
+	Stencils
+	Scene class
+	Custom GPU data structures
+	Supports all basic render modes (tri, lines, points..)
+	Lightweight to hardware
+	Skybox
+	Overlays
+	Basic profiler
+	Completely OOP & strongly typed with GL enums
+	GPU resources automatically managed
+		Avoids duplication
+		Automatically cleans up

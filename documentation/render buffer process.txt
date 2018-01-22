@@ -1,0 +1,11 @@
+Scene is organized into an efficent rendering order including grouping/seprating models that use the deffered rendering and those that don't.
+Models with deffered materials are drawn into the a set of color attachements called the GBuffer that store useful information nessersary for the lighting process.
+custom materials are then drawn directly into the another texture which will be used as the final render texture. Models rendered in this step are automatically occluded by objects previously drawn as they share the same depth buffer.
+Information collected in step 2 is then used to draw and light the scene, this information is written to the same texture as step 3. This step is a post-process the complex lighting calculations are only done once for each pixel on the screen instead of each fragment. A stencil buffer is also used to skip pixels drawn in step 3 (the custom materials). Now the scene is fully drawn, containing both custom materials and deffered materials.
+
+An optional bloom step is then applied by:
+	Extracting bright pixels from the final render to another texture
+	This texture is then blurred horizontally into another texture
+	The horizontally blurred texture is then virtically blurred but written back to the same texture in step 5
+	The resulting blurred texture is then added to the original final render in step 4
+	

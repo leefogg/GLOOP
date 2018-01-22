@@ -1,0 +1,36 @@
+package engine.graphics.shading.posteffects;
+
+import engine.graphics.shading.GLSL.Uniform1i;
+import engine.graphics.shading.ShaderCompilationException;
+
+import java.io.IOException;
+
+final class CombineShader extends PostEffectShader {
+	private Uniform1i texture1, texture2;
+
+	public CombineShader() throws ShaderCompilationException, IOException {
+		super(
+				"res/shaders/Post Effects/Combine/VertexShader.vert",
+				"res/shaders/Post Effects/Combine/FragmentShader.frag"
+			);
+	}
+
+	@Override
+	protected void getCustomUniformLocations() {
+		texture1 = new Uniform1i(this, "Texture1");
+		texture2 = new Uniform1i(this, "Texture2");
+	}
+
+	@Override
+	protected void setDefaultCustomUniformValues() {
+		setTexture1(5);
+		setTexture2(6);
+	}
+
+	public void setTexture1(int unit) {	texture1.set(unit); }
+
+	public void setTexture2(int unit) {
+		texture2.set(unit);
+	}
+
+}

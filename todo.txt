@@ -1,0 +1,105 @@
+LOD
+	each LOD distance
+MeshBuilder
+Model implements Updatable
+	register for updates
+		per frame
+		per n milliseconds
+			periodically
+			n times
+Animation
+	Keyframe
+	Timeline
+	Readable<T> (float)
+		Used to add timelines or floats to vectors
+	seperate thread
+		Cutscenes
+Wireframe render
+	disable textures
+ModelLoader
+	loadMesh
+	loadSkeleton
+	LoadPoses
+Move system shaders to source path
+Use texture mipmaps as alternate textures
+	GIFTexture class to store frames in mipmaps
+New buffer class
+	glGenBuffers to int ID
+	Delete method
+	bind method
+	FBO, VAO, VBO extends Buffer
+Implement Uniform Blocks
+	http://www.lighthouse3d.com/tutorials/glsl-tutorial/uniform-blocks/
+	http://www.geeks3d.com/20140704/gpu-buffers-introduction-to-opengl-3-1-uniform-buffers-objects/
+	https://www.khronos.org/opengl/wiki/Uniform_Buffer_Object
+Async Loading
+Make own Vector3f, 3f, 2i, 2f, 4i and 4f classes
+Uniform class
+	Templated and abstract
+	One final class for each type (float, int, vec3, matrix, list..)
+serializable VAO
+	File with striped float data to forward to the GPU
+#include directive in GLSL
+	Recursive
+	Detect circular dependancies
+GlobalSettings class
+	Optionally loaded settings from an INI file
+	then boot engine
+	with GraphicsSettings, SoundSettings, AnimationSettings classes
+List class
+	TrimTrailingNulls boolean
+	RemoveGaps boolean
+	incrementation size
+Lighting
+	spot lights
+	multiple lights
+		prioritised rendering based on pixels effected
+		updated every n frames
+		steps for rendering:
+			Render static geometery
+			Calculate and render bounding spheres/geometery render queries
+			Render dynamic geometery while waiting for render queries to finish
+			Composite basic lighting buffer containing just ambient and directional lights
+			Sort lights by pixels/texels effected
+			Upload top n number to uniform block
+			Invoke custom pixel shader for each light by rendering light geometery, writing into lighting buffer
+			Combine lighting buffer with albedo gbuffer
+Profiling
+	Logger
+		Seprate files
+			Texture unit changes
+			Resources loaded
+			Errors
+			Memory
+				All the below as seprate columns except texture units
+				Runs on interval
+	The following buffers have the following global states
+		Textures
+			Total
+			Total bytes
+			Bytes added
+			bytes changed
+		Uniforms
+			Total bytes
+			Bytes added
+			bytes changed
+		Mesh
+			Total bytes
+			Bytes added
+			bytes changed
+		Texture units
+			changes
+	Debug screens
+		https://wiki.frictionalgames.com/hpl3/engine/graphics_debug
+		Scroll mouse wheel to scroll through VBO's textures
+		Lighting heat map.
+			Shows how many lighting calulations where needed for a specific pixel
+			Could simply be a second pass that is independent of the output and therefore could be removed from VRAM when not in use
+		Light map
+			Shows just lighting information
+			Could also be disposable or used as normal pipeline
+			Save as R8/R16 texture
+		Overdraw complexity
+			Heatmap showing how many times a pixel was written to
+Bake shadow maps
+Three shadow maps at three distances from player that are then interpolated to give higher details for closer objects

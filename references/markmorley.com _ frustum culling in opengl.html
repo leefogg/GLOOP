@@ -1,0 +1,649 @@
+
+<!-- saved from url=(0129)file:///C:/Users/Lee/GamesWorkspace/Tower%20Defence%203D/res/references/markmorley.com%20_%20frustum%20culling%20in%20opengl.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252"></head><body bgcolor="white" text="black" link="blue" vlink="blue" alink="blue"><p>
+This is Mark Morley's tutorial on frustum culling.  I did not write it, but I saved a copy of it from google's cache when his site went down.  If anyone knows what happened to it, let me know.  I found it so helpful that I was disappointed when the site went down.  Hopefully you'll find it useful, too.
+</p>
+<p><small><a href="http://www.markmorley.com/technicaldetails/" title="">Return to Crown and Cutlass - Technical Details</a></small></p>
+
+<a href="http://sourceforge.net/" title=""> <img src="file:///C:/Users/Lee/GamesWorkspace/Tower%20Defence%203D/res/references/markmorley.com%20_%20frustum%20culling%20in%20opengl_files/sflogo.php" width="210" height="62" border="0" alt="" title=""></a>
+<div style="display: inline; padding: 0 20px;" title="">
+<script type="text/javascript"><!--
+google_ad_client = "pub-6670416621414045";
+google_ad_width = 468;
+google_ad_height = 60;
+google_ad_format = "468x60_as";
+google_ad_type = "text";
+google_ad_channel ="";
+google_color_border = "B71429";
+google_color_bg = "EEEEEE";
+google_color_link = "B71429";
+google_color_url = "666666";
+google_color_text = "000000";
+//--></script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+</div>
+
+<hr>
+
+
+<!--<base href="http://www.markmorley.com/opengl/frustumculling.html">--><!--<base href=".">--><base href=".">
+
+<title>markmorley.com | frustum culling in opengl</title>
+<meta name="description" content="Frustum Culling in OpenGL, by Mark Morley">
+<meta name="keywords" content="3d, opengl, frustum, culling, visibility testing, bounding volume, bounding volumes, bounding sphere, bounding spheres, bounding box, bounding boxes, bounding cube, bounding cubes, plane equations, frustum equations">
+
+
+
+<a href="http://www.markmorley.com/" title="">
+<font face="verdana,arial,helvetica" size="+2" color="black">
+markmorley.com</font><hr width="700" align="left"></a>
+
+
+<font face="verdana,arial,helvetica">
+
+<h1><a href="http://www.opengl.org/" title="">
+<img src="file:///C:/Users/Lee/GamesWorkspace/Tower%20Defence%203D/res/references/markmorley.com%20_%20frustum%20culling%20in%20opengl_files/ogl.gif" alt="" border="0" align="left" hspace="20" title=""></a>
+<b style="color:black;background-color:#ffff66">Frustum </b><b style="color:black;background-color:#A0FFFF">Culling</b> in <b style="color:black;background-color:#99ff99">OpenGL</b></h1>
+<b>By Mark Morley<br>
+December 2000
+</b>
+<br clear="left">
+<p>
+
+<br></p><h4>Introduction:</h4>
+
+Imagine you are writing a program that lets the user wander around in a virtual world that's chock full of trees, buildings, cars, people, and all sorts of other objects.  What would your main rendering loop look like?
+<p>
+
+The simplest and most obvious thing to do would be to loop through all of the objects in your world and tell <b style="color:black;background-color:#99ff99">OpenGL</b> to draw each one.  After all, <b style="color:black;background-color:#99ff99">OpenGL</b> clips everything for you so you don't have to worry about objects that are off-screen.  Everything will look correct when it's done.
+</p><p>
+
+If you only had a few objects, that method would probably suffice.  But as you add more and more objects to your world you'll find that things bog down pretty quickly.  It won't be long before your frame rate plummets.
+</p><p>
+
+Now, it's likely that only a small fraction of the objects in your world are actually visible at any given moment.  If you could somehow determine that an object will not be visible <i>before</i> you draw it, you could just skip it and avoid sending all that extra data down the <b style="color:black;background-color:#99ff99">OpenGL</b> pipeline in the first place.
+</p><p>
+
+One way to do this is known as <b style="color:black;background-color:#ffff66">Frustum </b><b style="color:black;background-color:#A0FFFF">Culling</b>.
+</p><p>
+
+<br></p><h4>Definitions:</h4>
+
+Before we go any further, let's answer a few basic questions:
+<p>
+
+</p><dl>
+<dt>What's the view <b style="color:black;background-color:#ffff66">frustum</b>?
+<p>
+
+</p></dt><dd>The view <b style="color:black;background-color:#ffff66">frustum</b> is the volume of space that includes everything that is currently visible from a given viewpoint.  It is defined by six planes arranged in the shape of a pyramid with the top chopped off.  If a point is inside this volume then it's in the <b style="color:black;background-color:#ffff66">frustum</b> and it's visible.  If a point is outside of the <b style="color:black;background-color:#ffff66">frustum</b> then it isn't visible.
+<p>
+
+<small>[Note that by "visible" what I really mean is that it's <i>potentially</i> visible.  For example, it might be behind another point that obscures it, but it's still in the <b style="color:black;background-color:#ffff66">frustum</b>.]</small>
+</p><p>
+
+</p></dd><dt>What's a plane?
+<p>
+
+</p></dt><dd>A plane is like an infinitely long, infinitely wide, and infinitely thin sheet of paper.  Any given point is in front of the plane, behind the plane, or actually part of the plane.
+<p>
+
+A plane can be defined with four numbers: A, B, and C define the plane's normal, and D defines its distance from the origin.  If this is all greek to you, don't sweat it - you don't really need to understand it to use it.
+</p><p>
+
+</p></dd></dl>
+
+<br><h4>The Nitty Gritty</h4>
+
+Ok, the first thing we need to know is: what are the numbers that define the six planes of the current view <b style="color:black;background-color:#ffff66">frustum</b>?
+<p>
+
+Figuring this out on your own can be tough.  Fortunately, with a little bit of effort you can extract these numbers from <b style="color:black;background-color:#99ff99">OpenGL</b> itself.  What we need to do is extract the current PROJECTION and MODELVIEW matrices, combine them, then extract the values from the resulting matrix.
+</p><p>
+
+First of all, let's assume that we're going to store the <b style="color:black;background-color:#ffff66">frustum</b> values in a global variable like this:
+</p><p>
+
+</p><pre>float <b style="color:black;background-color:#ffff66">frustum</b>[6][4];
+</pre>
+<p>
+
+That's six sets of four numbers (six planes, each with an A, B, C, and D
+value).
+</p><p>
+
+Now here's the function that extracts the numbers and fills in the array.  You'll call this function once each frame, after setting up your view but before drawing your objects.
+</p><p>
+
+</p><pre>ExtractFrustum()
+{
+   float   proj[16];
+   float   modl[16];
+   float   clip[16];
+   float   t;
+
+   /* Get the current PROJECTION matrix from <b style="color:black;background-color:#99ff99">OpenGL</b> */
+   glGetFloatv( GL_PROJECTION_MATRIX, proj );
+
+   /* Get the current MODELVIEW matrix from <b style="color:black;background-color:#99ff99">OpenGL</b> */
+   glGetFloatv( GL_MODELVIEW_MATRIX, modl );
+
+   /* Combine the two matrices (multiply projection by modelview) */
+   clip[ 0] = modl[ 0] * proj[ 0] + modl[ 1] * proj[ 4] + modl[ 2] * proj[ 8] + modl[ 3] * proj[12];
+   clip[ 1] = modl[ 0] * proj[ 1] + modl[ 1] * proj[ 5] + modl[ 2] * proj[ 9] + modl[ 3] * proj[13];
+   clip[ 2] = modl[ 0] * proj[ 2] + modl[ 1] * proj[ 6] + modl[ 2] * proj[10] + modl[ 3] * proj[14];
+   clip[ 3] = modl[ 0] * proj[ 3] + modl[ 1] * proj[ 7] + modl[ 2] * proj[11] + modl[ 3] * proj[15];
+
+   clip[ 4] = modl[ 4] * proj[ 0] + modl[ 5] * proj[ 4] + modl[ 6] * proj[ 8] + modl[ 7] * proj[12];
+   clip[ 5] = modl[ 4] * proj[ 1] + modl[ 5] * proj[ 5] + modl[ 6] * proj[ 9] + modl[ 7] * proj[13];
+   clip[ 6] = modl[ 4] * proj[ 2] + modl[ 5] * proj[ 6] + modl[ 6] * proj[10] + modl[ 7] * proj[14];
+   clip[ 7] = modl[ 4] * proj[ 3] + modl[ 5] * proj[ 7] + modl[ 6] * proj[11] + modl[ 7] * proj[15];
+
+   clip[ 8] = modl[ 8] * proj[ 0] + modl[ 9] * proj[ 4] + modl[10] * proj[ 8] + modl[11] * proj[12];
+   clip[ 9] = modl[ 8] * proj[ 1] + modl[ 9] * proj[ 5] + modl[10] * proj[ 9] + modl[11] * proj[13];
+   clip[10] = modl[ 8] * proj[ 2] + modl[ 9] * proj[ 6] + modl[10] * proj[10] + modl[11] * proj[14];
+   clip[11] = modl[ 8] * proj[ 3] + modl[ 9] * proj[ 7] + modl[10] * proj[11] + modl[11] * proj[15];
+
+   clip[12] = modl[12] * proj[ 0] + modl[13] * proj[ 4] + modl[14] * proj[ 8] + modl[15] * proj[12];
+   clip[13] = modl[12] * proj[ 1] + modl[13] * proj[ 5] + modl[14] * proj[ 9] + modl[15] * proj[13];
+   clip[14] = modl[12] * proj[ 2] + modl[13] * proj[ 6] + modl[14] * proj[10] + modl[15] * proj[14];
+   clip[15] = modl[12] * proj[ 3] + modl[13] * proj[ 7] + modl[14] * proj[11] + modl[15] * proj[15];
+
+   /* Extract the numbers for the RIGHT plane */
+   <b style="color:black;background-color:#ffff66">frustum</b>[0][0] = clip[ 3] - clip[ 0];
+   <b style="color:black;background-color:#ffff66">frustum</b>[0][1] = clip[ 7] - clip[ 4];
+   <b style="color:black;background-color:#ffff66">frustum</b>[0][2] = clip[11] - clip[ 8];
+   <b style="color:black;background-color:#ffff66">frustum</b>[0][3] = clip[15] - clip[12];
+
+   /* Normalize the result */
+   t = sqrt( <b style="color:black;background-color:#ffff66">frustum</b>[0][0] * <b style="color:black;background-color:#ffff66">frustum</b>[0][0] + <b style="color:black;background-color:#ffff66">frustum</b>[0][1] * <b style="color:black;background-color:#ffff66">frustum</b>[0][1] + <b style="color:black;background-color:#ffff66">frustum</b>[0][2] * <b style="color:black;background-color:#ffff66">frustum</b>[0][2] );
+   <b style="color:black;background-color:#ffff66">frustum</b>[0][0] /= t;
+   <b style="color:black;background-color:#ffff66">frustum</b>[0][1] /= t;
+   <b style="color:black;background-color:#ffff66">frustum</b>[0][2] /= t;
+   <b style="color:black;background-color:#ffff66">frustum</b>[0][3] /= t;
+
+   /* Extract the numbers for the LEFT plane */
+   <b style="color:black;background-color:#ffff66">frustum</b>[1][0] = clip[ 3] + clip[ 0];
+   <b style="color:black;background-color:#ffff66">frustum</b>[1][1] = clip[ 7] + clip[ 4];
+   <b style="color:black;background-color:#ffff66">frustum</b>[1][2] = clip[11] + clip[ 8];
+   <b style="color:black;background-color:#ffff66">frustum</b>[1][3] = clip[15] + clip[12];
+
+   /* Normalize the result */
+   t = sqrt( <b style="color:black;background-color:#ffff66">frustum</b>[1][0] * <b style="color:black;background-color:#ffff66">frustum</b>[1][0] + <b style="color:black;background-color:#ffff66">frustum</b>[1][1] * <b style="color:black;background-color:#ffff66">frustum</b>[1][1] + <b style="color:black;background-color:#ffff66">frustum</b>[1][2] * <b style="color:black;background-color:#ffff66">frustum</b>[1][2] );
+   <b style="color:black;background-color:#ffff66">frustum</b>[1][0] /= t;
+   <b style="color:black;background-color:#ffff66">frustum</b>[1][1] /= t;
+   <b style="color:black;background-color:#ffff66">frustum</b>[1][2] /= t;
+   <b style="color:black;background-color:#ffff66">frustum</b>[1][3] /= t;
+
+   /* Extract the BOTTOM plane */
+   <b style="color:black;background-color:#ffff66">frustum</b>[2][0] = clip[ 3] + clip[ 1];
+   <b style="color:black;background-color:#ffff66">frustum</b>[2][1] = clip[ 7] + clip[ 5];
+   <b style="color:black;background-color:#ffff66">frustum</b>[2][2] = clip[11] + clip[ 9];
+   <b style="color:black;background-color:#ffff66">frustum</b>[2][3] = clip[15] + clip[13];
+
+   /* Normalize the result */
+   t = sqrt( <b style="color:black;background-color:#ffff66">frustum</b>[2][0] * <b style="color:black;background-color:#ffff66">frustum</b>[2][0] + <b style="color:black;background-color:#ffff66">frustum</b>[2][1] * <b style="color:black;background-color:#ffff66">frustum</b>[2][1] + <b style="color:black;background-color:#ffff66">frustum</b>[2][2] * <b style="color:black;background-color:#ffff66">frustum</b>[2][2] );
+   <b style="color:black;background-color:#ffff66">frustum</b>[2][0] /= t;
+   <b style="color:black;background-color:#ffff66">frustum</b>[2][1] /= t;
+   <b style="color:black;background-color:#ffff66">frustum</b>[2][2] /= t;
+   <b style="color:black;background-color:#ffff66">frustum</b>[2][3] /= t;
+
+   /* Extract the TOP plane */
+   <b style="color:black;background-color:#ffff66">frustum</b>[3][0] = clip[ 3] - clip[ 1];
+   <b style="color:black;background-color:#ffff66">frustum</b>[3][1] = clip[ 7] - clip[ 5];
+   <b style="color:black;background-color:#ffff66">frustum</b>[3][2] = clip[11] - clip[ 9];
+   <b style="color:black;background-color:#ffff66">frustum</b>[3][3] = clip[15] - clip[13];
+
+   /* Normalize the result */
+   t = sqrt( <b style="color:black;background-color:#ffff66">frustum</b>[3][0] * <b style="color:black;background-color:#ffff66">frustum</b>[3][0] + <b style="color:black;background-color:#ffff66">frustum</b>[3][1] * <b style="color:black;background-color:#ffff66">frustum</b>[3][1] + <b style="color:black;background-color:#ffff66">frustum</b>[3][2] * <b style="color:black;background-color:#ffff66">frustum</b>[3][2] );
+   <b style="color:black;background-color:#ffff66">frustum</b>[3][0] /= t;
+   <b style="color:black;background-color:#ffff66">frustum</b>[3][1] /= t;
+   <b style="color:black;background-color:#ffff66">frustum</b>[3][2] /= t;
+   <b style="color:black;background-color:#ffff66">frustum</b>[3][3] /= t;
+
+   /* Extract the FAR plane */
+   <b style="color:black;background-color:#ffff66">frustum</b>[4][0] = clip[ 3] - clip[ 2];
+   <b style="color:black;background-color:#ffff66">frustum</b>[4][1] = clip[ 7] - clip[ 6];
+   <b style="color:black;background-color:#ffff66">frustum</b>[4][2] = clip[11] - clip[10];
+   <b style="color:black;background-color:#ffff66">frustum</b>[4][3] = clip[15] - clip[14];
+
+   /* Normalize the result */
+   t = sqrt( <b style="color:black;background-color:#ffff66">frustum</b>[4][0] * <b style="color:black;background-color:#ffff66">frustum</b>[4][0] + <b style="color:black;background-color:#ffff66">frustum</b>[4][1] * <b style="color:black;background-color:#ffff66">frustum</b>[4][1] + <b style="color:black;background-color:#ffff66">frustum</b>[4][2] * <b style="color:black;background-color:#ffff66">frustum</b>[4][2] );
+   <b style="color:black;background-color:#ffff66">frustum</b>[4][0] /= t;
+   <b style="color:black;background-color:#ffff66">frustum</b>[4][1] /= t;
+   <b style="color:black;background-color:#ffff66">frustum</b>[4][2] /= t;
+   <b style="color:black;background-color:#ffff66">frustum</b>[4][3] /= t;
+
+   /* Extract the NEAR plane */
+   <b style="color:black;background-color:#ffff66">frustum</b>[5][0] = clip[ 3] + clip[ 2];
+   <b style="color:black;background-color:#ffff66">frustum</b>[5][1] = clip[ 7] + clip[ 6];
+   <b style="color:black;background-color:#ffff66">frustum</b>[5][2] = clip[11] + clip[10];
+   <b style="color:black;background-color:#ffff66">frustum</b>[5][3] = clip[15] + clip[14];
+
+   /* Normalize the result */
+   t = sqrt( <b style="color:black;background-color:#ffff66">frustum</b>[5][0] * <b style="color:black;background-color:#ffff66">frustum</b>[5][0] + <b style="color:black;background-color:#ffff66">frustum</b>[5][1] * <b style="color:black;background-color:#ffff66">frustum</b>[5][1] + <b style="color:black;background-color:#ffff66">frustum</b>[5][2] * <b style="color:black;background-color:#ffff66">frustum</b>[5][2] );
+   <b style="color:black;background-color:#ffff66">frustum</b>[5][0] /= t;
+   <b style="color:black;background-color:#ffff66">frustum</b>[5][1] /= t;
+   <b style="color:black;background-color:#ffff66">frustum</b>[5][2] /= t;
+   <b style="color:black;background-color:#ffff66">frustum</b>[5][3] /= t;
+}
+</pre>
+<p>
+
+Whew!  That's a big one.  Certainly doesn't look like it'll help to speed things up does it?  It will, believe me.  We only have to call this function once each frame, so don't be alarmed by those expensive sqrt() calls and all the math.
+</p><p>
+
+<br></p><h4>Is This Point In the <b style="color:black;background-color:#ffff66">Frustum</b>?</h4>
+
+Ok, so we have the plane equations, how do we test an object against the <b style="color:black;background-color:#ffff66">frustum</b> to determine if it might be visible?  Let's start small, with a single point.
+<p>
+
+Given what we now know about planes and points, we can make the following observation:
+</p><p>
+
+<i>A point is within the <b style="color:black;background-color:#ffff66">frustum</b> if it is in front of all six planes simultaneously.</i>
+</p><p>
+
+<small>[This is true because our <b style="color:black;background-color:#ffff66">frustum</b> planes all face inwards.  If they faced outwards we'd say that a point has to be behind all six planes.]</small>
+</p><p>
+
+Good stuff!  That's going to form the basis for all the tests we come up with.  The next step is to figure out whether a point is in front of a plane or not.  To do that we have to calculate the distance of the point from the plane.  If the distance is positive then the point is in front of the plane.  If it's negative then it's behind the plane.
+</p><p>
+
+Here's the formula for calculating a point's distance from a plane:
+</p><p>
+
+</p><pre>distance = A * X + B * Y + C * Z + D
+</pre>
+<p>
+
+Where A, B, C, and D are the four numbers that define the plane and X, Y, and Z are the point's coordinates.
+</p><p>
+
+So now we can write a function that checks a point against the <b style="color:black;background-color:#ffff66">frustum</b>:
+</p><p>
+
+</p><pre>bool PointInFrustum( float x, float y, float z )
+{
+   int p;
+
+   for( p = 0; p &lt; 6; p++ )
+      if( <b style="color:black;background-color:#ffff66">frustum</b>[p][0] * x + <b style="color:black;background-color:#ffff66">frustum</b>[p][1] * y + <b style="color:black;background-color:#ffff66">frustum</b>[p][2] * z + <b style="color:black;background-color:#ffff66">frustum</b>[p][3] &lt;= 0 )
+         return false;
+   return true;
+}
+</pre>
+<p>
+
+The function simply loops through all six planes, calculating the distance of the point from each plane.  If it's behind any one of them we can exit immediately, so on average we'll only have to perform three distance calculations to reject a point, while points that are in the <b style="color:black;background-color:#ffff66">frustum</b> will require all six tests.
+</p><p>
+
+Simple, huh?
+</p><p>
+
+By the way, this function treats points that are right on the plane as if they were outside the <b style="color:black;background-color:#ffff66">frustum</b>, which seems perfectly acceptable to me.  If you want to count those points as being inside, just change the <b>&lt;=</b> operator to <b>&lt;</b>.
+</p><p>
+
+<br></p><h4>Bounding Volumes</h4>
+
+Before we move on to more elaborate tests, we should talk about bounding volumes.
+<p>
+
+Let's say that one of your objects is a highly detailed model with a huge polygon count.  We could perform our PointInFrustum() test on every vertex in the model, but the test itself would probably become slower than simply sending everything to <b style="color:black;background-color:#99ff99">OpenGL</b> in the first place.
+</p><p>
+
+<small>[Actually, testing every point wouldn't always work - what if the model totally encloses the <b style="color:black;background-color:#ffff66">frustum</b>?  All points would be outside the <b style="color:black;background-color:#ffff66">frustum</b> but we'd still want to draw it.]</small>
+</p><p>
+
+So what do we do?  Imagine a sphere that totally encloses the model.  Now instead of testing the model itself, let's just test the sphere.  If any part of the sphere is "visible" we draw the model (but not the sphere, normally).
+</p><p>
+
+This allows us to decide whether or not to draw an object with one simple test, rather than testing every vertex in the object itself.  Of course, the sphere we test may be in the <b style="color:black;background-color:#ffff66">frustum</b> even though the model itself isn't visible, but in that case we just let <b style="color:black;background-color:#99ff99">OpenGL</b> deal with it.
+</p><p>
+
+The sphere that we're testing is called a bounding sphere, and it's one example of a bounding volume.  The other common bounding volume is the bounding box.  You could use any other volume shape, but spheres and boxes are usually the most practical.</p><p>
+</p><p>
+
+The idea is to calculate a bounding sphere or box for each object as you load it into memory.  For a sphere you need to store a point and a radius, only four numbers.  For a cube you could do the same, and for an arbitrary box you'll need eight points.  In any case, the overhead is small.
+</p><p>
+
+So which is better, a sphere or a box?  Well it depends.  We'll come back to this question later.
+</p><p>
+
+<br></p><h4>Is This Sphere In the <b style="color:black;background-color:#ffff66">Frustum</b>?</h4>
+
+Well now we know why we'd want to test a sphere, but how exactly do we do it?  As it turns out, it's almost exactly the same test as the PointInFrustum() function.
+<p>
+
+Here you go:
+</p><p>
+
+</p><pre>bool SphereInFrustum( float x, float y, float z, float radius )
+{
+   int p;
+
+   for( p = 0; p &lt; 6; p++ )
+      if( <b style="color:black;background-color:#ffff66">frustum</b>[p][0] * x + <b style="color:black;background-color:#ffff66">frustum</b>[p][1] * y + <b style="color:black;background-color:#ffff66">frustum</b>[p][2] * z + <b style="color:black;background-color:#ffff66">frustum</b>[p][3] &lt;= -radius )
+         return false;
+   return true;
+}
+</pre>
+<p>
+
+We pass it the X, Y, and Z of the sphere's center, and the sphere's radius.  The only difference from the point test is that we compare the distance to the radius instead of zero.
+</p><p>
+
+<br></p><h4>A Cool Variation</h4>
+
+Consider this variation of the SphereInFrustum() function:
+<p>
+
+</p><pre>float SphereInFrustum( float x, float y, float z, float radius )
+{
+   int p;
+   float d;
+
+   for( p = 0; p &lt; 6; p++ )
+   {
+      d = <b style="color:black;background-color:#ffff66">frustum</b>[p][0] * x + <b style="color:black;background-color:#ffff66">frustum</b>[p][1] * y + <b style="color:black;background-color:#ffff66">frustum</b>[p][2] * z + <b style="color:black;background-color:#ffff66">frustum</b>[p][3];
+      if( d &lt;= -radius )
+         return 0;
+   }
+   return d + radius;
+}
+</pre>
+<p>
+
+It's almost identical, except we return zero if the sphere is not in the <b style="color:black;background-color:#ffff66">frustum</b>, otherwise we return the distance plus the radius from the last plane tested.
+</p><p>
+
+What does this do for us?  Well, the last plane in the <b style="color:black;background-color:#ffff66">frustum</b> array is the <i>near</i> plane, so in addition to telling us if a sphere is visible it now also tells us how far away the object is from the camera.
+</p><p>
+
+This is cool because we can use it to alter the level of detail.  If the object is close to the near plane we can render it using more polygons, but if it's far away we can probably get away with a less detailed version.  The neat thing is that it's free - we had to do the calculation anyway!
+</p><p>
+
+<small>[Note that simply using the distance to determine a level of detail isn't always the best method.  You might also want to take into account the sphere's radius.  For example, a very large object that's far away may still need more detail than a tiny object that's closer.]</small>
+</p><p>
+
+<br></p><h4>Is This Box In the <b style="color:black;background-color:#ffff66">Frustum</b>?</h4>
+
+A point can't be bigger than the <b style="color:black;background-color:#ffff66">frustum</b>, and the sphere test works even when the sphere totally encloses the <b style="color:black;background-color:#ffff66">frustum</b>, but a box is a bit more complicated.
+<p>
+
+We can test to see if any of the eight corners are within the <b style="color:black;background-color:#ffff66">frustum</b> of course, and that would work for most cases, but what happens if the box totally encloses the <b style="color:black;background-color:#ffff66">frustum</b>?  All of the corners are outside of the <b style="color:black;background-color:#ffff66">frustum</b>, but it's still visible.
+</p><p>
+
+For this example we'll assume that the bounding box is a cube, but you can easily modify the routine to work for an arbitrary set of eight points (or more if you want to use a more complicated bounding volume).
+</p><p>
+
+Here it is (and this one works, even if the cube encloses the <b style="color:black;background-color:#ffff66">frustum</b>):
+</p><p>
+
+</p><pre>bool CubeInFrustum( float x, float y, float z, float size )
+{
+   int p;
+
+   for( p = 0; p &lt; 6; p++ )
+   {
+      if( <b style="color:black;background-color:#ffff66">frustum</b>[p][0] * (x - size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][1] * (y - size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][2] * (z - size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][3] &gt; 0 )
+         continue;
+      if( <b style="color:black;background-color:#ffff66">frustum</b>[p][0] * (x + size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][1] * (y - size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][2] * (z - size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][3] &gt; 0 )
+         continue;
+      if( <b style="color:black;background-color:#ffff66">frustum</b>[p][0] * (x - size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][1] * (y + size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][2] * (z - size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][3] &gt; 0 )
+         continue;
+      if( <b style="color:black;background-color:#ffff66">frustum</b>[p][0] * (x + size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][1] * (y + size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][2] * (z - size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][3] &gt; 0 )
+         continue;
+      if( <b style="color:black;background-color:#ffff66">frustum</b>[p][0] * (x - size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][1] * (y - size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][2] * (z + size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][3] &gt; 0 )
+         continue;
+      if( <b style="color:black;background-color:#ffff66">frustum</b>[p][0] * (x + size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][1] * (y - size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][2] * (z + size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][3] &gt; 0 )
+         continue;
+      if( <b style="color:black;background-color:#ffff66">frustum</b>[p][0] * (x - size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][1] * (y + size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][2] * (z + size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][3] &gt; 0 )
+         continue;
+      if( <b style="color:black;background-color:#ffff66">frustum</b>[p][0] * (x + size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][1] * (y + size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][2] * (z + size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][3] &gt; 0 )
+         continue;
+      return false;
+   }
+   return true;
+}
+</pre>
+<p>
+
+We pass in the center coordinates of the cube and the size, which is actually half of the cube's length (think of it like a sphere's radius).  Then for each plane we test each corner of the cube.  As soon as we find a point that is in front of the current plane, we can move on to the next plane, possibly saving several calculations.  If we test all eight points against a plane and all of them are behind it, then we can exit immediately because the cube can't be visible.  If we make it to the end then every plane has at least one point in front of it, so the cube is visible.
+</p><p>
+
+<img src="file:///C:/Users/Lee/GamesWorkspace/Tower%20Defence%203D/res/references/markmorley.com%20_%20frustum%20culling%20in%20opengl_files/falsepositive.gif" alt="" hspace="20" align="right" title=""><i>
+<font color="red">NOTE:</font> The function given above will produce the occasional false positive, meaning it will tell you a cube is visible when it's not.  This happens in the case where all the corners of the bounding box are <b>not</b> behind any one plane, but it's still outside the <b style="color:black;background-color:#ffff66">frustum</b>.  So you might end up rendering objects that won't be visible.  Depending on how your world looks and how you're using <b style="color:black;background-color:#ffff66">frustum </b><b style="color:black;background-color:#A0FFFF">culling</b>, this is likely to be a rare event, and it shouldn't have a noticeable impact on overall rendering speed unless the false positives contain a very large number of polygons.
+</i></p><p><i>
+
+To make this completely accurate you would also have to test the eight corners of the <b style="color:black;background-color:#ffff66">frustum</b> volume against the six planes that make up the sides of the bounding box.  If the bounding box is axially aligned, you can dispense with the box's planes and perform some simple greater-than/less-than tests for each corner of the <b style="color:black;background-color:#ffff66">frustum</b>.  In any case, this is left as an exercise for those with more patience than I :-)
+</i></p><p><i>
+</i><br clear="right">
+
+<br></p><h4>Intersection Tests</h4>
+
+The routines presented thus far have checked to see if any part of the bounding volume is in the <b style="color:black;background-color:#ffff66">frustum</b>, which is fast and probably what you want in most cases.  But sometimes it's useful to know if a bounding volume is entirely within the <b style="color:black;background-color:#ffff66">frustum</b> or only partially inside.
+<p>
+
+Why would you want to know this?  Well, let's say that you have a bounding volume that encloses many other bounding volumes, and they in turn enclose other bounding volumes, until you finally get to individual objects (this is pretty much how an octree works).  If you test the top-most bounding volume and it's not visible, you can skip all the things it contains.  If it's totally inside the <b style="color:black;background-color:#ffff66">frustum</b> then so are all of the things inside it, so you can jump straight to the objects and render them all without further testing.  But if it's only partially in the <b style="color:black;background-color:#ffff66">frustum</b> you'll want to test each bounding volume it contains and deal with their contents in a similar, recursive manner.
+</p><p>
+
+Here's a version of the SphereInFrustum() function that returns 0 if the sphere is totally outside, 1 if it's partially inside, and 2 if it's totally inside:
+</p><p>
+
+</p><pre>int SphereInFrustum( float x, float y, float z, float radius )
+{
+   int p;
+   int c = 0;
+   float d;
+
+   for( p = 0; p &lt; 6; p++ )
+   {
+      d = <b style="color:black;background-color:#ffff66">frustum</b>[p][0] * x + <b style="color:black;background-color:#ffff66">frustum</b>[p][1] * y + <b style="color:black;background-color:#ffff66">frustum</b>[p][2] * z + <b style="color:black;background-color:#ffff66">frustum</b>[p][3];
+      if( d &lt;= -radius )
+         return 0;
+      if( d &gt; radius )
+         c++;
+   }
+   return (c == 6) ? 2 : 1;
+}
+</pre>
+<p>
+
+We still get to exit early if the sphere is completely behind any of the six planes, but now we also test to see if it's completely in front of the plane as well.  If it is we increment a counter.  When we reach the end we just check the counter - if it's equal to six then the sphere doesn't intersect any of the planes so it's completely inside the <b style="color:black;background-color:#ffff66">frustum</b>, otherwise it's only partially inside.
+</p><p>
+
+And here's a version of CubeInFrustum() that does the same thing:
+</p><p>
+
+</p><pre>int CubeInFrustum( float x, float y, float z, float size )
+{
+   int p;
+   int c;
+   int c2 = 0;
+
+   for( p = 0; p &lt; 6; p++ )
+   {
+      c = 0;
+      if( <b style="color:black;background-color:#ffff66">frustum</b>[p][0] * (x - size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][1] * (y - size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][2] * (z - size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][3] &gt; 0 )
+         c++;
+      if( <b style="color:black;background-color:#ffff66">frustum</b>[p][0] * (x + size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][1] * (y - size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][2] * (z - size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][3] &gt; 0 )
+         c++;
+      if( <b style="color:black;background-color:#ffff66">frustum</b>[p][0] * (x - size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][1] * (y + size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][2] * (z - size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][3] &gt; 0 )
+         c++;
+      if( <b style="color:black;background-color:#ffff66">frustum</b>[p][0] * (x + size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][1] * (y + size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][2] * (z - size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][3] &gt; 0 )
+         c++;
+      if( <b style="color:black;background-color:#ffff66">frustum</b>[p][0] * (x - size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][1] * (y - size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][2] * (z + size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][3] &gt; 0 )
+         c++;
+      if( <b style="color:black;background-color:#ffff66">frustum</b>[p][0] * (x + size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][1] * (y - size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][2] * (z + size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][3] &gt; 0 )
+         c++;
+      if( <b style="color:black;background-color:#ffff66">frustum</b>[p][0] * (x - size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][1] * (y + size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][2] * (z + size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][3] &gt; 0 )
+         c++;
+      if( <b style="color:black;background-color:#ffff66">frustum</b>[p][0] * (x + size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][1] * (y + size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][2] * (z + size) + <b style="color:black;background-color:#ffff66">frustum</b>[p][3] &gt; 0 )
+         c++;
+      if( c == 0 )
+         return 0;
+      if( c == 8 )
+         c2++;
+   }
+   return (c2 == 6) ? 2 : 1;
+}
+</pre>
+<p>
+
+This routine tests all eight corners against each plane, counting how many corners are in front of the plane.  If none of the eight corners are in front, then we can exit immediately because the entire cube is outside the <b style="color:black;background-color:#ffff66">frustum</b>.  If all eight are in front of the plane then we increment a second counter.  When we reach the end we know that at least some part of the cube is in the <b style="color:black;background-color:#ffff66">frustum</b>, so we check the second counter.  If it equals six then the cube is completely within the <b style="color:black;background-color:#ffff66">frustum</b>, otherwise only part of it is.
+</p><p>
+
+Possible variations on these functions might return a byte value where each bit represents a specific <b style="color:black;background-color:#ffff66">frustum</b> plane.  Set a bit if the volume is completely in front of the corresponding plane, otherwise leave it unset.  In the end if all bits are unset, it isn't in the <b style="color:black;background-color:#ffff66">frustum</b> at all.  If all six bits are set, it's completely in the <b style="color:black;background-color:#ffff66">frustum</b>.  And if only some of the six bits are set, it's partially in the <b style="color:black;background-color:#ffff66">frustum</b>.  The difference now is that you know <i>which</i> planes it intersects.
+</p><p>
+
+<br></p><h4>Spheres VS Boxes</h4>
+
+The opinions on whether to use bounding spheres or boxes seems to be fairly evenly split.  Personally I think you should use spheres whenever possible.  Here's why:
+<p>
+
+</p><ul>
+<li> The sphere test is more accurate, it doesn't return false positives like the cube test can.
+<p>
+
+</p></li><li> The sphere test is the fastest, requiring on average only 3 distance tests to reject a sphere, and at most 6.  The cube test, on the other hand, requires at least 6 and possibly as many as 48!
+<p>
+
+</p></li><li> Consider an object that is spinning around it's center point.  The sphere enclosing it doesn't change, but if it's enclosed in a box, parts of the object may stick out as it spins, so you'd have to remember to rotate the box as well (or make the box bigger in the first place).
+<p>
+
+</p></li><li> Spheres take less memory to store.  Only four floating point numbers as opposed to the eight required for a box (well, if it's a cube you can get away with four numbers too).
+<p>
+</p></li></ul>
+
+Bounding spheres do have one flaw though.  Consider an object that is long and thin, like a telephone pole.  The sphere that fully encloses it needs to be fairly large, and winds up incorporating a lot of empty space.  If you had many objects like this your bounding sphere test would result in rendering a lot of non-visible objects.
+<p>
+
+There are a few ways to deal with this.  One way would be to use a long thin bounding box instead of a sphere.  This gives you a more accurate bounding volume, but requires a more complicated test.
+</p><p>
+
+Another option is to break the object up into smaller pieces, each with its own bounding sphere.  If you have really large or complicated objects you might want to do this anyway.
+</p><p>
+
+Yet another option is to leave the object in one piece, but define multiple bounding spheres for it.  If any one of the spheres is in the <b style="color:black;background-color:#ffff66">frustum</b>, draw the whole object.  This may require overlapping spheres though, so whether it will speed things up or not depends very much on the shape and size of the object.
+</p><p>
+
+In the end it's up to you.  You may find that it's necessary to use a combination of techniques.
+</p><p>
+
+<br></p><h4>Testing Triangles and Other Polygons</h4>
+
+I am often asked how to test polygons against the <b style="color:black;background-color:#ffff66">frustum</b>.  Really it's just like the CubeInFrustum() test, but for an arbitrary number of points.  The same rule applies: if all of the points are behind any single <b style="color:black;background-color:#ffff66">frustum</b> plane then the polygon is invisible, otherwise at least some part of it is in the <b style="color:black;background-color:#ffff66">frustum</b> (we assume the polygons are convex of course).
+<p>
+
+<small>[Note: This test is may generate the occasional false positive, just like I've explained in the CubeInFrustum() section above]</small>
+</p><p>
+
+Here's the routine:
+</p><p>
+
+</p><pre>bool PolygonInFrustum( int numpoints, POINT* pointlist )
+{
+   int f, p;
+
+   for( f = 0; f &lt; 6; f++ )
+   {
+      for( p = 0; p &lt; numpoints; p++ )
+      {
+         if( <b style="color:black;background-color:#ffff66">frustum</b>[f][0] * pointlist[p].x + <b style="color:black;background-color:#ffff66">frustum</b>[f][1] * pointlist[p].y + <b style="color:black;background-color:#ffff66">frustum</b>[f][2] * pointlist[p].z + <b style="color:black;background-color:#ffff66">frustum</b>[f][3] &gt; 0 )
+            break;
+      }
+      if( p == numpoints )
+         return false;
+   }
+   return true;
+}
+</pre>
+
+We pass in the number of points we're testing, and a pointer to the point array itself (assume that a POINT structure contains an X, Y, and Z value - it's actual structure is irrelevent).  For each <b style="color:black;background-color:#ffff66">frustum</b> plane we test all the points, breaking out early if a point is in front of a plane.  If all the points are behind the plane we return false immediately.  If we make it to the end then every plane has at least one point in front of it so the polygon is potentially visible.
+<p>
+
+<small>[This routine certainly has its uses, but in a real-time game or simulation it's not a great idea to use it for testing every single polygon in your scene.  <b style="color:black;background-color:#99ff99">OpenGL</b> itself can clip polygons faster than you can.  The idea behind <b style="color:black;background-color:#ffff66">frustum </b><b style="color:black;background-color:#A0FFFF">culling</b> is to discard entire sets of polygons and/or objects with a single test.]</small>
+</p><p>
+
+<br></p><h4>Optimizations</h4>
+
+The following optimizations could be made, but it's hard to say if they will make any significant difference:
+<p>
+
+</p><ul>
+
+<li> You can eliminate all the code in ExtractFrustum() that has to do with normalizing the plane values.  This will result in scaled distances when you compare a point to a plane.  The point and box tests will still work, but the sphere test won't.  If you aren't using bounding spheres at all this will save a few expensive calculations per frame, but those probably won't be an issue on most systems.
+<p>
+
+</p></li><li> ExtractFrustum() actually only needs to be called in frames where the camera position has moved.  If your PROJECTION and MODELVIEW matrices don't change from frame to frame, don't bother recalculating the <b style="color:black;background-color:#ffff66">frustum</b> planes.
+<p>
+
+</p></li><li> Try unrolling the loops inside the test routines.
+<p>
+
+</p></li></ul>
+
+<br><h4>Sample Code</h4>
+
+I've written a sample program that demonstrates <b style="color:black;background-color:#ffff66">frustum </b><b style="color:black;background-color:#A0FFFF">culling</b>.  It lets you wander around in a world that's filled with either points, spheres, or cubes of varying sizes and colors.  The source code and executable can be downloaded here:
+<p>
+
+</p><ul>
+<li><a href="http://www.markmorley.com/opengl/LessonX.zip" title="">LessonX.zip</a> Visual C++ 6.0 Source Code (17K)
+<p>
+
+</p></li><li><a href="http://www.markmorley.com/opengl/LessonX.exe" title="">LessonX.exe</a> Windows Executable (78K)
+<p>
+</p></li></ul>
+
+The keyboard commands are as follows:
+<p>
+
+</p><ul>
+<li> <b>Esc</b> - Exit
+</li><li> <b>Up</b> - Moves the camera forward
+</li><li> <b>Down</b> - Moves the camera backwards
+</li><li> <b>Left</b> - Turns the camera left
+</li><li> <b>Right</b> - Turns the camera right
+</li><li> <b>U</b> - Tilts the camera up
+</li><li> <b>D</b> - Tilts the camera down
+</li><li> <b>Keypad +</b> - Adds more objects to the world (1000 max)
+</li><li> <b>Keypad -</b> - Subtracts objects from the world (1 min)
+</li><li> <b>W</b> - Wide angle (increases FOV)
+</li><li> <b>T</b> - Telephoto (decreases FOV)
+</li><li> <b>G</b> - Toggles the ground plane grid
+</li><li> <b>M</b> - Changes mode (objects change from points to spheres to cubes)
+</li><li> <b>C</b> - Toggles <b style="color:black;background-color:#ffff66">frustum </b><b style="color:black;background-color:#A0FFFF">culling</b>
+</li></ul>
+<p>
+
+Things to note:
+</p><p>
+
+</p><ul>
+<li> This source code is based on NeHe Production's <b style="color:black;background-color:#99ff99">OpenGL</b> tutorial framework (<a href="http://nehe.gamedev.net/" title="">nehe.gamedev.net</a>), and I've tried to mimic his programming and commenting style, which is very different than my own.
+<p>
+
+</p></li><li> You'll likely find that the cube mode is faster than the spheres.  This is not due to the <b style="color:black;background-color:#ffff66">frustum</b> test - it's just that the cubes require less geometry to render.  The sphere tests are still faster.
+<p>
+
+</p></li><li> With <b style="color:black;background-color:#A0FFFF">culling</b> enabled, try different FOV values.  The larger your FOV (ie: the wider your viewing angle), the larger your <b style="color:black;background-color:#ffff66">frustum</b> becomes and more objects will be rendered.  This is something to keep in mind when you're trying to tweak every last frame out of an application.
+<p>
+
+</p></li><li> The main rendering loop simply runs through all the known objects.  A better way would be to store the objects in an octree or use some other method of space partitioning, but that's beyond the scope of this tutorial.
+<p>
+
+</p></li></ul>
+
+</font>
+
+<hr width="700" align="left">
+<font face="verdana,arial,helvetica" size="1">
+This page and its contents are Copyright 2000 by <a href="mailto:mark@markmorley.com" title="">Mark Morley</a><br>
+Unless otherwise noted, you may use any and all code examples provided herein in any way you want.<br>
+All other content, including  but not limited to text and images, may not be reproduced without consent.<br>
+This file was last edited on Wednesday, 24-Jan-2001 13:24:38 PST
+</font><br>
+</body></html>
