@@ -20,12 +20,14 @@ abstract class PostMan {
 	public static final void render(Texture initialImage, PostEffect[] effects) {
 		render(initialImage);
 		for (PostEffect effect : effects)
-			render(effect);
+			if (effect.isEnabled())
+				render(effect);
 	}
 	public static final void render(Texture initialImage, Iterable<PostEffect> effects) {
 		render(initialImage);
 		for (PostEffect effect : effects)
-			render(effect);
+			if (effect.isEnabled())
+				render(effect);
 	}
 	public static final void render(PostEffect effect) {
 		render(getCurrentTexture(), effect);
