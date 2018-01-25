@@ -135,7 +135,7 @@ vec3 dither(vec3 color, vec2 texcoord) {
 
 void main(void) {
 	vec4 specularmap = texture(specularTexture, textureCoord);
-	if (specularmap.w < 0.5)
+	if (specularmap.z < 0.5)
 		discard;
 	float specularity = specularmap.r;
 	float specularexponent = specularmap.g;
