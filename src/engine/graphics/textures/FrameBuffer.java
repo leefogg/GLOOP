@@ -1,9 +1,9 @@
 package engine.graphics.textures;
 
+import engine.graphics.data.DataConversion;
 import engine.graphics.models.DataType;
 import engine.graphics.rendering.Renderer;
 import engine.graphics.rendering.Viewport;
-import engine.graphics.data.DataConversion;
 import org.lwjgl.util.vector.Vector4f;
 
 import java.awt.image.BufferedImage;
@@ -11,7 +11,8 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.glDrawBuffer;
+import static org.lwjgl.opengl.GL11.glReadPixels;
 import static org.lwjgl.opengl.GL20.glDrawBuffers;
 import static org.lwjgl.opengl.GL30.*;
 
@@ -43,7 +44,7 @@ public class FrameBuffer { // TODO: implements Disposable
 		colorAttachments = new ArrayList<>(formats.length);
 		bind();
 
-		createColorAttachments(formats);
+		addColorAttachments(formats);
 		bindRenderAttachment(colorAttachments.size());
 	}
 
@@ -53,33 +54,33 @@ public class FrameBuffer { // TODO: implements Disposable
 	}
 
 	public FrameBufferColorTexture[] addColorAttachment(PixelFormat format) {
-		return createColorAttachments(colorAttachments.size()+1, format);
+		return addColorAttachments(1, format);
 	}
-	public FrameBufferColorTexture[] createColorAttachments(int totalattachments) {
-		return createColorAttachments(totalattachments, PixelFormat.RGB8);
+	public FrameBufferColorTexture[] addColorAttachments(int totalattachments) {
+		return addColorAttachments(totalattachments, PixelFormat.RGB8);
 	}
-	public FrameBufferColorTexture[] createColorAttachments(int totalattachments, PixelFormat format) {
+	public FrameBufferColorTexture[] addColorAttachments(int totalattachments, PixelFormat format) {
 		PixelFormat[] formats = new PixelFormat[totalattachments];
 		for (int i=0; i<totalattachments; i++)
 			formats[i] = format;
 
-		return createColorAttachments(formats);
+		return addColorAttachments(formats);
 	}
-	public FrameBufferColorTexture[] createColorAttachments(PixelFormat[] formats) {
+	public FrameBufferColorTexture[] addColorAttachments(PixelFormat[] formats) {
 		FrameBufferColorTexture[] newattachments = new FrameBufferColorTexture[formats.length];
 
 		if (formats.length == 0)
 			return newattachments;
 
 		for (int i=0; i<formats.length; i++)
-			newattachments[i] = new FrameBufferColorTexture("FBO" + ID + "ColorAttachment" + i, width, height, i, formats[i]);
+			newattachments[i] = new FrameBufferColorTexture("FBO" + ID + "ColorAttachment" + (colorAttachments.size() + i), width, height, (colorAttachments.size() + i), formats[i]);
 
 		addColorAttachments(newattachments);
 
 		return newattachments;
 	}
 
-	public void addColorAttachments(FrameBufferColorTexture[] attachments) {
+	private void addColorAttachments(FrameBufferColorTexture[] attachments) {
 		for (FrameBufferColorTexture attachment : attachments)
 			colorAttachments.add(attachment);
 	}
