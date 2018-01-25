@@ -11,6 +11,9 @@ abstract class PostMan {
 	private static boolean isFrontBuffer;
 
 	public static final void init() {
+		if (isActive())
+			return;
+		
 		frontBuffer = new FrameBuffer();
 		frontTexture = frontBuffer.getColorTexture(0);
 		backBuffer = new FrameBuffer();
