@@ -1,11 +1,8 @@
 package engine.graphics.shading.materials;
 
-import engine.graphics.shading.posteffects.PostEffect;
-import engine.graphics.textures.Texture;
-
 import java.io.IOException;
 
-public class ShaderToyMaterial extends PostEffect<ShaderToyShader> {
+public class ShaderToyMaterial extends Material<ShaderToyShader> {
 	private ShaderToyShader shader;
 
 	public ShaderToyMaterial(String fragmentshaderpath) throws IOException {
@@ -24,7 +21,7 @@ public class ShaderToyMaterial extends PostEffect<ShaderToyShader> {
 	public void commit() { shader.setOptionalUniformValues(); }
 
 	@Override
-	public void setTexture(Texture texture) {
-
+	protected boolean hasTransparency() {
+		return false;
 	}
 }

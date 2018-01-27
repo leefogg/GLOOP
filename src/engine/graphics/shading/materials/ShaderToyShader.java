@@ -5,7 +5,7 @@ import engine.graphics.shading.posteffects.PostEffectShader;
 
 import java.io.IOException;
 
-public class ShaderToyShader extends PostEffectShader {
+public class ShaderToyShader extends ShaderProgram {
 	public ShaderToyShader(String vertexshaderpath, String fragmentshaderpath) throws IOException {
 		super(vertexshaderpath, fragmentshaderpath);
 	}
