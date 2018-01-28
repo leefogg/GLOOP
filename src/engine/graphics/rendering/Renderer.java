@@ -1,12 +1,10 @@
 package engine.graphics.rendering;
 
-import static org.lwjgl.opengl.GL11.GL_BACK;
 import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11.GL_FRONT;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_SCISSOR_TEST;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
@@ -24,6 +22,8 @@ import static org.lwjgl.opengl.GL11.glScissor;
 import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER_SRGB;
 
 import engine.Disposable;
+import engine.general.GenericStackable;
+import engine.general.Stack;
 import engine.graphics.shading.ShaderCompilationException;
 import engine.graphics.shading.posteffects.PostEffect;
 import engine.graphics.shading.posteffects.PostProcessor;
@@ -63,16 +63,119 @@ public abstract class Renderer implements Disposable {
 	private static float timeScaler;
 	private static boolean RenderWhenHidden = false;
 
-	private static ArrayList<PostEffect> postEffects = new ArrayList<>();
+	private static final ArrayList<PostEffect> postEffects = new ArrayList<>();
+
+	private static final Stack<CullFaceEnabledState> CullFaceEnabledStack = new Stack();
+	private static final Stack<CullFaceState> CullFaceStack = new Stack();
+	private static final Stack<BlendingEnabledState> BlendingEnabledStack = new Stack();
+	private static final Stack<DepthTestingEnabledState> DepthTestingEnabledStack = new Stack();
+	private static final Stack<ScissorTestingEnabledState> ScissorTestingEnabledStack = new Stack();
+	private static final Stack<DepthBufferWriteEnabledState> DepthBufferWriteEnabledStack = new Stack();
+
+	private static class GLEnabledState extends GenericStackable {
+		protected int glEnum;
+		private boolean enabled;
+
+		public GLEnabledState(int glenum, boolean enabled) {
+			this.glEnum = glenum;
+			this.enabled = enabled;
+		}
+
+		@Override
+		public void enable() { setState(); }
+
+		@Override
+		public void disable() {}
+
+		protected void setState() {
+			if (enabled)
+				glEnable(glEnum);
+			else
+				glDisable(glEnum);
+		}
+
+		public boolean isEnabled() { return enabled; }
+	}
+	private static class CullFaceEnabledState extends GLEnabledState {
+		public CullFaceEnabledState(boolean enabled) {
+			super(GL_CULL_FACE, enabled);
+		}
+	}
+	private static class CullFaceState extends GenericStackable {
+		private engine.graphics.rendering.CullFaceState state;
+
+		public CullFaceState(engine.graphics.rendering.CullFaceState value) {
+			this.state = value;
+		}
+
+		@Override
+		public void enable() { setState(); }
+
+		@Override
+		public void disable() {}
+
+		protected void setState() {
+			glCullFace(state.getGLEnum());
+		}
+
+		public engine.graphics.rendering.CullFaceState getState() { return state; }
+	}
+	private static class BlendingEnabledState extends GLEnabledState {
+		public BlendingEnabledState(boolean enabled) {
+			super(GL_BLEND, enabled);
+		}
+	}
+	private static class DepthTestingEnabledState extends GLEnabledState {
+		public DepthTestingEnabledState(boolean enabled) {
+			super(GL_DEPTH_TEST, enabled);
+		}
+	}
+	private static class ScissorTestingEnabledState extends GLEnabledState {
+		public ScissorTestingEnabledState(boolean enabled) {
+			super(GL_SCISSOR_TEST, enabled);
+		}
+	}
+	private static class DepthBufferWriteEnabledState extends GenericStackable {
+		private boolean enabled;
+		public DepthBufferWriteEnabledState(boolean enabled) {
+			this.enabled = enabled;
+		}
+
+		@Override
+		public void enable() {
+			glDepthMask(enabled);
+		}
+
+		@Override
+		public void disable() {}
+
+		public boolean isEnabled() { return enabled; }
+	}
+
+	private static final CullFaceEnabledState EnabledCullFaceState = new CullFaceEnabledState(true);
+	private static final CullFaceEnabledState DisabledCullFaceState = new CullFaceEnabledState(false);
+	private static final CullFaceState FrontCullFaceState = new CullFaceState(engine.graphics.rendering.CullFaceState.Front);
+	private static final CullFaceState BackCullFaceState = new CullFaceState(engine.graphics.rendering.CullFaceState.Back);
+	private static final BlendingEnabledState EnabledBlendingState = new BlendingEnabledState(true);
+	private static final BlendingEnabledState DisabledBlendingState = new BlendingEnabledState(false);
+	private static final DepthTestingEnabledState EnabledDepthTestingState = new DepthTestingEnabledState(true);
+	private static final DepthTestingEnabledState DisabledDepthTestingState = new DepthTestingEnabledState(false);
+	private static final ScissorTestingEnabledState EnabledScissorTestingState = new ScissorTestingEnabledState(true);
+	private static final ScissorTestingEnabledState DisabledScissorTestingState = new ScissorTestingEnabledState(false);
+	private static final DepthBufferWriteEnabledState EnabledDepthBufferWriteState = new DepthBufferWriteEnabledState(true);
+	private static final DepthBufferWriteEnabledState DisabledDepthBufferWriteState = new DepthBufferWriteEnabledState(false);
 
 	static {
 		// Set inital state
-		// Pointless (should be OpengGL defaults anyway)
 		enableFaceCulling(true);
-		cullBackFaces();
+		enableBlending(false);
 		enableDepthTesting(true);
+		setFaceCulling(engine.graphics.rendering.CullFaceState.Back);
+		enableDepthTesting(true);
+		enableDepthBufferWriting(true);
+
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glEnable(GL_FRAMEBUFFER_SRGB);
+		glEnable(GL_FRAMEBUFFER_SRGB); // TODO: Pull this out to public methods
 
 		setRenderer(getForwardRenderer());
 	}
@@ -119,73 +222,94 @@ public abstract class Renderer implements Disposable {
 		currentRenderer.renderScene();
 	}
 
-	public static void enableFaceCulling(boolean enabled) {
-		if (enabled)
-			enableFaceCulling();
-		else
-			disableFaceCulling();
-	}
-	public static void enableFaceCulling() {
-		glEnable(GL_CULL_FACE);
-	}
-	public static void disableFaceCulling() {
-		glDisable(GL_CULL_FACE);
-	}
-
-	public static void cullFrontFaces() {
-		glCullFace(GL_FRONT);
-	}
-	public static void cullBackFaces() { glCullFace(GL_BACK); }
-
-	public static void enableBlending(boolean enabled) {
-		if (enabled)
-			enableBlending();
-		else
-			disableBlending();
-	}
-	public static void enableBlending() {glEnable(GL_BLEND); }
-	public static void disableBlending() {glDisable(GL_BLEND); }
-
-	/** Allows or blocks write access to the depth buffer */
-	public static void enableDepthBuffer(boolean enabled) {
-		glDepthMask(enabled);
-	}
-	public static void enableDepthBuffer() {
-		enableDepthBuffer(true);
-	}
-	public static void disableDepthBuffer() {
-		enableDepthBuffer(false);
-	}
-
-	public static void enableDepthTesting(boolean enabled) {
-		if (enabled)
-			enableDepthTesting();
-		else
-			disableDepthTesting();
-	}
-	public static void enableDepthTesting() {
-		glEnable(GL_DEPTH_TEST);
-	}
-	public static void disableDepthTesting() {
-		glDisable(GL_DEPTH_TEST);
-	}
-
-	// TODO: EnableAlpha blending
-	// TODO: SetAlphaBlendingFunction
-
 	public static void enablePostEffects() {
 		PostMan.init();
 	}
 
-	public static void setDepthFunction(DepthFunction function) {
-		glDepthFunc(function.getGLEnum());
+
+
+	///////////////////////////////// GL States /////////////////////////////////
+	public static void enableFaceCulling(boolean enabled) {
+		CullFaceEnabledStack.push(enabled ? EnabledCullFaceState : DisabledCullFaceState);
+	}
+	public static boolean popFaceCullingEnabledState() {
+		CullFaceEnabledState laststate = CullFaceEnabledStack.pop();
+		if (laststate == null)
+			return false; // OpengGL's default
+		return laststate.isEnabled();
 	}
 
-	public static final void enableScissorTesting() {glEnable(GL_SCISSOR_TEST);}
-	public static final void disableScissorTesting() {glDisable(GL_SCISSOR_TEST);}
-	public static final void setScissorArea(int x, int y, int width, int height) {
-		glScissor(x, y, width, height);
+	public static void setFaceCulling(engine.graphics.rendering.CullFaceState newstate) {
+		CullFaceStack.push((newstate == engine.graphics.rendering.CullFaceState.Front) ? FrontCullFaceState : BackCullFaceState);
 	}
+	public static engine.graphics.rendering.CullFaceState popFaceCullingState() {
+		CullFaceState laststate = CullFaceStack.pop();
+		if (laststate == null)
+			return null;
+		return laststate.state;
+	}
+
+	public static void enableBlending(boolean enabled) {
+		BlendingEnabledStack.push(enabled ? EnabledBlendingState : DisabledBlendingState);
+	}
+	public static boolean popBlendingEnabledState() {
+		BlendingEnabledState laststate = BlendingEnabledStack.pop();
+		if (laststate == null)
+			return false; // OpenGL's default
+		return laststate.isEnabled();
+	}
+
+	/**
+	 * Allows or blocks write access to the depth buffer
+	 * @param enabled Whether to enable or disable writes to the depth buffer
+	 */
+	public static void enableDepthBufferWriting(boolean enabled) {
+		DepthBufferWriteEnabledStack.push(enabled ? EnabledDepthBufferWriteState : DisabledDepthBufferWriteState);
+	}
+	public static boolean popDepthBufferWritingState() {
+		DepthBufferWriteEnabledState laststate = DepthBufferWriteEnabledStack.pop();
+		if (laststate == null)
+			return false; // OpenGL's default
+		return laststate.isEnabled();
+	}
+
+	public static void enableDepthTesting(boolean enabled) {
+		DepthTestingEnabledStack.push(enabled ? EnabledDepthTestingState : DisabledDepthTestingState);
+	}
+	public static boolean popDepthTestingEnabledState() {
+		DepthTestingEnabledState laststate = DepthTestingEnabledStack.pop();
+		if (laststate == null)
+			return false; // OpenGL's default
+		return laststate.isEnabled();
+	}
+
+	public static void enableScissorTesting(boolean enabled) {
+		if (enabled)
+			ScissorTestingEnabledStack.push(EnabledScissorTestingState);
+		else
+			ScissorTestingEnabledStack.push(DisabledScissorTestingState);
+	}
+	public static boolean popScissorTestingState() {
+		ScissorTestingEnabledState laststate = ScissorTestingEnabledStack.pop();
+		if (laststate == null)
+			return false; // OpenGL's default
+		return laststate.isEnabled();
+	}
+	public static final void setScissorArea(int x, int y, int width, int height) { glScissor(x, y, width, height); }
+
+	// TODO: EnableAlpha blending
+	// TODO: SetAlphaBlendingFunction
+
+	public static void setVoidColor(float red, float green, float blue) {
+		glClearColor(
+				red,
+				green,
+				blue,
+				0
+		);
+	}
+
+	public static void setDepthFunction(DepthFunction function) { glDepthFunc(function.getGLEnum()); }
 
 	/** Allows the graphics of specified color components. */
 	public static void setColorMask(boolean red, boolean green, boolean blue, boolean alpha) {
@@ -198,20 +322,13 @@ public abstract class Renderer implements Disposable {
 		glClear(mask);
 	}
 
+
+
 	public static final boolean willRenderWhenHidden() {
 		return RenderWhenHidden;
 	}
 	public static final void RenderWhenHidden(boolean renderWhenHidden) {
 		RenderWhenHidden = renderWhenHidden;
-	}
-
-	public static void setVoidColor(float red, float green, float blue) {
-		glClearColor(
-				red,
-				green,
-				blue,
-				0
-			);
 	}
 
 	public static int getBufferBits(boolean color, boolean depth, boolean stencil) {
@@ -249,5 +366,6 @@ public abstract class Renderer implements Disposable {
 			deferedRenderer.dispose();
 	}
 
+	// TODO: Remove. Replace with Scene.setCurrentCamera(Camera cam)
 	public static void setCamera(Camera camera) { currentRenderer.scene.currentCamera = camera; }
 }

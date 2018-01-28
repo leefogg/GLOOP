@@ -9,7 +9,6 @@ import engine.graphics.shading.posteffects.PostProcessor;
 import engine.graphics.textures.*;
 import engine.graphics.rendering.UI.GUIRenderer;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Vector4f;
 
@@ -170,11 +169,11 @@ public class DeferredRenderer extends Renderer {
 
 		targetFBO.bind();
 		GBuffers.blitTo(targetFBO, true, true, false);
-		Renderer.enableBlending(); // Multiply not add
+		Renderer.enableBlending(true); // Multiply not add
 		glBlendFunc(GL_DST_COLOR, GL_ZERO);
 		PostProcessor.render(lightTexture);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		Renderer.disableBlending(); // Back to additive
+		Renderer.popBlendingEnabledState();
 	}
 
 	@Override

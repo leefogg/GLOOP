@@ -3,7 +3,6 @@ package engine.graphics.shading.posteffects;
 import engine.graphics.rendering.Renderer;
 import engine.graphics.rendering.Viewport;
 import engine.graphics.models.Model2D;
-import engine.graphics.shading.ShaderProgram;
 import engine.graphics.shading.materials.FullBrightMaterial;
 import engine.graphics.shading.materials.Material;
 import engine.graphics.textures.Texture;
@@ -28,11 +27,11 @@ public class PostProcessor {
 		fullscreenquad.setScale(Viewport.getWidth(), Viewport.getHeight());
 
 		// rendering post effects shouldn't affect the depth buffer
-		Renderer.disableDepthTesting();
-			Renderer.disableDepthBuffer();
+		Renderer.enableDepthTesting(false);
+			Renderer.enableDepthBufferWriting(false);
 				fullscreenquad.setMaterial(material);
 				fullscreenquad.render();
-			Renderer.enableDepthBuffer();
-		Renderer.enableDepthTesting();
+			Renderer.popDepthBufferWritingState();
+		Renderer.popDepthTestingEnabledState();
 	}
 }

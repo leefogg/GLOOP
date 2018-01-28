@@ -27,30 +27,30 @@ public final class GUIRenderer {
 		if (!UIs.iterator().hasNext())
 			return;
 
-		Renderer.enableBlending();
-		Renderer.disableDepthTesting();
-		Renderer.disableFaceCulling();
+		Renderer.enableBlending(true);
+		Renderer.enableDepthTesting(false);
+		Renderer.enableFaceCulling(false);
 
 		for (Model2D gui : UIs)
 			gui.render();
 
-		Renderer.enableFaceCulling();
-		Renderer.enableDepthTesting();
-		Renderer.disableBlending();
+		Renderer.popFaceCullingEnabledState();
+		Renderer.popDepthTestingEnabledState();
+		Renderer.popBlendingEnabledState();
 	}
-	public static void render(Model2D[] UIs) {
+	public static void render(Model2D[] UIs) { // TODO: Find a way to make this DRY
 		if (UIs.length == 0)
 			return;
 
-		Renderer.enableBlending();
-		Renderer.disableDepthTesting();
-		Renderer.disableFaceCulling();
+		Renderer.enableBlending(true);
+		Renderer.enableDepthTesting(false);
+		Renderer.enableFaceCulling(false);
 
 		for (Model2D gui : UIs)
 			gui.render();
 
-		Renderer.enableFaceCulling();
-		Renderer.enableDepthTesting();
-		Renderer.disableBlending();
+		Renderer.popFaceCullingEnabledState();
+		Renderer.popDepthTestingEnabledState();
+		Renderer.popBlendingEnabledState();
 	}
 }
