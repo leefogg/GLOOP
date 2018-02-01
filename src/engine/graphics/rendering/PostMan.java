@@ -3,6 +3,7 @@ package engine.graphics.rendering;
 import engine.graphics.shading.posteffects.PostEffect;
 import engine.graphics.shading.posteffects.PostProcessor;
 import engine.graphics.textures.FrameBuffer;
+import engine.graphics.textures.PixelFormat;
 import engine.graphics.textures.Texture;
 
 abstract class PostMan {
@@ -14,9 +15,9 @@ abstract class PostMan {
 		if (isActive())
 			return;
 		
-		frontBuffer = new FrameBuffer();
+		frontBuffer = new FrameBuffer(PixelFormat.RGB8);
 		frontTexture = frontBuffer.getColorTexture(0);
-		backBuffer = new FrameBuffer();
+		backBuffer = new FrameBuffer(PixelFormat.RGB8);
 		backTexture = backBuffer.getColorTexture(0);
 	}
 

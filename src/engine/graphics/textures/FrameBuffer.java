@@ -17,17 +17,18 @@ import static org.lwjgl.opengl.GL20.glDrawBuffers;
 import static org.lwjgl.opengl.GL30.*;
 
 public class FrameBuffer { // TODO: implements Disposable
-	private static FrameBuffer boundFrameBuffer; // TODO: bind to the default FB by default
+	private static final DefaultFrameBuffer defaultframebuffer = new DefaultFrameBuffer();
+	// TODO: Framebuffer manager
+	protected static FrameBuffer boundFrameBuffer = defaultframebuffer; // TODO: bind to the default FB by default
 
-	private final int ID = glGenFramebuffers();
-	private final int width, height;
+	// TODO: Find a way to make these final
+	protected int ID;
+	protected int width, height;
 
-	private ArrayList<FrameBufferColorTexture>  colorAttachments;
-	private FrameBufferDepthTexture 	        depthAttachment;
+	protected ArrayList<FrameBufferColorTexture>    colorAttachments;
+	protected FrameBufferDepthTexture 	            depthAttachment;
 
-	public FrameBuffer() {
-		this(1);
-	}
+	protected FrameBuffer() {}
 	public FrameBuffer(int colorbuffers) {
 		this(Viewport.getWidth(), Viewport.getHeight(), colorbuffers);
 	}
@@ -39,6 +40,7 @@ public class FrameBuffer { // TODO: implements Disposable
 	public FrameBuffer(int width, int height, PixelFormat format) {	this(width, height, new PixelFormat[] {format}); }
 	public FrameBuffer(int width, int height, PixelFormat[] formats) {
 		//TODO: Throw exception if formats is null or empty
+		this.ID = glGenFramebuffers();
 		this.width = width;
 		this.height = height;
 		colorAttachments = new ArrayList<>(formats.length);
@@ -103,6 +105,27 @@ public class FrameBuffer { // TODO: implements Disposable
 		return colorAttachments.size();
 	}
 
+	public void bind() {
+		if (boundFrameBuffer != null && boundFrameBuffer.ID == this.ID)
+			return;
+
+		glBindFramebuffer(GL_FRAMEBUFFER, ID);
+		if (colorAttachments != null)
+			bindRenderAttachments(colorAttachments.size());
+
+		boundFrameBuffer = this;
+
+		Viewport.setDimensions(width, height);
+	}
+
+	public void dispose() {
+		for (Texture colorattachment : colorAttachments)
+			colorattachment.requestDisposal();
+		if (depthAttachment != null)
+			depthAttachment.requestDisposal();
+		glDeleteFramebuffers(ID);
+	}
+
 	// Set which attachment to draw to
 	private static void bindRenderAttachments(int count) {
 		int[] renderbuffers = new int[count];
@@ -116,22 +139,8 @@ public class FrameBuffer { // TODO: implements Disposable
 
 		glDrawBuffer(GL_COLOR_ATTACHMENT0 + index);
 	}
-
-	public void bind() {
-		if (boundFrameBuffer != null && boundFrameBuffer.ID == this.ID)
-			return;
-
-		glBindFramebuffer(GL_FRAMEBUFFER, ID);
-		if (colorAttachments != null)
-			bindRenderAttachments(colorAttachments.size());
-
-		boundFrameBuffer = this;
-
-		Viewport.setDimensions(width, height);
-	}
 	public static void bindDefault() {
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		boundFrameBuffer = null;
+		defaultframebuffer.bind();
 	}
 
 	private static final PixelFormat[] createFormatList(int count, PixelFormat format) {
@@ -158,14 +167,6 @@ public class FrameBuffer { // TODO: implements Disposable
 				bufferbits,
 				filter.getGLEnum()
 		);
-	}
-
-	public void dispose() {
-		for (Texture colorattachment : colorAttachments)
-			colorattachment.requestDisposal();
-		if (depthAttachment != null)
-			depthAttachment.requestDisposal();
-		glDeleteFramebuffers(ID);
 	}
 
 	public static final FrameBuffer getCurrent() {
