@@ -11,7 +11,7 @@ public final class ShaderManager {
 	private static ShaderProgram currentShader;
 
 	static {
-		// TODO: More reliable way to load default shader!
+		// TODO: More reliable way to load default shader
 		try {
 			currentShader = new FullBrightShader();
 		} catch (ShaderCompilationException | IOException e) {
@@ -32,7 +32,7 @@ public final class ShaderManager {
 		if (shader == currentShader)
 			return;
 
-		GL20.glUseProgram(shader.getID());
+		GL20.glUseProgram(shader.getID()); // TODO: Move this into ShaderProgram
 		currentShader = shader;
 	}
 
