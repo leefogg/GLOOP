@@ -13,8 +13,14 @@ public final class ResourceManager {
 	}
 
 	public static final void disposePendingObjects() {
-		for (Disposable object : disposalQueue)
+		while (disposalQueue.size() != 0) {
+			// Dispose last thing added to the queue first,
+			// If its adds even more, we'll dispose them next
+			int lastitemindex = disposalQueue.size()-1;
+			Disposable object = disposalQueue.get(lastitemindex);
 			object.dispose();
+			disposalQueue.remove(lastitemindex);
+		}
 
 		disposalQueue.clear();
 	}
