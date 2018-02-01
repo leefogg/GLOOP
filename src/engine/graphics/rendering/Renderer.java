@@ -28,6 +28,7 @@ import engine.graphics.shading.ShaderCompilationException;
 import engine.graphics.shading.posteffects.PostEffect;
 import engine.graphics.shading.posteffects.PostProcessor;
 import engine.graphics.textures.FrameBuffer;
+import engine.graphics.textures.FrameBufferManager;
 import engine.graphics.textures.Texture;
 import org.lwjgl.opengl.Display;
 
@@ -358,6 +359,7 @@ public abstract class Renderer implements Disposable {
 		VertexBufferManager.cleanup();
 		VertexArrayManager.cleanup();
 		TextureManager.cleanup();
+		FrameBufferManager.cleanup();
 		ShaderManager.cleanup();
 
 		if (forwardRenderer != null)

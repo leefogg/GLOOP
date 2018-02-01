@@ -17,9 +17,7 @@ import static org.lwjgl.opengl.GL20.glDrawBuffers;
 import static org.lwjgl.opengl.GL30.*;
 
 public class FrameBuffer { // TODO: implements Disposable
-	private static final DefaultFrameBuffer defaultframebuffer = new DefaultFrameBuffer();
-	// TODO: Framebuffer manager
-	protected static FrameBuffer boundFrameBuffer = defaultframebuffer; // TODO: bind to the default FB by default
+	static final DefaultFrameBuffer defaultframebuffer = new DefaultFrameBuffer();
 
 	// TODO: Find a way to make these final
 	protected int ID;
@@ -79,6 +77,8 @@ public class FrameBuffer { // TODO: implements Disposable
 
 		addColorAttachments(newattachments);
 
+		FrameBufferManager.register(this);
+
 		return newattachments;
 	}
 
@@ -106,16 +106,17 @@ public class FrameBuffer { // TODO: implements Disposable
 	}
 
 	public void bind() {
-		if (boundFrameBuffer != null && boundFrameBuffer.ID == this.ID)
+		FrameBuffer boundframebuffer = getCurrent();
+		if (boundframebuffer != null && boundframebuffer.ID == this.ID)
 			return;
 
 		glBindFramebuffer(GL_FRAMEBUFFER, ID);
 		if (colorAttachments != null)
 			bindRenderAttachments(colorAttachments.size());
 
-		boundFrameBuffer = this;
-
 		Viewport.setDimensions(width, height);
+
+		FrameBufferManager.setCurrentFrameBuffer(this);
 	}
 
 	public void dispose() {
@@ -169,9 +170,7 @@ public class FrameBuffer { // TODO: implements Disposable
 		);
 	}
 
-	public static final FrameBuffer getCurrent() {
-		return boundFrameBuffer;
-	}
+	public static final FrameBuffer getCurrent() { return FrameBufferManager.getCurrentFrameBuffer(); }
 
 	// Reads the currently bound framebuffer's pixel's state
 	// NOTE: Ensure that all required geometry has been drawn (if nessersary) with glFlush and glFinish
@@ -179,7 +178,8 @@ public class FrameBuffer { // TODO: implements Disposable
 		int numpixels = width * height;
 		int numbytes = 4 * numpixels;
 
-		int boundframebufferheight = (boundFrameBuffer == null) ? Viewport.getHeight() : boundFrameBuffer.height;
+		FrameBuffer boundframebuffer = getCurrent();
+		int boundframebufferheight = (boundframebuffer == null) ? Viewport.getHeight() : boundframebuffer.height;
 
 		ByteBuffer pixeldata = ByteBuffer.allocateDirect(numbytes);
 		glReadPixels(startX, boundframebufferheight-height-startY, width, height, PixelComponents.RGBA.getGLEnum(), DataType.UByte.getGLEnum(), pixeldata);

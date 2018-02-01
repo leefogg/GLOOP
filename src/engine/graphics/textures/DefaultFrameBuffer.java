@@ -53,7 +53,7 @@ class DefaultFrameBuffer extends FrameBuffer {
 	@Override
 	public void bind() {
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		boundFrameBuffer = this;
+		FrameBufferManager.setCurrentFrameBuffer(this);
 	}
 
 	@Override
