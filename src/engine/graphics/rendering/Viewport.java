@@ -134,8 +134,8 @@ public abstract class Viewport {
 	}
 
 	public static void close() {
-		ResourceManager.disposePendingObjects();
 		Renderer.disposeAll();
+		ResourceManager.disposePendingObjects();
 		Display.destroy();
 		Logger.dispose();
 	}
