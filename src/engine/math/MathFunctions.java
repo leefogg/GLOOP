@@ -27,14 +27,22 @@ public class MathFunctions {
 		return createTransformationMatrix(translation, rotation, scale, new Matrix4f());
 	}
 	public static Matrix4f createTransformationMatrix(Vector3f translation, Quaternion rotation, Vector3f scale, Matrix4f out) {
-		out.setIdentity();
+		if (out == null)
+			out = new Matrix4f();
+		else
+			out.setIdentity();
+
 		Matrix4f.translate(translation, out, out);
 		Matrix4f.mul(out, rotation.toRotationMatrix(passthoughMatrix), out);
 		Matrix4f.scale(scale, out, out);
 		return out;
 	}
 	public static Matrix4f createTransformationMatrix(Vector2f translation, Quaternion rotation, Vector3f scale, Matrix4f out) {
-		out.setIdentity();
+		if (out == null)
+			out = new Matrix4f();
+		else
+			out.setIdentity();
+
 		Matrix4f.translate(translation, out, out);
 		Matrix4f.mul(out, rotation.toRotationMatrix(passthoughMatrix), out);
 		Matrix4f.scale(scale, out, out);
@@ -49,10 +57,14 @@ public class MathFunctions {
 		return createViewMatrix(position, new Vector3f());
 	}
 	public static Matrix4f createViewMatrix(Vector3f position, Vector3f rotation) {
-		return createViewMatrix(position, rotation, new Matrix4f());
+		return createViewMatrix(position, rotation, null);
 	}
 	public static Matrix4f createViewMatrix(Vector3f position, Vector3f rotation, Matrix4f out) {
-		out.setIdentity();
+		if (out == null)
+			out = new Matrix4f();
+		else
+			out.setIdentity();
+
 		Matrix4f.rotate((float)Math.toRadians(rotation.x), right, out, out);
 		Matrix4f.rotate((float)Math.toRadians(rotation.y), up, out, out);
 		position.negate();
@@ -62,6 +74,9 @@ public class MathFunctions {
 		return out;
 	}
 	public static Matrix4f createViewMatrix(Vector3f eye, Vector3f target, Vector3f up, Matrix4f out) { // TODO: Optimize object creation
+		if (out == null)
+			out = new Matrix4f();
+
 		Vector3f
 		zaxis = new Vector3f(),
 		xaxis = new Vector3f(),
@@ -81,6 +96,9 @@ public class MathFunctions {
 	}
 
 	public static void createProjectionMatrix(int width, int height, float fov, float znear, float zfar, Matrix4f out) {
+		if (out == null)
+			out = new Matrix4f();
+
 		float aspectRatio = (float)width / (float)height;
 		float y_scale = (float)(1f / Math.tan(Math.toRadians(fov / 2f)) * aspectRatio);
 		float x_scale = y_scale / aspectRatio;
@@ -94,8 +112,10 @@ public class MathFunctions {
 		out.m33 = 0;
 	}
 
-	public static Matrix4f createOrthoProjectionMatrix(float left, float right, float top, float bottom, float near, float far, Matrix4f out)
-	{
+	public static Matrix4f createOrthoProjectionMatrix(float left, float right, float top, float bottom, float near, float far, Matrix4f out) {
+		if (out == null)
+			out = new Matrix4f();
+
 		out.m00 = 2.0f / (right - left);
 		out.m01 = 0.0f;
 		out.m02 = 0.0f;
