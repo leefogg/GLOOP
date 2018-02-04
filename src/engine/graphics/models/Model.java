@@ -10,6 +10,7 @@ import org.lwjgl.util.vector.Matrix4f;
 public abstract class Model implements Renderable {
 	protected final VertexArray modelData;
 	protected Material material;
+	private Matrix4f vpmatrix = new Matrix4f();
 
 	private boolean hidden = false;
 
@@ -52,7 +53,7 @@ public abstract class Model implements Renderable {
 		engine.graphics.cameras.Camera camera = Renderer.getForwardRenderer().getScene().currentCamera;
 		Matrix4f projectionmatrix = camera.getProjectionMatrix();
 		Matrix4f viewmatrix = camera.getViewMatrix();
-		Matrix4f vpmatrix = Matrix4f.mul(projectionmatrix, viewmatrix, null);
+		Matrix4f.mul(projectionmatrix, viewmatrix, vpmatrix);
 		currentshader.setViewProjectionMatrix(vpmatrix);
 		vpmatrix.invert();
 		currentshader.setInverseViewProjectionMatrix(vpmatrix);
