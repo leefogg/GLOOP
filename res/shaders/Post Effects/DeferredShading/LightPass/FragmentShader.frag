@@ -135,8 +135,11 @@ vec3 dither(vec3 color, vec2 texcoord) {
 
 void main(void) {
 	vec4 specularmap = texture(specularTexture, textureCoord);
-	if (specularmap.z < 0.5)
+	
+	// TODO: Move to stencil buffer
+	if (specularmap.z < 0.5) // Skip if stencil says so
 		discard;
+		
 	float specularity = specularmap.r;
 	float specularexponent = specularmap.g;
 	float roughness = specularmap.b;
@@ -147,7 +150,6 @@ void main(void) {
 	
 	vec4 cameraspaceposition = texture(positionTexture, textureCoord);
 	vec3 worldspaceposition = cameraspaceposition.xyz + campos;
-	//vec3 worldspaceposition = calcWorldPosition(cameraspaceposition.a, viewRay, campos);
 	
 	
 	// Ambiance
