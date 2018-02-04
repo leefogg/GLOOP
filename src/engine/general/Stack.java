@@ -26,10 +26,18 @@ public class Stack<E extends Stackable>  {
 		return element;
 	}
 
+	public E peek() {
+		return backingStack.peek();
+	}
+
 	public void empty() {
 		for (E element : backingStack)
 			element.poped();
 
 		backingStack.empty();
+	}
+
+	public int getSize() {
+		return backingStack.size();
 	}
 }
