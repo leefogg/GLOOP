@@ -66,17 +66,15 @@ vec3 calculateSpecular(vec3 worldspaceposition, vec3 facenormal, vec3 lightposit
 	return spec * specularity * lightcolor;
 }
 
-float calulateLuminosity(vec3 worldspaceposition, PointLight light) {
-	float distancetolight = length(light.position - worldspaceposition);
-	float attenuation = 1.0 + light.quadraticAttenuation * (distancetolight * distancetolight);
+float calulateLuminosity(vec3 lightpos, vec3 worldpos, float quadraticAttenuation) {
+	float distancetolight = length(lightpos - worldpos);
+	float attenuation = 1.0 + quadraticAttenuation * (distancetolight * distancetolight);
 	float luminosity = 1.0 / attenuation;
 	
 	return luminosity;
 }
 float calulateLuminosity(vec3 worldspaceposition, SpotLight light) {
-	float distancetolight = length(light.position - worldspaceposition);
-	float attenuation = 1.0 + light.quadraticAttenuation * (distancetolight * distancetolight);
-	float luminosity = 1.0 / attenuation;
+	float luminosity = calulateLuminosity(light.position, worldspaceposition, light.quadraticAttenuation);
 	luminosity *= 1.0 + ((light.outerCone + 1.0) / 2.0);
 	
 	return luminosity;
@@ -117,6 +115,7 @@ vec3 calcWorldPosition(float depth, vec3 view_ray, vec3 cam_position) {
 	return view_ray * depth - cam_position;
 }
 
+// Used for dithering
 #define MOD3 vec3(443.8975,397.2973, 491.1871)
 float hash12(vec2 p) {
 	vec3 p3  = fract(vec3(p.xyx) * MOD3);
@@ -174,7 +173,7 @@ void main(void) {
 		);
 		
 		// Attenuation
-		float luminosity = calulateLuminosity(worldspaceposition, light);
+		float luminosity = calulateLuminosity(light.position, worldspaceposition, light.quadraticAttenuation);
 		
 		diffusecolor *= luminosity;
 		specularcolor *= luminosity;
