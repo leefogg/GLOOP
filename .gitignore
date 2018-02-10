@@ -31,3 +31,6 @@ res/*
 *.csv
 *.obj
 *.mtl
+
+.idea/*
+.settings/*
