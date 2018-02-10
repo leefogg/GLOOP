@@ -100,21 +100,6 @@ vec3 calculateDiffuse(vec3 worldspaceposition, vec3 facenormal, SpotLight spotli
 	return spotlight.color * intensity * diffuse;
 }
 
-vec3 getWorldSpaceCoords() {
-	vec4 vertposition = texture(positionTexture, textureCoord);
-	vertposition.xy = (textureCoord * 2.0 - 1.0);
-	vertposition.w = 1.0;
-	vec4 cameraspaceposition = InverseVPMatrix * vertposition;
-	vec3 worldspaceposition = cameraspaceposition.xyz / cameraspaceposition.w;
-	
-	return worldspaceposition;
-}
-
-vec3 calcWorldPosition(float depth, vec3 view_ray, vec3 cam_position) {
-	view_ray = normalize(view_ray);
-	return view_ray * depth - cam_position;
-}
-
 // Used for dithering
 #define MOD3 vec3(443.8975,397.2973, 491.1871)
 float hash12(vec2 p) {
