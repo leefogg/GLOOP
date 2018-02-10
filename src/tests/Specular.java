@@ -51,13 +51,11 @@ public final class Specular {
 
 
 		PointLight light1 = new PointLight();
-		light1.linearAttenuation = 0.01f;
 		light1.quadraticAttenuation = 0.032f;
 		light1.setPosition(10, 10f , 10);
 		light1.setColor(0,1,0);
 		scene.add(light1);
 		PointLight light2 = new PointLight();
-		light2.linearAttenuation = 0.01f;
 		light2.quadraticAttenuation = 0.032f;
 		light2.setPosition(-10, 10f , 10);
 		light2.setColor(1,0,0);

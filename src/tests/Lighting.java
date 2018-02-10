@@ -32,7 +32,6 @@ public final class Lighting {
 
 		public LightBall(Scene scene) {
 			vecolcity.scale(0.3f);
-			light.linearAttenuation = 0.01f;
 			light.quadraticAttenuation = 0.32f;
 			color.set(r.nextFloat(), r.nextFloat(), r.nextFloat());
 			light.setColor(color);
@@ -94,16 +93,15 @@ public final class Lighting {
 		try {
 			DeferredMaterial floormaterial = deferredrenderer.getNewMaterial();
 			floormaterial.setDiffuseColor(1,1,1,1);
-			Texture albedomap = TextureManager.newTexture("res\\textures\\Textures\\Steinwand_C1_Diffuse.jpg", PixelComponents.RGB, PixelFormat.SRGB8);
+			Texture albedomap = TextureManager.newTexture("res\\textures\\plane-d.png", PixelComponents.RGB, PixelFormat.SRGB8);
 			floormaterial.setAlbedoTexture(albedomap);
-			Texture normalmap = TextureManager.newTexture("res\\textures\\Textures\\Steinwand_C3_Normal.jpg", PixelComponents.RGB, PixelFormat.RGB8);
+			Texture normalmap = TextureManager.newTexture("res\\textures\\plane-n.png", PixelComponents.RGB, PixelFormat.RGB8);
 			floormaterial.setNormalTexture(normalmap);
-			Texture specularmap = TextureManager.newTexture("res\\textures\\Textures\\Steinwand_C4_Specular.jpg", PixelComponents.RGBA, PixelFormat.RED);
+			Texture specularmap = TextureManager.newTexture("res\\textures\\plane-s.png", PixelComponents.RGBA, PixelFormat.RED);
 			floormaterial.setSpecularTexture(specularmap);
-			Texture depthmap = TextureManager.newTexture("res\\textures\\Textures\\Steinwand_C2_Displacement.jpg", PixelComponents.RGBA, PixelFormat.RED);
-			floormaterial.setDepthMap(depthmap);
-			floormaterial.setDisplacement(0.01f);
 			floormaterial.setTextureRepeat(2,2);
+			floormaterial.setSpecularity(1);
+			floormaterial.setSpecularExponent(128);
 			Model3D outerbox = new Model3D("res\\models\\insideout box.obj", floormaterial);
 			outerbox.setScale(50,50,50);
 			outerbox.setPosition(0,25,0);

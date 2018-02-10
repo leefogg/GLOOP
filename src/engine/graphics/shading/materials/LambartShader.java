@@ -15,10 +15,7 @@ class LambartShader extends ShaderProgram {
 	private Uniform3f
 		lightPosition,
 		lightColor;
-	private Uniform1f
-		lightLinearAttenuation,
-		lightQuadraticAttenuation,
-		lightBrightness;
+	private Uniform1f lightQuadraticAttenuation;
 	private Uniform1i Texture;
 
 	public LambartShader() throws ShaderCompilationException, IOException {
@@ -41,9 +38,7 @@ class LambartShader extends ShaderProgram {
 
 		lightColor = new Uniform3f(this, "LightColor");
 		lightPosition = new Uniform3f(this, "LightPosition");
-		lightLinearAttenuation = new Uniform1f(this, "LightLinearAttenuation");
 		lightQuadraticAttenuation = new Uniform1f(this, "LightQuadraticAttenuation");
-		lightBrightness = new Uniform1f(this, "LightBrightness");
 	}
 
 	@Override
@@ -67,15 +62,7 @@ class LambartShader extends ShaderProgram {
 		lightColor.set(r, g, b);
 	}
 
-	public void setLightlinearAttenuation(float linearAttenuation) {
-		lightLinearAttenuation.set(linearAttenuation);
-	}
-
 	public void setLightquadraticAttenuation(float quadraticAttenuation) {
 		lightQuadraticAttenuation.set(quadraticAttenuation);
-	}
-
-	public void setLightBrightness(float brightness) {
-		lightBrightness.set(brightness);
 	}
 }

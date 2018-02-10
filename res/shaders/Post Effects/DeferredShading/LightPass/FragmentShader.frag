@@ -10,7 +10,6 @@ uniform sampler2D
 struct PointLight {
 	vec3 position;
 	vec3 color;
-	float linearAttenuation;
 	float quadraticAttenuation;
 };
 struct DirectionalLight {
@@ -23,7 +22,6 @@ struct SpotLight {
 	vec3  color;
 	float innerCone;
 	float outerCone;
-	float linearAttenuation;
 	float quadraticAttenuation;
 };
 
@@ -38,6 +36,7 @@ uniform SpotLight spotLights[32];
 uniform float znear, zfar;
 uniform vec3 campos;
 uniform mat4 InverseVPMatrix;
+uniform mat4 VPMatrix;
 
 const float MaxSpecularExponent = 256;
 
@@ -69,14 +68,14 @@ vec3 calculateSpecular(vec3 worldspaceposition, vec3 facenormal, vec3 lightposit
 
 float calulateLuminosity(vec3 worldspaceposition, PointLight light) {
 	float distancetolight = length(light.position - worldspaceposition);
-	float attenuation = 1.0 + light.linearAttenuation * distancetolight + light.quadraticAttenuation * (distancetolight * distancetolight);
+	float attenuation = 1.0 + light.quadraticAttenuation * (distancetolight * distancetolight);
 	float luminosity = 1.0 / attenuation;
 	
 	return luminosity;
 }
 float calulateLuminosity(vec3 worldspaceposition, SpotLight light) {
 	float distancetolight = length(light.position - worldspaceposition);
-	float attenuation = 1.0 + light.linearAttenuation * distancetolight + light.quadraticAttenuation * (distancetolight * distancetolight);
+	float attenuation = 1.0 + light.quadraticAttenuation * (distancetolight * distancetolight);
 	float luminosity = 1.0 / attenuation;
 	luminosity *= 1.0 + ((light.outerCone + 1.0) / 2.0);
 	

@@ -42,13 +42,11 @@ public class ModelViewer {
 		forwardrenderer.setScene(scene);
 
 		PointLight light1 = new PointLight();
-		light1.linearAttenuation = 0.000f;
-		light1.quadraticAttenuation = 0.00f;
+		light1.quadraticAttenuation = 0.12f;
 		scene.add(light1);
 
-		scene.getAmbientlight().setColor(0.5f, .5f, 0.5f);
+		scene.getAmbientlight().setColor(0.02f, 0.02f, .02f);
 
-		Model3D model = null;
 		Model3D lightmodel = null;
 		try {
 			String[] skyboxpaths = new String[] {
@@ -64,23 +62,20 @@ public class ModelViewer {
 			scene.add(skybox);
 
 			DeferredMaterial material = deferredrenderer.getNewMaterial();
-			Texture albedo = TextureManager.newTexture("res\\models\\Metal_Water_Tank\\textures\\albedo.png", PixelComponents.RGB, PixelFormat.SRGB8);
+			Texture albedo = TextureManager.newTexture("res\\models\\SOMA\\ark\\albedo.bmp", PixelComponents.RGB, PixelFormat.SRGB8);
 			material.setAlbedoTexture(albedo);
-			Texture normals = TextureManager.newTexture("res\\models\\Metal_Water_Tank\\textures\\normals.png", PixelComponents.RGB, PixelFormat.RGB8);
+			Texture normals = TextureManager.newTexture("res\\models\\SOMA\\ark\\normals.bmp", PixelComponents.RGB, PixelFormat.RGB8);
 			material.setNormalTexture(normals);
+			Texture specular = TextureManager.newTexture("res\\models\\SOMA\\ark\\specular.png", PixelComponents.R, PixelFormat.RED);
+			material.setSpecularTexture(specular);
+			material.setSpecularExponent(150);
 			material.setEnvironmentTexture(cubemap);
-			material.setReflectivity(0.6f);
-			model = new Model3D("res\\models\\Metal_water_tank\\Water_Tank_BI.obj", material);
-			model.setScale(2,2,2);
+			material.setReflectivity(0.1f);
+			Model3D model = new Model3D("res\\models\\SOMA\\ark\\model.obj", material);
+			model.setScale(20,20,20);
 			scene.add(model);
 
-			material = deferredrenderer.getNewMaterial();
-			albedo = TextureManager.newTexture("res\\models\\Metal_Water_Tank\\textures\\floor_ao.png", PixelComponents.RGB, PixelFormat.SRGB8);
-			material.setAlbedoTexture(albedo);
-			material.setEnvironmentTexture(cubemap);
-			model = new Model3D("res\\models\\Metal_water_tank\\floor.obj", material);
-			model.setScale(2,2,2);
-			scene.add(model);
+
 
 			SingleColorMaterial fullbright = new SingleColorMaterial();
 			lightmodel = new Model3D("res\\models\\sphere.obj", fullbright);
@@ -92,7 +87,6 @@ public class ModelViewer {
 		}
 
 		DebugCamera camera = new DebugCamera();
-		camera.setzfar(100);
 		camera.setPosition(-1,7,19);
 		Renderer.setCamera(camera);
 
@@ -108,7 +102,7 @@ public class ModelViewer {
 			camera.update(delta, timescaler);
 
 			sincos += step * timescaler;
-			lightposition.set(10,35, 0);
+			lightposition.set((float)Math.sin(sincos)*22,5, (float)Math.cos(sincos)*22);
 			light1.setPosition(lightposition);
 			lightmodel.setPosition(lightposition);
 
@@ -116,8 +110,8 @@ public class ModelViewer {
 			Renderer.render();
 			Renderer.setRenderer(forwardrenderer);
 			Renderer.render();
-			deferredrenderer.renderAttachments(8);
 			Renderer.swapBuffers();
+			deferredrenderer.renderAttachments(8);
 
 			Viewport.update();
 			Viewport.setTitle("ModelViewer " + Viewport.getCurrentFrameRate() + "Hz");

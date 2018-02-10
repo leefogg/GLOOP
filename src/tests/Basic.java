@@ -35,7 +35,6 @@ public final class Basic {
 		Renderer.setRenderer(renderer);
 
 		PointLight light1 = new PointLight();
-		light1.linearAttenuation = 0.005f;
 		light1.quadraticAttenuation = 0.01f;
 		scene.add(light1);
 

@@ -7,8 +7,7 @@ public final class SpotLight {
 	private final Vector3f direction = new Vector3f(0,-1,0);
 	private final Vector3f color = new Vector3f(1,1,1);
 	private float innerCone, outerCone;
-	public float linearAttenuation = Integer.MAX_VALUE,
-				 quadraticAttenuation = Integer.MAX_VALUE;
+	public float quadraticAttenuation = Integer.MAX_VALUE;
 
 	public SpotLight() {
 		setInnerCone(45);

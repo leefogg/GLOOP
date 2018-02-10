@@ -48,9 +48,7 @@ public final class LambartMaterial extends Material<LambartShader> {
 		shader.setLightPosition(passthrough);
 		Vector3f lightcolor = light1.getColor(passthrough);
 		shader.setLightColor(lightcolor.x, lightcolor.y, lightcolor.z);
-		shader.setLightlinearAttenuation(light1.linearAttenuation);
 		shader.setLightquadraticAttenuation(light1.quadraticAttenuation);
-		shader.setLightBrightness(light1.strength);
 	}
 
 	@Override

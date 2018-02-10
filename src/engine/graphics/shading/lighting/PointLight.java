@@ -5,10 +5,7 @@ import org.lwjgl.util.vector.Vector3f;
 public final class PointLight {
 	private final Vector3f position = new Vector3f();
 	private final Vector3f color = new Vector3f(1,1,1);
-	public float
-	strength = 1,
-	linearAttenuation = Integer.MAX_VALUE,
-	quadraticAttenuation = Integer.MAX_VALUE;
+	public float quadraticAttenuation = Integer.MAX_VALUE;
 
 	public final Vector3f getPosition(Vector3f destination) {
 		return destination.set(position);
@@ -30,10 +27,5 @@ public final class PointLight {
 	public final void setColor(float r, float g, float b) {
 		color.set(r,g,b);
 		color.normalise();
-	}
-
-	public void off() {
-		linearAttenuation = Integer.MAX_VALUE;
-		quadraticAttenuation = Integer.MAX_VALUE;
 	}
 }

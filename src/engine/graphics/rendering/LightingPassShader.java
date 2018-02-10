@@ -39,9 +39,7 @@ final class LightingPassShader extends PostEffectShader {
 	private class PointLight {
 		private int index;
 
-		private Uniform1f
-				linearAttenuation,
-				quadraticAttenuation;
+		private Uniform1f quadraticAttenuation;
 		private Uniform3f
 				position,
 				color;
@@ -51,7 +49,6 @@ final class LightingPassShader extends PostEffectShader {
 
 			position = new Uniform3f(shader, "pointLights[" + index + "].position");
 			color = new Uniform3f(shader, "pointLights[" + index + "].color");
-			linearAttenuation = new Uniform1f(shader, "pointLights[" + index + "].linearAttenuation");
 			quadraticAttenuation =   new Uniform1f(shader, "pointLights[" + index + "].quadraticAttenuation");
 		}
 
@@ -61,7 +58,6 @@ final class LightingPassShader extends PostEffectShader {
 			position.set(passthrough);
 			light.getColor(passthrough);
 			color.set(passthrough);
-			linearAttenuation.set(light.linearAttenuation);
 			quadraticAttenuation.set(light.quadraticAttenuation);
 		}
 	}
@@ -96,7 +92,6 @@ final class LightingPassShader extends PostEffectShader {
 				color;
 		private Uniform1f innerCone,
 				outerCone,
-				linearAttenuation,
 				quadraticAttenuation;
 
 		public SpotLight(int index, ShaderProgram shader) {
@@ -107,7 +102,6 @@ final class LightingPassShader extends PostEffectShader {
 			color = new Uniform3f(shader, "spotLights[" + index + "].color");
 			innerCone = new Uniform1f(shader, "spotLights[" + index + "].innerCone");
 			outerCone = new Uniform1f(shader, "spotLights[" + index + "].outerCone");
-			linearAttenuation = new Uniform1f(shader, "spotLights[" + index + "].linearAttenuation");
 			quadraticAttenuation = new Uniform1f(shader, "spotLights[" + index + "].quadraticAttenuation");
 		}
 
@@ -121,7 +115,6 @@ final class LightingPassShader extends PostEffectShader {
 			color.set(passthrough);
 			innerCone.set(spotlight.getInnerCone());
 			outerCone.set(spotlight.getOuterCone());
-			linearAttenuation.set(spotlight.linearAttenuation);
 			quadraticAttenuation.set(spotlight.quadraticAttenuation);
 		}
 	}
