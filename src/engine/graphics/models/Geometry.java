@@ -248,7 +248,8 @@ public class Geometry {
 
 	private void normalizeNormals() {
 		for (Vector3f normal : normals)
-			normal.normalise();
+			if (normal.lengthSquared() > Float.MIN_VALUE)
+				normal.normalise();
 	}
 
 	public void invertNormals() {
