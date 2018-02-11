@@ -50,7 +50,7 @@ public abstract class Model implements Renderable {
 		material.commit();
 
 		ShaderProgram currentshader = ShaderManager.getCurrentShader();
-		engine.graphics.cameras.Camera camera = Renderer.getForwardRenderer().getScene().currentCamera;
+		engine.graphics.cameras.Camera camera = Renderer.getRenderer().getScene().currentCamera;
 		Matrix4f projectionmatrix = camera.getProjectionMatrix();
 		Matrix4f viewmatrix = camera.getViewMatrix();
 		Matrix4f.mul(projectionmatrix, viewmatrix, vpmatrix);
