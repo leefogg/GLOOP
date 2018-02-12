@@ -1,6 +1,7 @@
 package engine.graphics.rendering;
 
 import engine.graphics.cameras.Camera;
+import engine.graphics.cameras.PerspectiveCamera;
 import engine.graphics.models.Model;
 import engine.graphics.shading.lighting.AmbientLight;
 import engine.graphics.shading.lighting.DirectionalLight;
@@ -20,7 +21,7 @@ public class Scene {
 	private final ArrayList<DirectionalLight> directionalLights = new ArrayList<>();
 	private final ArrayList<SpotLight> spotLights = new ArrayList<>();
 	private final AmbientLight ambientLight = new AmbientLight();
-	public Camera currentCamera;
+	public Camera currentCamera = new PerspectiveCamera();
 
 	public final int getNumberOfDirectionalLights() { return directionalLights.size(); }
 	public final DirectionalLight getDirectionallight(int index) {
