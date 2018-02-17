@@ -28,10 +28,6 @@ public abstract class ShaderProgram implements Disposable {
 		modelMatrix,
 		VPMatrix,
 		inverseVPMatrix;
-	private Uniform2f
-		resolution,
-		mouse;
-	private Uniform1f time;
 
 	//TODO: vertex only and vertex, geo and fragment constructors
 	public ShaderProgram(String vertexshaderpath, String fragmentshaderpath) throws ShaderCompilationException, IOException {
@@ -92,17 +88,6 @@ public abstract class ShaderProgram implements Disposable {
 	}
 	protected abstract void getCustomUniformLocations();
 	protected abstract void setDefaultCustomUniformValues();
-	protected void getOptionalUniformLocations() {
-		resolution = new Uniform2f(this, "Resolution");
-		time = new Uniform1f(this, "Time");
-		mouse = new Uniform2f(this, "Mouse");
-	}
-	protected void setOptionalDefaultUnifomValues() { setOptionalUniformValues(); }
-	public void setOptionalUniformValues() {
-		setResolution(Viewport.getWidth(), Viewport.getHeight());
-		setTime(Viewport.getElapsedSeconds());
-		//TODO: Update mouse corordinates
-	}
 	protected void bindFragmentOutputLocations() {}
 
 	protected void bindAttribute(String attributename, int attributeindex) {
@@ -123,22 +108,9 @@ public abstract class ShaderProgram implements Disposable {
 
 	public int getID() { return programID; }
 
-	public void setModelMatrix(Matrix4f modelmatrix) {
-		modelMatrix.set(modelmatrix);
-	}
+	public void setModelMatrix(Matrix4f modelmatrix) { modelMatrix.set(modelmatrix); }
 	public void setViewProjectionMatrix(Matrix4f vpmatrix) { VPMatrix.set(vpmatrix); }
 	public void setInverseViewProjectionMatrix(Matrix4f inversevpmatrix) { inverseVPMatrix.set(inversevpmatrix); }
-
-	//TODO: Implement the following
-	public void setTime(float seconds) {
-		time.set(seconds);
-	}
-	public void setResolution(float x, float y) {
-		resolution.set(x, y);
-	}
-	public void setMousePosition(int x, int y) {
-		mouse.set(x, y);
-	}
 
 	public abstract boolean supportsTransparency();
 

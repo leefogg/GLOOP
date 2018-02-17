@@ -1,5 +1,7 @@
 package engine.graphics.shading.materials;
 
+import engine.graphics.rendering.Viewport;
+
 import java.io.IOException;
 
 public class ShaderToyMaterial extends Material<ShaderToyShader> {
@@ -18,7 +20,11 @@ public class ShaderToyMaterial extends Material<ShaderToyShader> {
 	}
 
 	@Override
-	public void commit() { shader.setOptionalUniformValues(); }
+	public void commit() {
+		shader.setResolution(Viewport.getWidth(), Viewport.getHeight());
+		shader.setTime(Viewport.getElapsedSeconds());
+		//TODO: Update mouse corordinates
+	}
 
 	@Override
 	protected boolean hasTransparency() {

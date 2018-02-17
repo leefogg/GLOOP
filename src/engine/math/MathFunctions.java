@@ -14,9 +14,38 @@ public class MathFunctions {
 	private static final Vector3f passthroughVector = new Vector3f();
 	private static final Matrix4f passthoughMatrix = new Matrix4f();
 
-	public static Matrix4f getIdentityTransformationMatrix() {
-		return (Matrix4f)new Matrix4f().setIdentity();
+	public static final void createTranslationMatrix(Vector2f position, Matrix4f out) {
+		createTranslationMatrix(new Vector3f(position.x, position.y, 0), out);
 	}
+	public static final void createTranslationMatrix(Vector3f position, Matrix4f out) {
+		if (out == null)
+			out = new Matrix4f();
+		else
+			out.setIdentity();
+
+		out.translate(position);
+	}
+
+	public static final void createScaleMatrix(Vector2f scale, Matrix4f out) {
+		createTranslationMatrix(new Vector3f(scale.x, scale.y, 0), out);
+	}
+	public static final void createScaleMatrix(Vector3f scale, Matrix4f out) {
+		if (out == null)
+			out = new Matrix4f();
+		else
+			out.setIdentity();
+
+		out.scale(scale);
+	}
+
+	public static final void createRotatationMatrix(Quaternion rotation, Matrix4f out) {
+		if (out == null)
+			out = new Matrix4f();
+
+		out.load(rotation.toRotationMatrix(passthoughMatrix));
+	}
+
+
  	public static Matrix4f createTransformationMatrix(Vector3f translation) {
 		return createTransformationMatrix(translation, new Vector3f());
 	}
