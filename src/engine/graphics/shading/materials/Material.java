@@ -1,6 +1,8 @@
 package engine.graphics.shading.materials;
 
+import engine.graphics.cameras.Camera;
 import engine.graphics.shading.ShaderProgram;
+import org.lwjgl.util.vector.Matrix4f;
 
 public abstract class Material<T extends ShaderProgram> {
 	public void bind() {
@@ -10,6 +12,10 @@ public abstract class Material<T extends ShaderProgram> {
 	public abstract T getShader();
 
 	public abstract void commit();
+
+	public void setCameraAttributes(Camera currentcamera, Matrix4f modelmatrix) {
+		getShader().setCameraUniforms(currentcamera, modelmatrix);
+	}
 
 	public boolean isTransparent() { return getShader().supportsTransparency() && hasTransparency(); }
 

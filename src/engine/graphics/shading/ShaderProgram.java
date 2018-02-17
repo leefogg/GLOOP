@@ -1,10 +1,8 @@
 package engine.graphics.shading;
 
 import engine.Disposable;
-import engine.graphics.rendering.Viewport;
+import engine.graphics.cameras.Camera;
 import engine.graphics.shading.GLSL.Uniform16f;
-import engine.graphics.shading.GLSL.Uniform1f;
-import engine.graphics.shading.GLSL.Uniform2f;
 import engine.resources.ResourceManager;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
@@ -22,6 +20,8 @@ public abstract class ShaderProgram implements Disposable {
 	private final int programID;
 	private final VertexShader vertexShader;
 	private final FragmentShader fragmentShader;
+
+	private Matrix4f vpmatrix = new Matrix4f();
 
 	// Uniform locations
 	private Uniform16f
@@ -74,12 +74,22 @@ public abstract class ShaderProgram implements Disposable {
 	}
 	public static void useNone() {
 		glUseProgram(0);
-	}
+	} // TODO: Delete
 
 	private void getAllUniformLocations() {
 		getMandatoryUniformLocations();
 		getCustomUniformLocations();
 		setDefaultCustomUniformValues();
+	}
+
+	public void setCameraUniforms(Camera camera, Matrix4f modelmatrix) {
+		Matrix4f projectionmatrix = camera.getProjectionMatrix();
+		Matrix4f viewmatrix = camera.getViewMatrix();
+		Matrix4f.mul(projectionmatrix, viewmatrix, vpmatrix);
+		setViewProjectionMatrix(vpmatrix);
+		vpmatrix.invert();
+		setInverseViewProjectionMatrix(vpmatrix);
+		setModelMatrix(modelmatrix);
 	}
 	private void getMandatoryUniformLocations() {
 		modelMatrix      = new Uniform16f(this, "ModelMatrix");
