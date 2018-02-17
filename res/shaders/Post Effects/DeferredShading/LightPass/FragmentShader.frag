@@ -195,7 +195,7 @@ void main(void) {
 		diffusecolor *= luminosity;
 		specularcolor *= luminosity;
 		
-		pixelColor += specularcolor;
+		pixelColor += diffusecolor + specularcolor;
 	}
 	
 	#if defined DITHER
