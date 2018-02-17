@@ -31,9 +31,10 @@ public class Model2D extends Model {
 			System.exit(1);
 		}
 	}
+
 	private final Vector2f
-	position = new Vector2f(), // Position in pixels
-	size = new Vector2f(); // Size in pixels
+		position = new Vector2f(), // Position in pixels
+		size = new Vector2f(); // Size in pixels
 	protected Transform2D transform = new Transform2D();
 	//TODO: top-left alignment or centre (use enum)
 	public Model2D(int x, int y, int width, int height) {
@@ -45,9 +46,7 @@ public class Model2D extends Model {
 
 	//TODO: Add alignment options (top-left or centre)
 
-	public Vector2f getPostition(Vector2f position) {
-		return transform.getPostition(position);
-	}
+	public void getPostition(Vector2f position) { transform.getPosition(position); }
 
 	public void setPostition(Vector3f position) {
 		setPosition((int)position.x, (int)position.y);
@@ -63,8 +62,8 @@ public class Model2D extends Model {
 				);
 	}
 
-	public Vector2f getScale(Vector2f scale) {
-		return transform.getScale(scale);
+	public void getScale(Vector2f scale) {
+		transform.getScale(scale);
 	}
 
 	public void setScale(Vector3f scale) {
@@ -88,15 +87,14 @@ public class Model2D extends Model {
 	}
 
 	public Model2D Clone() {
+		// Always stores ints in transform so casting should do nothing
 		Model2D gui = new Model2D((int)position.x, (int)position.y, (int)size.x, (int)size.y);
 		gui.setMaterial(material);
 
 		return gui;
 	}
 	@Override
-	public Matrix4f getModelMatrix() {
-		return transform.getModelMatrix();
-	}
+	public void getModelMatrix(Matrix4f out) { transform.getModelMatrix(out); }
 
 	//TODO: ToModel3D method
 }

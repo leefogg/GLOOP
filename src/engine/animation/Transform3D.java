@@ -5,63 +5,66 @@ import engine.math.Quaternion;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
-public class Transform3D {
-	private final Matrix4f modelMatrix = new Matrix4f();
-
-	private boolean transformationMatrixIsDirty = true;
+public class Transform3D extends Transform<Vector3f>{
 	private final Vector3f
-	postition = new Vector3f(0, 0, 0),
-	scale = new Vector3f(1f, 1f, 1f);
+		Position = new Vector3f(0, 0, 0),
+		Scale = new Vector3f(1f, 1f, 1f);
 	private final Quaternion Rotation = new Quaternion();
 
-	public Matrix4f getModelMatrix() {
-		if (isDirty()) {
-			MathFunctions.createTransformationMatrix(postition, Rotation, scale, modelMatrix);
-			transformationMatrixIsDirty = false;
-		}
-
-		return modelMatrix;
-	}
-
-	public Vector3f getPostition(Vector3f postition) {
-		return postition.set(this.postition);
-	}
-	public void setPostition(Vector3f position) {
-		setPosition(position.x, position.y, position.z);
-	}
+	@Override
+	public void getPosition(Vector3f out) { out.set(this.Position); }
+	@Override
+	public void setPosition(Vector3f position) { setPosition(position.x, position.y, position.z); }
 	public void setPosition(float x, float y, float z) {
-		postition.set(x, y, z);
+		Position.set(x, y, z);
 
-		setDirty();
+		isDirty = true;
 	}
 
-	public Quaternion getRotation() {
-		return Rotation;
+	@Override
+	public void getScale(Vector3f scale) { scale.set(this.Scale); }
+	@Override
+	public void setScale(Vector3f scale) { setScale(scale.x, scale.y, scale.z);	}
+	public void setScale(float width, float height, float depth) {
+		Scale.set(width, height, depth);
+
+		isDirty = true;
 	}
+
+	@Override
+	public void getRotation(Quaternion out) { out.set(Rotation); }
+	@Override
 	public void setRotation(Quaternion rotation) {
 		Rotation.set(rotation);
 
-		setDirty();
+		isDirty = true;
 	}
 
-	public Vector3f getScale(Vector3f scale) {
-		return scale.set(this.scale);
-	}
-	public void setScale(Vector3f scale) {
-		setScale(scale.x, scale.y, scale.z);
+	@Override
+	public void getTranslationMatrix(Matrix4f out) {
 
-		setDirty();
-	}
-	public void setScale(float width, float height, float depth) {
-		scale.set(width, height, depth);
-
-		setDirty();
 	}
 
-	private void setDirty() {
-		transformationMatrixIsDirty = true;
+	@Override
+	public void getScaleMatrix(Matrix4f out) {
+
 	}
-	private boolean isDirty() {
-		return transformationMatrixIsDirty;
+
+	@Override
+	public void getRotationMatrix(Matrix4f out) {
+
+	}
+
+	@Override
+	public void getModelMatrix(Matrix4f out) {
+		if (out == null)
+			out = new Matrix4f();
+
+		if (isDirty) {
+			MathFunctions.createTransformationMatrix(Position, Rotation, Scale, modelMatrix);
+			isDirty = false;
+		}
+
+		out.load(modelMatrix);
 	}
 }

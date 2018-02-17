@@ -27,8 +27,8 @@ public class Model3D extends Model {
 	public void setPosition(float x, float y, float z) {
 		transform.setPosition(x, y, z);
 	}
-	public Vector3f getPostition(Vector3f position) {
-		return transform.getPostition(position);
+	public void getPostition(Vector3f position) {
+		transform.getPosition(position);
 	}
 
 	public void setScale(Vector3f scale) {
@@ -37,21 +37,20 @@ public class Model3D extends Model {
 	public void setScale(float x, float y, float z) {
 		transform.setScale(x,y,z);
 	}
-	public Vector3f getScale(Vector3f scale) {
-		return transform.getScale(scale);
+	public void getScale(Vector3f scale) {
+		transform.getScale(scale);
 	}
 
-	public Quaternion getRotation(Quaternion rotation) {
-		rotation.set(transform.getRotation());
-		return rotation;
+	public void getRotation(Quaternion rotation) {
+		transform.getRotation(rotation);
 	}
 	public void setRotation(Quaternion rotation) {
 		transform.setRotation(rotation);
 	}
 
 	@Override
-	public Matrix4f getModelMatrix() {
-		return transform.getModelMatrix();
+	public void getModelMatrix(Matrix4f out) {
+		transform.getModelMatrix(out);
 	}
 
 	//TODO: ToModel2D method
