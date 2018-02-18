@@ -44,6 +44,16 @@ public class MathFunctions {
 
 		out.load(rotation.toRotationMatrix(passthoughMatrix));
 	}
+	public static final void createRotatationMatrix(Vector3f rotation, Matrix4f out) {
+		if (out == null)
+			out = new Matrix4f();
+		else
+			out.setIdentity();
+
+		Matrix4f.rotate((float)Math.toRadians(rotation.x), right, out, out);
+		Matrix4f.rotate((float)Math.toRadians(rotation.y), up, out, out);
+		Matrix4f.rotate((float)Math.toRadians(rotation.z), in, out, out);
+	}
 
 
  	public static Matrix4f createTransformationMatrix(Vector3f translation) {
