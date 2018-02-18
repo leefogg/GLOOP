@@ -81,19 +81,31 @@ public final class Quaternion {
 		return this;
 	}
 
+	public Quaternion rotate(float xdegrees, float ydegrees, float zdegrees) {
+		rotate(1,0,0, xdegrees);
+		rotate(0,0,1, ydegrees); // TODO: this and next line's axis are swapped to align with Maya, but is that correct?
+		rotate(0,1,0, zdegrees);
+		return this;
+	}
+	public Quaternion rotate(float x, float y, float z, double degrees) {
+		return rotate(this, x, y, z, degrees, this);
+	}
 	public Quaternion rotate(Vector3f axis, double degrees) {
 		return rotate(this, axis, degrees, this);
 	}
 	public static Quaternion rotate(Quaternion left, Vector3f axis, double degrees, Quaternion out) {
+		return rotate(left, axis.x, axis.y, axis.z, degrees, out);
+	}
+	public static Quaternion rotate(Quaternion left, float x, float y, float z, double degrees, Quaternion out) {
 		double radians = (float)Math.toRadians(degrees);
 		float w = (float)Math.cos(radians/2f);
 		float reversescaler = (float)Math.sin(radians/2f);
 
 		return multiply(
 				left,
-				axis.x * reversescaler,
-				axis.y * reversescaler,
-				axis.z * reversescaler,
+				x * reversescaler,
+				y * reversescaler,
+				z * reversescaler,
 				w,
 				out
 		);
