@@ -38,7 +38,7 @@ uniform vec3 campos;
 uniform mat4 InverseVPMatrix;
 uniform mat4 VPMatrix;
 
-const float MaxSpecularExponent = 256;
+const float MaxSpecularExponent = 256.0;
 
 uniform float time;
 

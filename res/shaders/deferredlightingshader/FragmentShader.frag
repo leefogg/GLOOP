@@ -14,19 +14,19 @@ uniform sampler2D
 	depthMap;
 uniform samplerCube environmentMap;
 uniform float Specularity, SpecularExponent, Roughness;
-uniform vec4 AlbedoColor = vec4(1, 0, 0, 1);
+uniform vec4 AlbedoColor = vec4(1.0, 0.0, 0.0, 1.0);
 uniform float 
-	reflectivity = 0,
-	refractivity = 0,
+	reflectivity = 0.0,
+	refractivity = 0.0,
 	normalMapScale = 1.0;
 uniform vec3 campos;
 uniform float znear, zfar;
 uniform mat4 InverseVPMatrix;
 uniform float heightScale = 0.1;
 uniform float 
-	FresnelBias = 0,
+	FresnelBias = 0.0,
 	FresnelScale = 0.5, 
-	FresnelPower = 2;
+	FresnelPower = 2.0;
 	
 uniform vec4 refractionIndices = vec4(1.0/1.2);
 
@@ -49,8 +49,8 @@ vec2 calcParallaxMapping(sampler2D parallax_texture, vec2 tex_coords, mat3 TBN, 
 	vec3 viewDir = -normalize(t_camPosition - t_worldPosition);
 
 	// number of depth layers
-	const float minLayers = 2;
-	const float maxLayers = 24;
+	const float minLayers = 2.0;
+	const float maxLayers = 24.0;
 	// More layers the more perpendicular view
 	float numLayers = mix(maxLayers, minLayers, abs(dot(vec3(0.0, 0.0, 1.0), viewDir)));  
 	// calculate the size of each layer
@@ -116,13 +116,13 @@ void main(void) {
 	#if defined NORMALMAPPING
 	if (HasNormalMap) {
 		norm = texture(normalMap, texcoords).rgb;
-		norm = norm * 2 - 1; // To tangent space ([0,1] to [-1,1])
-		norm = mix(vec3(0,0,1), norm, normalMapScale);
+		norm = norm * 2.0 - 1.0; // To tangent space ([0,1] to [-1,1])
+		norm = mix(vec3(0.0,0.0,1.0), norm, normalMapScale);
 	} else {
-		norm = vec3(0, 0, 1); // Straight up
+		norm = vec3(0.0, 0.0, 1.0); // Straight up
 	}
 	#else
-		norm = vec3(0, 0, 1); // Straight up
+		norm = vec3(0.0, 0.0, 1.0); // Straight up
 	#endif
 	// Transform here and work with, then save last
 	norm = TBNMatrix * norm; // To world space
@@ -133,8 +133,8 @@ void main(void) {
 	if (HasEnvironmentMap) {
 		bool isreflective = reflectivity > 1.0/256.0;
 		bool isrefractive = refractivity > 1.0/256.0;
-		vec3 reflectioncolor = vec3(0);
-		vec3 refractioncolor = vec3(0);
+		vec3 reflectioncolor = vec3(0.0);
+		vec3 refractioncolor = vec3(0.0);
 		#if defined REFLECTIVITY
 		if (isreflective) {
 			vec3 reflectdirection = reflect(fragLocalPos, norm);
@@ -185,7 +185,7 @@ void main(void) {
 	#else
 	specularity = Specularity;
 	#endif
-	specularbuffer = vec3(specularity, SpecularExponent, 1);
+	specularbuffer = vec3(specularity, SpecularExponent, 1.0);
 	
 	
 	// Position buffer
@@ -194,6 +194,6 @@ void main(void) {
 	
 	
 	// Finally save
-	norm = 0.5 + norm / 2;
+	norm = 0.5 + norm / 2.0;
 	normalbuffer = norm;
 }
