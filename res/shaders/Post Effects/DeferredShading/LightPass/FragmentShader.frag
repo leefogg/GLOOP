@@ -51,27 +51,36 @@ float calculateDiffuse(vec3 facenormal, vec3 worldspaceposition, vec3 position) 
 	return directiondiff;
 }
 
+float calulateLuminosity(float distance, float quadraticAttenuation) {
+	float attenuation = 1.0 + quadraticAttenuation * (distance * distance);
+	float luminosity = 1.0 / attenuation;
+	
+	return luminosity;
+}
+
 // Point lights
 vec3 calculateDiffuse(vec3 facenormal, vec3 worldspaceposition, PointLight pointlight) {
 	return pointlight.color * calculateDiffuse(facenormal, worldspaceposition, pointlight.position);
 }
 
-vec3 calculateSpecular(vec3 worldspaceposition, vec3 facenormal, vec3 lightposition, vec3 lightcolor, float specularity, float exponent) {
-	vec3 lightdir = normalize(worldspaceposition - lightposition);
-	vec3 viewdir = normalize(campos - worldspaceposition);
+vec3 calculateSpecular(vec3 worldspaceposition, vec3 facenormal, vec3 lightposition, vec3 lightcolor, float specularity, float exponent, float quadraticAttenuation) {
+	vec3 lightdir = worldspaceposition - lightposition;
+	vec3 viewdir = campos - worldspaceposition;
+	float distance = abs(length(lightdir + viewdir));
+	float luminosity = calulateLuminosity(distance, quadraticAttenuation);
+	
+	lightdir = normalize(lightdir);
+	viewdir = normalize(viewdir);
 	vec3 reflectdir = reflect(lightdir, facenormal);
 	
 	float specularcontribution = max(dot(viewdir, reflectdir), 0.0);
 	float spec = pow(specularcontribution, max(exponent, 0.001));
-	return spec * specularity * lightcolor;
+	return spec * specularity * luminosity * lightcolor;
 }
 
 float calulateLuminosity(vec3 lightpos, vec3 worldpos, float quadraticAttenuation) {
 	float distancetolight = length(lightpos - worldpos);
-	float attenuation = 1.0 + quadraticAttenuation * (distancetolight * distancetolight);
-	float luminosity = 1.0 / attenuation;
-	
-	return luminosity;
+	return calulateLuminosity(distancetolight, quadraticAttenuation);
 }
 float calulateLuminosity(vec3 worldspaceposition, SpotLight light) {
 	float luminosity = calulateLuminosity(light.position, worldspaceposition, light.quadraticAttenuation);
@@ -82,7 +91,7 @@ float calulateLuminosity(vec3 worldspaceposition, SpotLight light) {
 
 // Directional lights
 vec3 calculateDiffuse(vec3 facenormal, DirectionalLight directionallight) {
-	float directiondiff = max(dot(directionallight.direction, facenormal), 0);
+	float directiondiff = max(dot(directionallight.direction, facenormal), 0.0);
 	vec3 diffusecolor = directionallight.diffuseColor * directiondiff;
 	
 	return diffusecolor;
@@ -154,14 +163,15 @@ void main(void) {
 			light.position, 
 			light.color, 
 			specularity,
-			specularexponent * MaxSpecularExponent
+			specularexponent * MaxSpecularExponent,
+			light.quadraticAttenuation
 		);
 		
 		// Attenuation
 		float luminosity = calulateLuminosity(light.position, worldspaceposition, light.quadraticAttenuation);
 		
 		diffusecolor *= luminosity;
-		specularcolor *= luminosity;
+		// Specular has luminosity built in
 		pixelColor += diffusecolor + specularcolor;
 	}
 	
@@ -186,18 +196,19 @@ void main(void) {
 			light.position, 
 			light.color, 
 			specularity,
-			specularexponent * MaxSpecularExponent
+			specularexponent * MaxSpecularExponent,
+			light.quadraticAttenuation
 		);
 		
 		// Attenuation
 		float luminosity = calulateLuminosity(worldspaceposition, light);
 		
 		diffusecolor *= luminosity;
-		specularcolor *= luminosity;
-		
+		// Specular has luminosity built in
 		pixelColor += diffusecolor + specularcolor;
 	}
 	
+	//TODO: Change to Blue Noise
 	#if defined DITHER
 	pixelColor = dither(pixelColor, textureCoord);
 	#endif
