@@ -51,7 +51,7 @@ public class DeferredRenderer extends Renderer {
 		PixelFormat[] buffers = new PixelFormat[]{
 				PixelFormat.RGB8, // Albedo TODO: Needs to be RGB16F for HDR
 				PixelFormat.RGB8, // Specularity, SpecularExponent/inverse roughness and stencil
-				PixelFormat.RGB16, // Normals in world space
+				PixelFormat.RGB8, // Normals in world space
 				PixelFormat.RGBA16F, // World-space XYZ and depth in W
 				PixelFormat.RGB8 // Lighting buffer
 		};
