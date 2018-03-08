@@ -8,9 +8,7 @@ import engine.graphics.shading.lighting.AmbientLight;
 import engine.graphics.shading.lighting.DirectionalLight;
 import engine.graphics.shading.lighting.PointLight;
 import engine.graphics.shading.lighting.SpotLight;
-import javafx.scene.effect.Light;
-
-import java.awt.*;
+import org.lwjgl.util.vector.Vector3f;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.function.Predicate;
@@ -23,6 +21,8 @@ public class Scene {
 	private final ArrayList<SpotLight> spotLights = new ArrayList<>();
 	private final AmbientLight ambientLight = new AmbientLight();
 	public Camera currentCamera = new PerspectiveCamera();
+	private Vector3f fogColor = new Vector3f(0,0,0);
+	private float fogDensity = 0.02f;
 
 	public final int getNumberOfDirectionalLights() { return directionalLights.size(); }
 	public final DirectionalLight getDirectionallight(int index) {
@@ -40,6 +40,9 @@ public class Scene {
 
 	public final int getNumberOfSpotLights() { return spotLights.size(); }
 	public final SpotLight getSpotLight(int index) { return spotLights.get(index); }
+
+	public void  getFogColor(Vector3f passthrough) { passthrough.set(fogColor); }
+	public float getFogDensity() { return fogDensity; }
 
 	public void add(Model model) { models.add(model); }
 	public void add(Decal decal) { decals.add(decal); }

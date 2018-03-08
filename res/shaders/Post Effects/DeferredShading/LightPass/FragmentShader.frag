@@ -32,6 +32,8 @@ uniform int numberOfDirectionalLights = 0;
 uniform DirectionalLight directionalLights[8];
 uniform int numberOfSpotLights;
 uniform SpotLight spotLights[32];
+uniform vec3 fogColor = vec3(0,0,0);
+uniform float fogDensity = 0.02;
 
 uniform float znear, zfar;
 uniform vec3 campos;
@@ -211,5 +213,13 @@ void main(void) {
 	//TODO: Change to Blue Noise
 	#if defined DITHER
 	pixelColor = dither(pixelColor, textureCoord);
+	#endif
+	
+	#if defined FOG
+	float dist = abs(length(campos - worldspaceposition));
+	float fogfactor = 1.0 / exp(dist * fogDensity);
+	fogfactor = clamp(fogfactor, 0.0, 1.0);
+	
+	pixelColor = mix(fogColor, pixelColor, fogfactor);
 	#endif
 }

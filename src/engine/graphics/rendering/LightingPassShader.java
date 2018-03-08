@@ -118,11 +118,23 @@ final class LightingPassShader extends PostEffectShader {
 			quadraticAttenuation.set(spotlight.quadraticAttenuation);
 		}
 	}
+	private class Fog {
+		public final Uniform3f color;
+		public final Uniform1f density;
 
+		public Fog(ShaderProgram shader) {
+			color = new Uniform3f(shader, "fogColor");
+			density = new Uniform1f(shader, "fogDensity");
+		}
+
+		public void setColor(Vector3f color) { this.color.set(color); }
+		public void setDensity(float density) { this.density.set(density); }
+	}
 
 	private PointLight[] pointLights;
 	private DirectionalLight[] directionalLights;
 	private SpotLight[] spotLights;
+	private Fog fog;
 
 	private static final Vector3f cameraposition = new Vector3f(); // Pass through
 
@@ -169,6 +181,8 @@ final class LightingPassShader extends PostEffectShader {
 		for (int i=0; i<spotLights.length; i++)
 			spotLights[i] = new SpotLight(i, this);
 
+		fog = new Fog(this);
+
 		time = new Uniform1f(this, "time");
 	}
 
@@ -211,6 +225,10 @@ final class LightingPassShader extends PostEffectShader {
 			SpotLight spotlight = spotLights[i];
 			spotlight.update(scene);
 		}
+
+		scene.getFogColor(passthrough);
+		fog.setColor(passthrough);
+		fog.setDensity(scene.getFogDensity());
 	}
 
 

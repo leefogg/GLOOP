@@ -98,6 +98,8 @@ public class DeferredRenderer extends Renderer {
 			defines.clear();
 			if (Settings.EnableDither)
 				defines.add("DITHER");
+			if (Settings.EnableFog)
+				defines.add("FOG");
 
 			lightingshader = new LightingPassShader(defines.toArray(new String[0]));
 			lightingPosteffect = new LightingPassPostEffect(lightingshader, normalsTexture, specularTexture, positionTexture);

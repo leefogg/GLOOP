@@ -12,7 +12,8 @@ public class Settings {
 			EnableRefractivity = true,
 			EnableFresnel = false,
 			EnableChromaticAberration = false,
-			EnableShadows = false;
+			EnableShadows = false,
+			EnableFog = false;
 	public int
 			MaxPointLights = 64,
 			MaxSpotLights = 32,
