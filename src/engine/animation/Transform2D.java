@@ -46,17 +46,17 @@ public class Transform2D extends Transform<Vector2f> {
 
 	@Override
 	public void getTranslationMatrix(Matrix4f out) {
-
+		MathFunctions.createTranslationMatrix(Position, out);
 	}
 
 	@Override
 	public void getScaleMatrix(Matrix4f out) {
-
+		MathFunctions.createScaleMatrix(Scale, out);
 	}
 
 	@Override
 	public void getRotationMatrix(Matrix4f out) {
-
+		MathFunctions.createRotatationMatrix(Rotation, out);
 	}
 
 	@Override

@@ -22,15 +22,15 @@ public final class DeferredMaterial extends Material<DeferredGBuffersShader> {
 	private final Vector2f textureRepeat = new Vector2f(1, 1);
 	private final Vector2f textureOffset = new Vector2f(0, 0);
 	private float
-	reflectivity = 0,
-	refractivity = 0,
-	normalMapScale = 1,
-	displacement = 0.05f,
-	specularity,
-	specularExponent = 0.5f,
-	fresnelBias,
-	fresnelScale,
-	fresnelExponent;
+		reflectivity = 0,
+		refractivity = 0,
+		normalMapScale = 1,
+		displacement = 0.05f,
+		specularity,
+		specularExponent = 0.5f,
+		fresnelBias,
+		fresnelScale,
+		fresnelExponent;
 	private static final float MaxSpecularExponent = 256f;
 
 	@Override
@@ -180,6 +180,9 @@ public final class DeferredMaterial extends Material<DeferredGBuffersShader> {
 
 		shader.setCameraAttributes(Renderer.getRenderer().getScene().currentCamera);
 	}
+
+	@Override
+	public boolean useDeferredPipeline() { return true; }
 
 	@Override
 	protected boolean hasTransparency() { return albedoMap.isTransparent(); }

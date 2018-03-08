@@ -5,7 +5,7 @@ import org.lwjgl.util.vector.Matrix4f;
 
 public abstract class Transform<T> {
 	protected Matrix4f modelMatrix = new Matrix4f();
-	protected boolean isDirty;
+	protected boolean isDirty = true; // Force any caching to load on first use
 
 	public abstract void setPosition(T position);
 	public abstract void getPosition(T out);

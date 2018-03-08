@@ -2,6 +2,7 @@ package engine.graphics.rendering;
 
 import engine.graphics.cameras.Camera;
 import engine.graphics.cameras.PerspectiveCamera;
+import engine.graphics.models.Decal;
 import engine.graphics.models.Model;
 import engine.graphics.shading.lighting.AmbientLight;
 import engine.graphics.shading.lighting.DirectionalLight;
@@ -16,7 +17,7 @@ import java.util.function.Predicate;
 
 public class Scene {
 	private final HashSet<Model> models = new HashSet<>();
-
+	private final HashSet<Decal> decals = new HashSet<>();
 	private final ArrayList<PointLight> pointLights = new ArrayList<>();
 	private final ArrayList<DirectionalLight> directionalLights = new ArrayList<>();
 	private final ArrayList<SpotLight> spotLights = new ArrayList<>();
@@ -41,12 +42,15 @@ public class Scene {
 	public final SpotLight getSpotLight(int index) { return spotLights.get(index); }
 
 	public void add(Model model) { models.add(model); }
+	public void add(Decal decal) { decals.add(decal); }
 	public void add(PointLight light) {	pointLights.add(light); }
 	public void add(DirectionalLight directionallight) { directionalLights.add(directionallight); }
 	public void add(SpotLight spotlight) { spotLights.add(spotlight); }
 
 	public HashSet<Model> getModels() { return models; }
+	public HashSet<Decal> getDecals() { return decals; }
 
+	// TODO: Use this
 	public ArrayList<Model> selectModels(Predicate<Model> test) {
 		ArrayList<Model> selecteditems = new ArrayList<>();
 		for (Model item : models) {

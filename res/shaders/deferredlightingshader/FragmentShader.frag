@@ -36,9 +36,9 @@ in mat3 TBNMatrix;
 in vec4 vertPosition;
 
 layout(location=0) out vec3 albedobuffer;
-layout(location=1) out vec4 positionbuffer;
+layout(location=1) out vec3 specularbuffer;
 layout(location=2) out vec3 normalbuffer;
-layout(location=3) out vec3 specularbuffer;
+layout(location=3) out vec4 positionbuffer;
 
 vec2 calcParallaxMapping(sampler2D parallax_texture, vec2 tex_coords, mat3 TBN, vec3 camera_position, vec3 world_position, inout vec3 viewdir) { 
 	mat3 tTBN = transpose(TBN);

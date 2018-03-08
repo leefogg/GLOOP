@@ -1,6 +1,7 @@
 package engine.graphics.rendering;
 
 import engine.graphics.Settings;
+import engine.graphics.models.Decal;
 import engine.graphics.models.Model;
 import engine.graphics.models.Model2D;
 import engine.graphics.shading.ShaderCompilationException;
@@ -9,8 +10,10 @@ import engine.graphics.shading.posteffects.PostProcessor;
 import engine.graphics.textures.*;
 import engine.graphics.rendering.UI.GUIRenderer;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Vector4f;
+import sun.java2d.pipe.RenderBuffer;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -47,9 +50,9 @@ public class DeferredRenderer extends Renderer {
 
 		PixelFormat[] buffers = new PixelFormat[]{
 				PixelFormat.RGB8, // Albedo TODO: Needs to be RGB16F for HDR
-				PixelFormat.RGBA16F, // World-space XYZ and depth in W
-				PixelFormat.RGB16, // Normals in world space
 				PixelFormat.RGB8, // Specularity, SpecularExponent/inverse roughness and stencil
+				PixelFormat.RGB16, // Normals in world space
+				PixelFormat.RGBA16F, // World-space XYZ and depth in W
 				PixelFormat.RGB8 // Lighting buffer
 		};
 		GBuffers = new FrameBuffer(buffers);
@@ -59,9 +62,9 @@ public class DeferredRenderer extends Renderer {
 		// Save for deferred shading pass
 		FrameBufferColorTexture[] attachments = GBuffers.getAllColorAttachments();
 		albedoTexture = attachments[0];
-		positionTexture = attachments[1];
+		specularTexture = attachments[1];
 		normalsTexture = attachments[2];
-		specularTexture = attachments[3];
+		positionTexture = attachments[3];
 		lightTexture = attachments[4];
 
 		loadShaders();
@@ -136,13 +139,20 @@ public class DeferredRenderer extends Renderer {
 
 	@Override
 	protected void renderScene() {
-		Renderer.clear(true, true, false);
+		int[] boundrenderattachments = GBuffers.getBoundColorAttachments();
+
+		clear(true, true, false);
 
 		for (Model model : scene.getModels()) {
-			if (!(model.getMaterial() instanceof DeferredMaterial))
+			if (!model.getMaterial().useDeferredPipeline())
 				continue;
 
 			model.render();
+		}
+		for (Decal decal : scene.getDecals()) {
+			decal.render();
+
+			GBuffers.bindRenderAttachments(boundrenderattachments);
 		}
 	}
 
@@ -272,6 +282,12 @@ public class DeferredRenderer extends Renderer {
 
 		loadShaders();
 	}
+
+	public Texture getAlbedoTexture() { return albedoTexture; }
+	public Texture getNormalsTexture() { return normalsTexture; }
+	public Texture getSpecularTexture() { return specularTexture; }
+	public Texture getPositionTexture() { return positionTexture; }
+	public Texture getLightTexture() { return lightTexture; }
 
 	//TODO: Incomplete crap
 	public void read() {

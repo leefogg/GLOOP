@@ -18,6 +18,7 @@ import static org.lwjgl.opengl.GL30.*;
 
 public class FrameBuffer { // TODO: implements Disposable
 	static final DefaultFrameBuffer defaultframebuffer = new DefaultFrameBuffer();
+	private int[] boundColorAttachments;
 
 	// TODO: Find a way to make these final
 	protected int ID;
@@ -42,14 +43,14 @@ public class FrameBuffer { // TODO: implements Disposable
 		this.width = width;
 		this.height = height;
 		colorAttachments = new ArrayList<>(formats.length);
-		bind();
+		setCurrent(this);
 
 		addColorAttachments(formats);
 		bindRenderAttachment(colorAttachments.size());
 	}
 
 	public void createDepthAttachment() {
-		bind();
+		setCurrent(this);
 		depthAttachment = new FrameBufferDepthTexture("FBO" + ID + "DepthAttachment0", width, height);
 	}
 
@@ -106,40 +107,45 @@ public class FrameBuffer { // TODO: implements Disposable
 	}
 
 	public void bind() {
-		FrameBuffer boundframebuffer = getCurrent();
-		if (boundframebuffer != null && boundframebuffer.ID == this.ID)
-			return;
-
-		glBindFramebuffer(GL_FRAMEBUFFER, ID);
+		setCurrent(this);
 		if (colorAttachments != null)
 			bindRenderAttachments(colorAttachments.size());
-
-		Viewport.setDimensions(width, height);
 
 		FrameBufferManager.setCurrentFrameBuffer(this);
 	}
 
-	public void dispose() {
-		for (Texture colorattachment : colorAttachments)
-			colorattachment.requestDisposal();
-		if (depthAttachment != null)
-			depthAttachment.requestDisposal();
-		glDeleteFramebuffers(ID);
+	private static final void setCurrent(FrameBuffer buffer) {
+		FrameBuffer boundframebuffer = FrameBufferManager.getCurrentFrameBuffer();
+		if (boundframebuffer != null && boundframebuffer.ID == buffer.ID)
+			return;
+
+		glBindFramebuffer(GL_FRAMEBUFFER, buffer.ID);
+		Viewport.setDimensions(buffer.width, buffer.height);
 	}
 
 	// Set which attachment to draw to
-	private static void bindRenderAttachments(int count) {
+	public void bindRenderAttachments(int count) {
 		int[] renderbuffers = new int[count];
 		for (int i=0; i<count; i++)
 			renderbuffers[i] = GL_COLOR_ATTACHMENT0 + i;
-		glDrawBuffers(DataConversion.toGLBuffer(renderbuffers)); // TODO: Maintain list as IntBuffer
+
+		bindRenderAttachments(renderbuffers);
 	}
-	private static void bindRenderAttachment(int index) {
+	public void bindRenderAttachments(int[] attachments) {
+		setCurrent(this);
+		boundColorAttachments = attachments;
+		glDrawBuffers(DataConversion.toGLBuffer(attachments)); // TODO: Maintain list as IntBuffer
+	}
+	private void bindRenderAttachment(int index) {
+		setCurrent(this);
 		if (index >= 16)// TODO: Get max number of color attachments. http://stackoverflow.com/questions/29707968/get-maximum-number-of-framebuffer-color-attachments
 			throw new IndexOutOfBoundsException("Cannot bind FBO color attachment " + index + ". FBOs only support 0-15 (16) color attachments.");
 
-		glDrawBuffer(GL_COLOR_ATTACHMENT0 + index);
+		glDrawBuffer(GL_COLOR_ATTACHMENT0 + index); //TODO: I dont think thats right https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glDrawBuffer.xhtml
 	}
+
+	public int[] getBoundColorAttachments() { return boundColorAttachments; }
+
 	public static void bindDefault() {
 		defaultframebuffer.bind();
 	}
@@ -168,6 +174,14 @@ public class FrameBuffer { // TODO: implements Disposable
 				bufferbits,
 				filter.getGLEnum()
 		);
+	}
+
+	public void dispose() {
+		for (Texture colorattachment : colorAttachments)
+			colorattachment.requestDisposal();
+		if (depthAttachment != null)
+			depthAttachment.requestDisposal();
+		glDeleteFramebuffers(ID);
 	}
 
 	public static final FrameBuffer getCurrent() { return FrameBufferManager.getCurrentFrameBuffer(); }
