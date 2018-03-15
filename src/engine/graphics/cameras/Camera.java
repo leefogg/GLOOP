@@ -11,12 +11,12 @@ public abstract class Camera {
 
 	protected float znear, zfar;
 	protected Matrix4f
-	ProjectionMatrix = new Matrix4f(),
-	ViewMatrix = new Matrix4f();
-	protected boolean viewMatrixIsDirty = true; // Flag to update the view matrix only once per frame
+		ProjectionMatrix = new Matrix4f(),
+		ViewMatrix = new Matrix4f();
 	protected Vector3f
-	Position = new Vector3f(),
-	Rotation = new Vector3f(); // TODO: Change to quaternion
+		Position = new Vector3f(),
+		Rotation = new Vector3f(); // TODO: Change to quaternion
+	protected boolean viewMatrixIsDirty = true; // Flag to update the view matrix only once per frame
 
 	public void update(float delta, float timescaler) {}
 
