@@ -60,7 +60,7 @@ public class VertexArray implements Disposable {
 		return storeVertcies(DataConversion.toGLBuffer(vertcies));
 	}
 	public int storeVertcies(FloatBuffer data) {
-		NumberofVertcies = data.capacity();
+		NumberofVertcies = data.capacity() / 3;
 
 		VertexBuffer verciesarray = new VertexBuffer(GLArrayType.Array);
 		verciesarray.store(data);
