@@ -111,52 +111,37 @@ public class Geometry {
 						String[] subcomponents = component.split("/");
 						int vertexpointer = Integer.valueOf(subcomponents[0]) - 1;
 
-						indicies[i] = vertexpointer; // Add vertex indexes
+						indicies[i++] = vertexpointer; // Add vertex indexes
 
 						if (!subcomponents[1].isEmpty()) { // Is it not blank?
 							int uvpointer = Integer.valueOf(subcomponents[1]) - 1;
-							indicies[i+3] = uvpointer; // Add UV indexes
+							indicies[i++] = uvpointer; // Add UV indexes
 						}
 
 						if (!subcomponents[2].isEmpty()) { // Is it not blank?
 							int normalpointer = Integer.valueOf(subcomponents[2]) - 1;
-							indicies[i+6] = normalpointer; // Add Normal indexes
+							indicies[i++] = normalpointer; // Add Normal indexes
 						}
-
-						i++;
 					}
 				}
 
-				vertcies.add(
-							new Vertex(
-								indicies[0],
-								indicies[3],
-								indicies[6]
-							)
-						);
-				vertcies.add(
+				for (int i=0; i<9; )
+					vertcies.add(
 						new Vertex(
-							indicies[1],
-							indicies[4],
-							indicies[7]
-						)
-					);
-				vertcies.add(
-						new Vertex(
-							indicies[2],
-							indicies[5],
-							indicies[8]
+							indicies[i++],
+							indicies[i++],
+							indicies[i++]
 						)
 					);
 
 				int numverts = vertcies.size();
 				faces.add(
-						new Face(
-							numverts-3,
-							numverts-2,
-							numverts-1
-						)
-					);
+					new Face(
+						numverts-3,
+						numverts-2,
+						numverts-1
+					)
+				);
 			}
 
 			linenumber++;
@@ -185,7 +170,7 @@ public class Geometry {
 	}
 
 	private void calculateTangents() {
-		tangents = new Vector3f[vertcies.length];
+		tangents = new Vector3f[faces.length*3];
 
 		int i=0;
 		for (Face face : faces) {
