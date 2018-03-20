@@ -83,8 +83,8 @@ public final class Quaternion {
 
 	public Quaternion rotate(float xdegrees, float ydegrees, float zdegrees) {
 		rotate(1,0,0, xdegrees);
-		rotate(0,0,1, ydegrees); // TODO: this and next line's axis are swapped to align with Maya, but is that correct?
-		rotate(0,1,0, zdegrees);
+		rotate(0,0,1, zdegrees);
+		rotate(0,1,0, ydegrees);
 		return this;
 	}
 	public Quaternion rotate(float x, float y, float z, double degrees) {
