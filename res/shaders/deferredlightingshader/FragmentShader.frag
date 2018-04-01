@@ -143,7 +143,7 @@ void main(void) {
 			// Calculate Fresnel effect
 			float fresnalbias = 1;
 			#if defined FRESNEL
-			fresnalbias = FresnelBias+FresnelScale*pow(1.0+dot(normalize(fragLocalPos), norm), FresnelPower);
+			fresnalbias = FresnelBias+FresnelScale*pow(dot(normalize(fragLocalPos), -norm), FresnelPower);
 			#endif
 			albedobuffer.rgb = mix(albedobuffer.rgb, reflectioncolor, fresnalbias * reflectivity);
 		}
