@@ -30,7 +30,7 @@ final class DeferredGBuffersShader extends ShaderProgram {
 			normalMapScale,
 			displacement,
 			specularity,
-			specularExponent,
+			roughness,
 			fresnelBias,
 			fresnelScale,
 			fresnelExponent;
@@ -91,7 +91,7 @@ final class DeferredGBuffersShader extends ShaderProgram {
 		textureOffset = new Uniform2f(this, "TextureOffset");
 
 		specularity = new Uniform1f(this, "Specularity");
-		specularExponent = new Uniform1f(this, "SpecularExponent");
+		roughness = new Uniform1f(this, "Roughness");
 
 		fresnelBias = new Uniform1f(this, "FresnelBias");
 		fresnelScale = new Uniform1f(this, "FresnelScale");
@@ -134,8 +134,6 @@ final class DeferredGBuffersShader extends ShaderProgram {
 
 	public void setSpecularity(float specularity) { this.specularity.set(specularity); }
 
-	public void setSpecularExponent(float specularexponent) { this.specularExponent.set(specularexponent); }
-
 	public void setDiffuseColor(Vector4f diffuse) {
 		diffuseColor.set(diffuse);
 	}
@@ -148,12 +146,10 @@ final class DeferredGBuffersShader extends ShaderProgram {
 		this.refractivity.set(refractivity);
 	}
 
-	public void setRefractionIndices(Vector4f indices) {
-		refractionIndices.set(indices);
-	}
-	public void setRefractionIndices(float r, float g, float b, float original) {
-		refractionIndices.set(r,g,b,original);
-	}
+	public void setRoughness(float roughness) { this.roughness.set(roughness); }
+
+	public void setRefractionIndices(Vector4f indices) { refractionIndices.set(indices); }
+	public void setRefractionIndices(float r, float g, float b, float original) { refractionIndices.set(r,g,b,original); }
 
 	public void setNormalMapScale(float normalmapscale) { normalMapScale.set(normalmapscale); }
 

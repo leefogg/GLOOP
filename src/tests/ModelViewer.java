@@ -8,8 +8,10 @@ import engine.graphics.rendering.DeferredRenderer;
 import engine.graphics.shading.ShaderCompilationException;
 import engine.graphics.shading.lighting.PointLight;
 import engine.graphics.rendering.DeferredMaterial;
+import engine.graphics.shading.materials.DecalMaterial;
 import engine.graphics.shading.materials.SingleColorMaterial;
 import engine.graphics.textures.*;
+import engine.math.Quaternion;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -68,14 +70,12 @@ public class ModelViewer {
 			material.setNormalTexture(normals);
 			Texture specular = TextureManager.newTexture("res\\models\\SOMA\\ark\\specular.png", PixelComponents.R, PixelFormat.RED);
 			material.setSpecularTexture(specular);
-			material.setSpecularExponent(150);
+			material.setRoughness(0.2f);
 			material.setEnvironmentTexture(cubemap);
 			material.setReflectivity(0.1f);
 			Model3D model = new Model3D("res\\models\\SOMA\\ark\\model.obj", material);
 			model.setScale(20,20,20);
 			scene.add(model);
-
-
 
 			SingleColorMaterial fullbright = new SingleColorMaterial();
 			lightmodel = new Model3D("res\\models\\sphere.obj", fullbright);
@@ -111,7 +111,7 @@ public class ModelViewer {
 			Renderer.setRenderer(forwardrenderer);
 			Renderer.render();
 			Renderer.swapBuffers();
-			deferredrenderer.renderAttachments(8);
+			//deferredrenderer.renderAttachments();
 
 			Viewport.update();
 			Viewport.setTitle("ModelViewer " + Viewport.getCurrentFrameRate() + "Hz");

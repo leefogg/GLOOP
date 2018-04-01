@@ -13,7 +13,7 @@ uniform sampler2D
 	specularMap,
 	depthMap;
 uniform samplerCube environmentMap;
-uniform float Specularity, SpecularExponent, Roughness;
+uniform float Specularity, Roughness;
 uniform vec4 AlbedoColor = vec4(1.0, 0.0, 0.0, 1.0);
 uniform float 
 	reflectivity = 0.0,
@@ -175,17 +175,21 @@ void main(void) {
 	#endif
 	
 	
-	float specularity;
+	float specularity, roughness;
 	#if defined SPECULARMAPPING
 	if (HasSpecularMap) {
-		specularity = texture(specularMap, texcoords).r;
+		vec3 spectexture = texture(specularMap, texcoords).rgb;
+		specularity = spectexture.r;
+		roughness = spectexture.g;
 	} else {
 		specularity = Specularity;
+		roughness = Roughness;
 	}
 	#else
 	specularity = Specularity;
+	roughness = Roughness;
 	#endif
-	specularbuffer = vec3(specularity, SpecularExponent, 1.0);
+	specularbuffer = vec3(specularity, roughness, 1.0);
 	
 	
 	// Position buffer

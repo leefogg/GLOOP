@@ -27,11 +27,11 @@ public final class DeferredMaterial extends Material<DeferredGBuffersShader> {
 		normalMapScale = 1,
 		displacement = 0.05f,
 		specularity,
-		specularExponent = 0.5f,
+		roughness,
 		fresnelBias,
 		fresnelScale,
 		fresnelExponent;
-	private static final float MaxSpecularExponent = 256f;
+	public static final float MaxSpecularExponent = 256f;
 
 	@Override
 	public DeferredGBuffersShader getShader() {
@@ -68,9 +68,7 @@ public final class DeferredMaterial extends Material<DeferredGBuffersShader> {
 
 	public void setSpecularity(float specularity) { this.specularity = specularity; }
 
-	public void setSpecularExponent(float specularexponent) { this.specularExponent = specularexponent/MaxSpecularExponent; }
-
-	public void setRoughness(float roughness) { setSpecularExponent(1f/roughness);}
+	public void setRoughness(float roughness) { this.roughness = roughness;}
 
 	public final void setDiffuseColor(Vector4f diffusecolor) { setDiffuseColor(diffusecolor.x, diffusecolor.y, diffusecolor.z, diffusecolor.w); }
 	public final void setDiffuseColor(float r, float g, float b, float a) {
@@ -146,7 +144,7 @@ public final class DeferredMaterial extends Material<DeferredGBuffersShader> {
 				shader.hasSpecularMap(true);
 				TextureManager.bindSpecularMap(specularMap);
 			}
-			shader.setSpecularExponent(specularExponent);
+			shader.setRoughness(roughness);
 		}
 
 		if (Settings.EnableFresnel) {

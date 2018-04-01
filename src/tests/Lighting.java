@@ -101,7 +101,7 @@ public final class Lighting {
 			floormaterial.setSpecularTexture(specularmap);
 			floormaterial.setTextureRepeat(2,2);
 			floormaterial.setSpecularity(1);
-			floormaterial.setSpecularExponent(128);
+			floormaterial.setRoughness(0.5f);
 			Model3D outerbox = new Model3D("res\\models\\insideout box.obj", floormaterial);
 			outerbox.setScale(50,50,50);
 			outerbox.setPosition(0,25,0);
@@ -133,9 +133,9 @@ public final class Lighting {
 
 		boolean isrunning = true;
 		while(isrunning) {
+			Viewport.update();
 			float delta = Renderer.getTimeDelta();
 			float timescaler = Renderer.getTimeScaler();
-
 			camera.update(delta, timescaler);
 
 			Renderer.setRenderer(deferredrenderer);
@@ -153,7 +153,6 @@ public final class Lighting {
 			deferredrenderer.renderAttachments();
 
 
-			Viewport.update();
 			Viewport.setTitle("Development Engine " + Viewport.getCurrentFrameRate() + "Hz");
 
 			if (Display.isCloseRequested())

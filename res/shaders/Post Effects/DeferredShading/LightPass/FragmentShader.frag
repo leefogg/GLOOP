@@ -53,8 +53,8 @@ float calculateDiffuse(vec3 facenormal, vec3 worldspaceposition, vec3 position) 
 	return directiondiff;
 }
 
-float calulateLuminosity(float distance, float quadraticAttenuation) {
-	float attenuation = 1.0 + quadraticAttenuation * (distance * distance);
+float calulateLuminosity(float distance, float quadraticattenuation) {
+	float attenuation = 1.0 + quadraticattenuation * (distance * distance);
 	float luminosity = 1.0 / attenuation;
 	
 	return luminosity;
@@ -65,18 +65,18 @@ vec3 calculateDiffuse(vec3 facenormal, vec3 worldspaceposition, PointLight point
 	return pointlight.color * calculateDiffuse(facenormal, worldspaceposition, pointlight.position);
 }
 
-vec3 calculateSpecular(vec3 worldspaceposition, vec3 facenormal, vec3 lightposition, vec3 lightcolor, float specularity, float exponent, float quadraticAttenuation) {
+vec3 calculateSpecular(vec3 worldspaceposition, vec3 facenormal, vec3 lightposition, vec3 lightcolor, float specularity, float exponent, float quadraticattenuation) {
 	vec3 lightdir = worldspaceposition - lightposition;
 	vec3 viewdir = campos - worldspaceposition;
 	float distance = abs(length(lightdir + viewdir));
-	float luminosity = calulateLuminosity(distance, quadraticAttenuation);
+	float luminosity = calulateLuminosity(distance, quadraticattenuation);
 	
 	lightdir = normalize(lightdir);
 	viewdir = normalize(viewdir);
 	vec3 reflectdir = reflect(lightdir, facenormal);
 	
 	float specularcontribution = max(dot(viewdir, reflectdir), 0.0);
-	float spec = pow(specularcontribution, max(exponent, 0.001));
+	float spec = pow(specularcontribution, max(exponent, 1));
 	return spec * specularity * luminosity * lightcolor;
 }
 
@@ -129,14 +129,14 @@ vec3 dither(vec3 color, vec2 texcoord) {
 
 void main(void) {
 	vec4 specularmap = texture(specularTexture, textureCoord);
+	float specularity = specularmap.r;
+	float roughness = specularmap.g;
+	float stencil = specularmap.b;
 	
 	// TODO: Move to stencil buffer
-	if (specularmap.z < 0.5) // Skip if stencil says so
+	if (stencil < 0.5) // Skip if stencil says so
 		discard;
 		
-	float specularity = specularmap.r;
-	float specularexponent = specularmap.g;
-	float roughness = specularmap.b;
 	
 	vec4 normalbuffer = texture(normalTexture, textureCoord);
 	vec3 facenormal = normalbuffer.rgb * 2.0 - 1.0;
@@ -165,7 +165,7 @@ void main(void) {
 			light.position, 
 			light.color, 
 			specularity,
-			specularexponent * MaxSpecularExponent,
+			roughness * MaxSpecularExponent,
 			light.quadraticAttenuation
 		);
 		
@@ -198,7 +198,7 @@ void main(void) {
 			light.position, 
 			light.color, 
 			specularity,
-			specularexponent * MaxSpecularExponent,
+			roughness * MaxSpecularExponent,
 			light.quadraticAttenuation
 		);
 		

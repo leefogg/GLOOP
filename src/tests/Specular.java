@@ -29,7 +29,6 @@ public final class Specular {
 			Viewport.show();
 			//Viewport.setFullScreen(true);
 			Viewport.unbindMouseOnBlur(true);
-			Renderer.setVoidColor(0,0,0);
 		} catch (LWJGLException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -62,32 +61,27 @@ public final class Specular {
 		scene.add(light2);
 
 		try {
-			for (int z = -5; z < 5; z++) {
-				for (int x = -5; x < 5; x++) {
-					float exponent = (5f + z) / 10f;
-					float specular = (5f + x) / 10f;
-					exponent *= exponent;
-					exponent *= 256f;
-
+			for (int z = 0; z < 10; z++) {
+				for (int x = 0; x < 10; x++) {
+					float roughness = z / 10f;
+					float specular = x / 10f;
 					DeferredMaterial material = deferredrenderer.getNewMaterial();
 					material.setDiffuseColor(1, 1, 1, 1f);
 					material.setSpecularity(specular);
-					material.setSpecularExponent(exponent);
+					material.setRoughness(roughness);
 					Model3D model = new Model3D("res\\models\\sphere.obj", material);
-					model.setPosition(x, 0.5f , z);
+					model.setPosition(x-5, 0.5f , z-5);
 					scene.add(model);
 				}
 			}
 
 			DeferredMaterial material = deferredrenderer.getNewMaterial();
 			Texture albedomap = TextureManager.newTexture("res\\textures\\wood.png", PixelComponents.RGB, PixelFormat.SRGB8);
-			BufferedImage speculartexture = ImageIO.read(new File("res\\textures\\fractal.jpg"));
-			speculartexture = ImageConversion.convertToAlpha(speculartexture);
-			Texture specularmap = TextureManager.newTexture("res\\textures\\fractal.jpg", speculartexture, PixelComponents.RGB, PixelFormat.RED);
 			Model3D model = new Model3D("res\\models\\plane.obj", material);
 			material.setTextureRepeat(5,5);
 			material.setAlbedoTexture(albedomap);
-			material.setSpecularTexture(specularmap);
+			material.setRoughness(0.1f);
+			material.setSpecularity(1);
 			scene.add(model);
 		} catch (IOException e) {
 			e.printStackTrace(System.err);
@@ -103,12 +97,13 @@ public final class Specular {
 		boolean isrunning = true;
 		double sincos = (float)Math.PI, step = (float)Math.PI/600f;
 		while(isrunning) {
+			Viewport.update();
 			float delta = Renderer.getTimeDelta();
 			float timescaler = Renderer.getTimeScaler();
+			camera.update(delta, timescaler);
 
 			sincos += step * timescaler;
-
-			camera.update(delta, timescaler);
+			light1.setPosition(6, 10f,(float)Math.cos(sincos)*50f);
 
 			Renderer.setRenderer(deferredrenderer);
 			Renderer.render();
@@ -118,14 +113,13 @@ public final class Specular {
 			deferredrenderer.renderAttachments();
 
 
-			Viewport.update();
 			Viewport.setTitle("Development Engine " + Viewport.getCurrentFrameRate() + "Hz");
 
 			if (Display.isCloseRequested())
 				isrunning = false;
 			if (!Mouse.isGrabbed() && Keyboard.isKeyDown(Keyboard.KEY_ESCAPE))
 				isrunning = false;
-			if (Keyboard.isKeyDown(Keyboard.KEY_K)) {
+			if (Keyboard.isKeyDown(Keyboard.KEY_F5)) {
 				try {
 					deferredrenderer.reload();
 				} catch (IOException e) {
