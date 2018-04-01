@@ -130,7 +130,7 @@ vec3 dither(vec3 color, vec2 texcoord) {
 void main(void) {
 	vec4 specularmap = texture(specularTexture, textureCoord);
 	float specularity = specularmap.r;
-	float roughness = specularmap.g;
+	float roughness = 1-specularmap.g;
 	float stencil = specularmap.b;
 	
 	// TODO: Move to stencil buffer

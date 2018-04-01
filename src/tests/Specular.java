@@ -61,8 +61,8 @@ public final class Specular {
 		scene.add(light2);
 
 		try {
-			for (int z = 0; z < 10; z++) {
-				for (int x = 0; x < 10; x++) {
+			for (int z = 0; z <= 10; z++) {
+				for (int x = 0; x <= 10; x++) {
 					float roughness = z / 10f;
 					float specular = x / 10f;
 					DeferredMaterial material = deferredrenderer.getNewMaterial();
