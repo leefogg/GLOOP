@@ -68,7 +68,7 @@ public final class DeferredMaterial extends Material<DeferredGBuffersShader> {
 
 	public void setSpecularity(float specularity) { this.specularity = specularity; }
 
-	public void setRoughness(float roughness) { this.roughness = roughness;}
+	public void setRoughness(float roughness) { this.roughness = Math.min(Math.max(roughness,0),1);}
 
 	public final void setDiffuseColor(Vector4f diffusecolor) { setDiffuseColor(diffusecolor.x, diffusecolor.y, diffusecolor.z, diffusecolor.w); }
 	public final void setDiffuseColor(float r, float g, float b, float a) {
