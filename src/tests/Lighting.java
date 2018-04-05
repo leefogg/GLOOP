@@ -29,15 +29,19 @@ public final class Lighting {
 		Vector3f vecolcity = new Vector3f(r.nextFloat()-0.5f, r.nextFloat()-0.5f, r.nextFloat()-0.5f);
 		Vector3f color = new Vector3f();
 		private PointLight light = new PointLight();
+		private Model3D model;
 
-		public LightBall(Scene scene) {
+		public LightBall(Scene scene, Model3D model) {
 			vecolcity.scale(0.3f);
 			light.quadraticAttenuation = 0.32f;
 			color.set(r.nextFloat(), r.nextFloat(), r.nextFloat());
 			light.setColor(color);
 			light.setPosition(position.x, position.y, position.z);
 
+			this.model = model;
+
 			scene.add(light);
+			scene.add(model);
 		}
 
 		public void update(double timescaler) {
@@ -47,7 +51,8 @@ public final class Lighting {
 			position.y += vecolcity.y;
 			position.z += vecolcity.z;
 
-			light.setPosition(position.x, position.y, position.z);
+			light.setPosition(position);
+			model.setPosition(position);
 		}
 
 		private void collideWalls() {
@@ -62,8 +67,6 @@ public final class Lighting {
 
 	public static void main(String[] args) {
 		try {
-			Settings.EnableEnvironemntMapping = false;
-			Settings.EnableParallaxMapping =true;
 			Viewport.create(1280, 720, "Engine Testing");
 			Viewport.show();
 		} catch (LWJGLException e) {
@@ -80,13 +83,8 @@ public final class Lighting {
 		}
 		Scene scene = deferredrenderer.getScene();
 
-
-		LightBall[] pointlights = new LightBall[64];
-		for (int i=0; i<pointlights.length; i++)
-			pointlights[i] = new LightBall(scene);
-
-
-		Model3D	ball = null;
+		LightBall[] balls = new LightBall[64];
+		Model3D	ballmodel = null;
 		try {
 			DeferredMaterial floormaterial = deferredrenderer.getNewMaterial();
 			floormaterial.setDiffuseColor(1,1,1,1);
@@ -105,15 +103,18 @@ public final class Lighting {
 			scene.add(outerbox);
 
 			DeferredMaterial material = deferredrenderer.getNewMaterial();
-			material.setDiffuseColor(1,1,1,0.5f);
+			material.setDiffuseColor(1,1,1,1);
 			Model3D box = new Model3D("res\\models\\bunny.obj", material);
 			box.setPosition(0, 25, 0);
 			box.setScale(10,10,10);
 			scene.add(box);
 
-			DeferredMaterial singlecolormaterial = deferredrenderer.getNewMaterial();
-			singlecolormaterial.setDiffuseColor(1,1,1, 1);
-			ball = new Model3D("res\\models\\sphere.obj", singlecolormaterial);
+			material = deferredrenderer.getNewMaterial();
+			material.setDiffuseColor(1,1,1, 1);
+			ballmodel = new Model3D("res\\models\\sphere.obj", material);
+
+			for (int i=0; i<balls.length; i++)
+				balls[i] = new LightBall(scene, ballmodel.clone());
 		} catch (IOException e) {
 			System.err.println("Couldn't load Model!");
 			e.printStackTrace(System.err);
@@ -135,10 +136,11 @@ public final class Lighting {
 			float timescaler = Renderer.getTimeScaler();
 			camera.update(delta, timescaler);
 
+			for (LightBall ball : balls)
+				ball.update(timescaler);
+
 			Renderer.setRenderer(deferredrenderer);
 			Renderer.render();
-
-
 			Renderer.swapBuffers();
 			deferredrenderer.renderAttachments();
 
