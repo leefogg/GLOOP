@@ -27,6 +27,7 @@ uniform float
 	FresnelBias = 0.0,
 	FresnelScale = 0.5, 
 	FresnelPower = 2.0;
+uniform float Time;
 	
 uniform vec4 refractionIndices = vec4(1.0/1.2);
 
@@ -90,6 +91,13 @@ vec2 calcParallaxMapping(sampler2D parallax_texture, vec2 tex_coords, mat3 TBN, 
 	return finalTexCoords;
 } 
 
+#define MOD3 vec3(443.8975,397.2973, 491.1871)
+float rand(vec2 p) {
+	vec3 p3  = fract(vec3(p.xyx) * MOD3);
+    p3 += dot(p3, p3.yzx + 19.19);
+    return fract((p3.x + p3.y) * p3.z);
+}
+
 void main(void) {
 	vec3 fraglocalpos = fragLocalPos;
 	
@@ -103,11 +111,11 @@ void main(void) {
 	vec4 albedocolor;
 	if (HasAlbedoMap) {
 		albedocolor = texture(albedoMap, texcoords);
-		if (albedocolor.a < 0.1) //TODO: 1/256th?
-			discard;
 	} else {
 		albedocolor = AlbedoColor;
 	}
+	if (rand(texcoords + vec2(Time)) + (1-albedocolor.a) > 1.0)
+		discard;
 	albedobuffer = albedocolor.rgb;
 
 	

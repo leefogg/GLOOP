@@ -34,7 +34,8 @@ final class DeferredGBuffersShader extends ShaderProgram {
 			roughness,
 			fresnelBias,
 			fresnelScale,
-			fresnelExponent;
+			fresnelExponent,
+			time;
 	private Uniform2f textureRepeat;
 	private Uniform2f textureOffset;
 	private Uniform1b
@@ -97,6 +98,8 @@ final class DeferredGBuffersShader extends ShaderProgram {
 		fresnelBias = new Uniform1f(this, "FresnelBias");
 		fresnelScale = new Uniform1f(this, "FresnelScale");
 		fresnelExponent = new Uniform1f(this, "FresnelPower");
+
+		time = new Uniform1f(this, "Time");
 	}
 
 	@Override
@@ -173,6 +176,8 @@ final class DeferredGBuffersShader extends ShaderProgram {
 	public void setzfar(float zfar) {
 		this.zfar.set(zfar);
 	}
+
+	public void setTime(float time) { this.time.set(time); }
 
 
 	public void setCameraPosition(Vector3f cameraposition) {

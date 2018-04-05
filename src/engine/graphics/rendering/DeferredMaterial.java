@@ -175,6 +175,8 @@ public final class DeferredMaterial extends Material<DeferredGBuffersShader> {
 				TextureManager.bindDepthMap(depthMap);
 			}
 		}
+
+		shader.setTime(Viewport.getElapsedSeconds());
 	}
 
 	@Override
