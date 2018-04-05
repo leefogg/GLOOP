@@ -89,7 +89,7 @@ public final class Specular {
 		}
 
 		DebugCamera camera = new DebugCamera();
-		Renderer.setCamera(camera);
+		scene.currentCamera = camera;
 		camera.setPosition(0, 3, 10);
 
 		System.gc();

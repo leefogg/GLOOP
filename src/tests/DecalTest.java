@@ -28,15 +28,12 @@ public class DecalTest {
 		}
 
 		DeferredRenderer deferredrenderer = null;
-		ForwardRenderer forwardrenderer = null;
 		try {
 			deferredrenderer = Renderer.getDeferedRenderer();
-			forwardrenderer = Renderer.getForwardRenderer();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		Scene scene = deferredrenderer.getScene();
-		forwardrenderer.setScene(scene);
 
 		PointLight light1 = new PointLight();
 		light1.quadraticAttenuation = 0.003f;
@@ -55,7 +52,7 @@ public class DecalTest {
 
 			DeferredMaterial bunnymaerial = deferredrenderer.getNewMaterial();
 			Model3D bunny = new Model3D("res/models/bunny.obj", bunnymaerial);
-			bunnymaerial.setDiffuseColor(1,1,1,0);
+			bunnymaerial.setDiffuseColor(1,1,1,1);
 			bunny.setPosition(-6.794f, 0f, -8.714f);
 			bunny.setScale(5,5,5);
 			scene.add(bunny);
@@ -119,7 +116,7 @@ public class DecalTest {
 
 		DebugCamera camera = new DebugCamera();
 		camera.setPosition(-1,7,19);
-		Renderer.setCamera(camera);
+		scene.currentCamera = camera;
 
 		System.gc();
 

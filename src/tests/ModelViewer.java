@@ -88,7 +88,7 @@ public class ModelViewer {
 
 		DebugCamera camera = new DebugCamera();
 		camera.setPosition(-1,7,19);
-		Renderer.setCamera(camera);
+		scene.currentCamera = camera;
 
 		System.gc();
 

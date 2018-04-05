@@ -27,10 +27,6 @@ public class RenderModes {
 			System.exit(1);
 		}
 
-		DebugCamera camera = new DebugCamera();
-		camera.setPosition(2.066602f, 1.0899944f, 115.840645f);
-		Renderer.setCamera(camera);
-
 		Random r = new Random();
 
 		float[] positions = new float[3*1000];
@@ -58,17 +54,21 @@ public class RenderModes {
 		}
 
 		ForwardRenderer forwardrenderer = Renderer.getForwardRenderer();
+		DebugCamera camera = new DebugCamera();
+		camera.setPosition(2.066602f, 1.0899944f, 115.840645f);
+		forwardrenderer.getScene().currentCamera = camera;
 
 		System.gc();
 
 		boolean isrunning = true;
 		int frame = 0;
 		while(isrunning) {
+			Viewport.update();
 			float delta = Renderer.getTimeDelta();
 			float timescaler = Renderer.getTimeScaler();
 			camera.update(delta, timescaler);
-			frame++;
 
+			frame++;
 			switch(frame/Viewport.getTargetFrameRate() % 4) {
 				case 0:
 					pointsbuffer.setRenderingMode(RenderMode.Points);
@@ -87,11 +87,7 @@ public class RenderModes {
 			model1.render();
 			Renderer.swapBuffers();
 
-
-			Viewport.update();
 			Viewport.setTitle("Development Engine " + Viewport.getCurrentFrameRate() + "Hz");
-
-			camera.update(delta, timescaler);
 
 			if (Display.isCloseRequested())
 				isrunning = false;

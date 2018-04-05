@@ -141,16 +141,13 @@ public final class DebugCamera extends PerspectiveCamera {
         Position.z += Velocity.z;
         Velocity.scale(0.8f);
 
-        if (Mouse.isButtonDown(0)) {
+        if (Mouse.isButtonDown(0))
             Mouse.setGrabbed(true);
-        }
-        if (Mouse.isButtonDown(1)) {
+        if (Mouse.isButtonDown(1))
             Mouse.setGrabbed(false);
-        }
 
-        if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
+        if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE))
             Mouse.setGrabbed(false);
-        }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_P))
             System.out.println("X: " + Position.x + "\tY: " + Position.y + "\tZ: " + Position.z);
@@ -159,7 +156,6 @@ public final class DebugCamera extends PerspectiveCamera {
             Velocity.set(0,0,0);
         }
 
-        if (Mouse.isGrabbed())
-            viewMatrixIsDirty = true;
+        viewMatrixIsDirty = true;
 	}
 }

@@ -133,7 +133,7 @@ public final class ReflectionRefraction {
 
 		DebugCamera camera = new DebugCamera();
 		camera.setPosition(0,2,0);
-		Renderer.setCamera(camera);
+		scene.currentCamera = camera;
 
 		System.gc();
 
@@ -142,13 +142,14 @@ public final class ReflectionRefraction {
 		Vector3f up = new Vector3f(0,1,0);
 		Quaternion rotation = new Quaternion();
 		while (isrunning) {
+			Viewport.update();
 			float delta = Renderer.getTimeDelta();
 			float timescaler = Renderer.getTimeScaler();
-
-			sincos += step * timescaler;
 			camera.update(delta, timescaler);
 
-			refractiveballmaterial.setRefractionIndex(1.01f + (((float)Math.sin(sincos) + 1f) / 2f));
+			sincos += step * timescaler;
+
+			refractiveballmaterial.setRefractionIndex(1.01f + (((float)Math.sin(sincos) + 1f) / 32f));
 			rotation.toIdentity();
 			rotation = rotation.rotate(up, (float)sincos);
 			model1.setRotation(rotation);
@@ -158,11 +159,9 @@ public final class ReflectionRefraction {
 			Renderer.render();
 			Renderer.setRenderer(forwardrenderer);
 			Renderer.render();
-			deferredrenderer.renderAttachments();
 			Renderer.swapBuffers();
 			deferredrenderer.renderAttachments();
 
-			Viewport.update();
 			Viewport.setTitle("Reflection and Refraction " + Viewport.getCurrentFrameRate() + "Hz");
 
 			if (Display.isCloseRequested())

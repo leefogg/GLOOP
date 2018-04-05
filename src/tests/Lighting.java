@@ -72,16 +72,13 @@ public final class Lighting {
 		}
 
 		DeferredRenderer deferredrenderer = null;
-		ForwardRenderer forwardrenderer = null;
 		try {
 			deferredrenderer = Renderer.getDeferedRenderer();
-			forwardrenderer = Renderer.getForwardRenderer();
 		} catch (Exception e) {
 			e.printStackTrace();
 			exitCleanly(1);
 		}
 		Scene scene = deferredrenderer.getScene();
-		forwardrenderer.setScene(scene);
 
 
 		LightBall[] pointlights = new LightBall[64];
@@ -108,14 +105,14 @@ public final class Lighting {
 			scene.add(outerbox);
 
 			DeferredMaterial material = deferredrenderer.getNewMaterial();
-			material.setDiffuseColor(1,1,1,1);
+			material.setDiffuseColor(1,1,1,0.5f);
 			Model3D box = new Model3D("res\\models\\bunny.obj", material);
 			box.setPosition(0, 25, 0);
 			box.setScale(10,10,10);
 			scene.add(box);
 
-			SingleColorMaterial singlecolormaterial = new SingleColorMaterial();
-			singlecolormaterial.setColor(1,1,1);
+			DeferredMaterial singlecolormaterial = deferredrenderer.getNewMaterial();
+			singlecolormaterial.setDiffuseColor(1,1,1, 1);
 			ball = new Model3D("res\\models\\sphere.obj", singlecolormaterial);
 		} catch (IOException e) {
 			System.err.println("Couldn't load Model!");
@@ -127,7 +124,7 @@ public final class Lighting {
 
 		DebugCamera camera = new DebugCamera();
 		camera.setPosition(0, 25, 40);
-		Renderer.setCamera(camera);
+		scene.currentCamera = camera;
 
 		System.gc();
 
@@ -140,14 +137,7 @@ public final class Lighting {
 
 			Renderer.setRenderer(deferredrenderer);
 			Renderer.render();
-			Renderer.setRenderer(forwardrenderer);
-			for (int i=0; i<pointlights.length; i++) {
-				pointlights[i].update(timescaler);
-				ball.setPosition(pointlights[i].position);
-				SingleColorMaterial material = (SingleColorMaterial)ball.getMaterial();
-				material.setColor(pointlights[i].color);
-				ball.render();
-			}
+
 
 			Renderer.swapBuffers();
 			deferredrenderer.renderAttachments();

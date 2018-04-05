@@ -22,9 +22,7 @@ public abstract class Model implements Renderable {
 	public void setMaterial(Material material) {
 		this.material = material;
 	}
-	public Material getMaterial() {
-		return material;
-	}
+	public Material getMaterial() { return material; }
 
 	@Override
  	public void update(int delta, float timescaler) {}

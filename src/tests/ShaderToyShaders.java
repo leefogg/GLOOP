@@ -20,8 +20,6 @@ public final class ShaderToyShaders {
 		try {
 			Viewport.create(640, 480, "Engine Testing");
 			Viewport.show();
-			Viewport.unbindMouseOnBlur(true);
-			Renderer.setVoidColor(0,0,0);
 		} catch (LWJGLException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -29,7 +27,7 @@ public final class ShaderToyShaders {
 		ForwardRenderer forwardrenderer = Renderer.getForwardRenderer();
 
 		DebugCamera camera = new DebugCamera();
-		Renderer.setCamera(camera);
+		forwardrenderer.getScene().currentCamera = camera;
 
 		Scene scene = forwardrenderer.getScene();
 		try {
