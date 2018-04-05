@@ -175,8 +175,6 @@ public final class DeferredMaterial extends Material<DeferredGBuffersShader> {
 				TextureManager.bindDepthMap(depthMap);
 			}
 		}
-
-		shader.setCameraAttributes(Renderer.getRenderer().getScene().currentCamera);
 	}
 
 	@Override

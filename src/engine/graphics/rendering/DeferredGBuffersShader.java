@@ -6,6 +6,7 @@ import engine.graphics.shading.GLSL.*;
 import engine.graphics.shading.ShaderCompilationException;
 import engine.graphics.shading.ShaderProgram;
 import engine.graphics.textures.TextureUnit;
+import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
@@ -178,7 +179,10 @@ final class DeferredGBuffersShader extends ShaderProgram {
 		campos.set(cameraposition);
 	}
 
-	public void setCameraAttributes(Camera camera) {
+	@Override
+	public void setCameraUniforms(Camera camera, Matrix4f modelmatrix) {
+		super.setCameraUniforms(camera, modelmatrix);
+
 		setzfar(camera.getzfar());
 		setznear(camera.getznear());
 		camera.getPosition(cameraposition);
