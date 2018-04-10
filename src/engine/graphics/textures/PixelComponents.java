@@ -6,7 +6,7 @@ import static org.lwjgl.opengl.GL30.GL_RG;
 
 public enum PixelComponents {
 	DEPTHCOMPONENT(GL_DEPTH_COMPONENT, 1),
-	DEPTHSTENCIL(GL_DEPTH_STENCIL, 1),
+	DEPTHSTENCIL(GL_DEPTH_STENCIL, 2),
 	R(GL_RED, 1),
 	RG(GL_RG, 2),
 	RGB(GL_RGB, 3),

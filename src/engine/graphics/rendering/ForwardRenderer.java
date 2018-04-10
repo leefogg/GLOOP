@@ -10,8 +10,7 @@ public class ForwardRenderer extends Renderer {
 	private FrameBuffer buffer; // TODO: Render directly into DefaultRenderBuffer
 
 	ForwardRenderer() {
-		buffer = new FrameBuffer(Viewport.getWidth(), Viewport.getHeight(), PixelFormat.RGB16);
-		buffer.createDepthAttachment();
+		buffer = new FrameBuffer(Viewport.getWidth(), Viewport.getHeight(), new PixelFormat[]{ PixelFormat.RGB16 }, true, true);
 	}
 
 	@Override
@@ -23,7 +22,7 @@ public class ForwardRenderer extends Renderer {
 
 		if (previoustechnique != null)
 			if (previoustechnique instanceof ForwardRenderer)
-				Renderer.clear(true, true, false);
+				Renderer.clear(true, true, true);
 			else
 				previoustechnique.getBuffer().blitTo(buffer, true, true, false);
 	}
@@ -31,9 +30,8 @@ public class ForwardRenderer extends Renderer {
 	@Override
 	protected void renderScene() {
 		for (Model model : scene.getModels()) {
-			if (model.getMaterial() instanceof DeferredMaterial)
+			if (model.getMaterial().useDeferredPipeline())
 				continue;
-
 			//TODO: Add PBR material filter when added
 
 			model.render();

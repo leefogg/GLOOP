@@ -4,6 +4,8 @@ import engine.graphics.data.DataConversion;
 import engine.graphics.models.DataType;
 import engine.graphics.rendering.Renderer;
 import engine.graphics.rendering.Viewport;
+import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.GL32;
 import org.lwjgl.util.vector.Vector4f;
 
 import java.awt.image.BufferedImage;
@@ -26,18 +28,19 @@ public class FrameBuffer { // TODO: implements Disposable
 
 	protected ArrayList<FrameBufferColorTexture>    colorAttachments;
 	protected FrameBufferDepthTexture 	            depthAttachment;
+	protected FrameBufferDepthStencilTexture        depthstencilAttachment;
 
 	protected FrameBuffer() {}
 	public FrameBuffer(int colorbuffers) {
 		this(Viewport.getWidth(), Viewport.getHeight(), colorbuffers);
 	}
-	public FrameBuffer(int width, int height, int colorbuffers) { this(width, height, createFormatList(colorbuffers, PixelFormat.RGB8)); }
+	public FrameBuffer(int width, int height, int colorbuffers) { this(width, height, createFormatList(colorbuffers, PixelFormat.RGB8), true, false); }
 	public FrameBuffer(PixelFormat format) {
 		this(Viewport.getWidth(), Viewport.getHeight(), format);
 	}
-	public FrameBuffer(PixelFormat[] formats) {	this(Viewport.getWidth(), Viewport.getHeight(), formats); }
-	public FrameBuffer(int width, int height, PixelFormat format) {	this(width, height, new PixelFormat[] {format}); }
-	public FrameBuffer(int width, int height, PixelFormat[] formats) {
+	public FrameBuffer(PixelFormat[] formats) {	this(Viewport.getWidth(), Viewport.getHeight(), formats, true, false); }
+	public FrameBuffer(int width, int height, PixelFormat format) {	this(width, height, new PixelFormat[] {format}, true, false); }
+	public FrameBuffer(int width, int height, PixelFormat[] formats, boolean hasdepth, boolean hasstencil) {
 		//TODO: Throw exception if formats is null or empty
 		this.ID = glGenFramebuffers();
 		this.width = width;
@@ -47,11 +50,65 @@ public class FrameBuffer { // TODO: implements Disposable
 
 		addColorAttachments(formats);
 		bindRenderAttachment(colorAttachments.size());
+		addDepthStencilAttachments(hasdepth, hasstencil);
+		checkErrors();
 	}
 
-	public void createDepthAttachment() {
+	private void checkErrors() {
+		int status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+		if (status == GL_FRAMEBUFFER_COMPLETE)
+			return;
+
+		String errorinfo;
+		switch (status) {
+			case GL_FRAMEBUFFER_UNDEFINED:
+				errorinfo = "The framebuffer attachment points are framebuffer incomplete";
+				break;
+			case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+				errorinfo = "A framebuffer attachment is incomplete";
+				break;
+			case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+				errorinfo = "The framebuffer does not have at least one image attached to it";
+				break;
+			case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
+				errorinfo = "The value of GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE is GL_NONE for a color attachment point named by GL_DRAW_BUFFERi";
+				break;
+			case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
+				errorinfo = "GL_READ_BUFFER is not GL_NONE and the value of GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE is GL_NONE for the color attachment point named by GL_READ_BUFFER";
+				break;
+			case GL_FRAMEBUFFER_UNSUPPORTED:
+				errorinfo = "The combination of internal formats of the attached images violates an implementation-dependent set of restrictions";
+				break;
+			case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:
+				errorinfo = "GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE - Refer to Doc";
+				break;
+			case GL32.GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS:
+				errorinfo = "GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS";
+				break;
+			default: errorinfo = "Unknown FBO Issue."; break;
+		}
+
+		System.err.println(errorinfo);
+		Renderer.checkErrors();
+	}
+
+	private void addDepthStencilAttachments(boolean hasdepth, boolean hasstencil) {
+		if (hasdepth) {
+			if (hasstencil) {
+				createDepthStencilAttachment();
+			} else {
+				createDepthAttachment();
+			}
+		}
+	}
+
+	protected void createDepthAttachment() {
 		setCurrent(this);
-		depthAttachment = new FrameBufferDepthTexture("FBO" + ID + "DepthAttachment0", width, height);
+		depthAttachment = new FrameBufferDepthTexture("FBO" + ID + "DepthAttachment", width, height);
+	}
+	protected void createDepthStencilAttachment() {
+		setCurrent(this);
+		depthstencilAttachment = new FrameBufferDepthStencilTexture("FBO" + ID + "DepthStencilAttachment", width, height);
 	}
 
 	public FrameBufferColorTexture[] addColorAttachment(PixelFormat format) {
@@ -68,6 +125,7 @@ public class FrameBuffer { // TODO: implements Disposable
 		return addColorAttachments(formats);
 	}
 	public FrameBufferColorTexture[] addColorAttachments(PixelFormat[] formats) {
+		setCurrent(this);
 		FrameBufferColorTexture[] newattachments = new FrameBufferColorTexture[formats.length];
 
 		if (formats.length == 0)
@@ -97,6 +155,7 @@ public class FrameBuffer { // TODO: implements Disposable
 	public Texture getDepthTexture() {
 		return depthAttachment;
 	}
+	public Texture getStencilTexture() { return depthstencilAttachment; }
 
 	public FrameBufferColorTexture[] getAllColorAttachments() {
 		return colorAttachments.toArray(new FrameBufferColorTexture[colorAttachments.size()]);

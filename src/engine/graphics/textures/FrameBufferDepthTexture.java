@@ -1,6 +1,7 @@
 package engine.graphics.textures;
 
 import engine.graphics.models.DataType;
+import engine.graphics.rendering.Renderer;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL32;
 
@@ -20,5 +21,7 @@ public final class FrameBufferDepthTexture extends Texture {
 			);
 
 		GL32.glFramebufferTexture(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, ID, 0);
+
+		Renderer.checkErrors();
 	}
 }

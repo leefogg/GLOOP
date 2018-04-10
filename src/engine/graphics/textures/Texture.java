@@ -3,9 +3,12 @@ package engine.graphics.textures;
 import engine.graphics.data.Buffer;
 import engine.graphics.data.DataConversion;
 import engine.graphics.models.DataType;
-import org.lwjgl.opengl.EXTTextureFilterAnisotropic;
+import engine.graphics.rendering.Renderer;
+import org.lwjgl.opengl.*;
+
+import static com.sun.org.apache.xalan.internal.xsltc.compiler.sym.error;
 import static org.lwjgl.opengl.GL30.*;
-import org.lwjgl.opengl.GLContext;
+
 import org.lwjgl.util.vector.Vector3f;
 
 import javax.imageio.ImageIO;
@@ -74,12 +77,20 @@ public class Texture extends Buffer {
 			externalformat,
 			internalformat,
 			type,
-			DataType.UByte,
+			datatype,
 			image.getWidth(),
 			image.getHeight()
 		);
 	}
-	Texture(String name, ByteBuffer pixeldata, TextureTarget target, PixelComponents externalformat, PixelFormat internalformat, TextureType type, DataType datatype, int width, int height) {
+	Texture(String name,
+	        ByteBuffer pixeldata,
+	        TextureTarget target,
+	        PixelComponents externalformat,
+	        PixelFormat internalformat,
+	        TextureType type,
+	        DataType datatype,
+	        int width,
+	        int height) {
 		super(internalformat.getSize() * width * height);
 		this.name = name;
 		this.width = width;
@@ -92,9 +103,12 @@ public class Texture extends Buffer {
 		//TODO: Needs to be more extensive
 
 		bind();
+
 		//glPixelStorei(GL_UNPACK_ALIGNMENT, bytesperpixel);
 		// Upload the data
-		writeData(target, pixeldata, externalformat);
+		writeData(target, internalformat, externalformat, datatype, pixeldata);
+
+		Renderer.checkErrors();
 
 		// Set default attributes. Mandatory for texture completion.
 		setWrapMode(TextureWrapMode.Repeat);
@@ -103,19 +117,29 @@ public class Texture extends Buffer {
 		TextureManager.register(this);
 	}
 
-	protected void writeData(TextureTarget target, ByteBuffer pixeldata, PixelComponents externalformat) {
-		writeData(target, pixeldata, externalformat, 0, 0);
+	protected void writeData(TextureTarget target,
+	                         PixelFormat internalformat,
+	                         PixelComponents externalformat,
+	                         DataType datatype,
+	                         ByteBuffer pixeldata) {
+		writeData(target, internalformat, externalformat, datatype, pixeldata, 0, 0);
 	}
-	protected void writeData(TextureTarget target, ByteBuffer pixeldata, PixelComponents externalformat, int level, int border) {
+	protected void writeData(TextureTarget target,
+	                         PixelFormat internalformat,
+	                         PixelComponents externalformat,
+	                         DataType datatype,
+	                         ByteBuffer pixeldata,
+	                         int level,
+	                         int border) {
 		glTexImage2D(
 				target.getGLEnum(),
 				level,
-				internalFormat.getGLEnum(),
+				internalformat.getGLEnum(),
 				width,
 				height,
 				border,
 				externalformat.getGLEnum(),
-				dataType.getGLEnum(),
+				datatype.getGLEnum(),
 				pixeldata
 		);
 	}

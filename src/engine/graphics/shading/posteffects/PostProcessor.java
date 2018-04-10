@@ -5,6 +5,7 @@ import engine.graphics.rendering.Viewport;
 import engine.graphics.models.Model2D;
 import engine.graphics.shading.materials.FullBrightMaterial;
 import engine.graphics.shading.materials.Material;
+import engine.graphics.textures.FrameBufferDepthStencilTexture;
 import engine.graphics.textures.Texture;
 
 public class PostProcessor {
@@ -22,16 +23,18 @@ public class PostProcessor {
 	}
 
 	// Renders in the currently bound frame buffer
-	public static void render(Material material) { //TODO: Change to PostProcess class
+	public static void render(Material material) {
 		// Rescale to the current resolution
 		fullscreenquad.setScale(Viewport.getWidth(), Viewport.getHeight());
 
 		// rendering post effects shouldn't affect the depth buffer
+		FrameBufferDepthStencilTexture.disableStencilTesting();
 		Renderer.enableDepthTesting(false);
 			Renderer.enableDepthBufferWriting(false);
 				fullscreenquad.setMaterial(material);
 				fullscreenquad.render();
 			Renderer.popDepthBufferWritingState();
 		Renderer.popDepthTestingEnabledState();
+		FrameBufferDepthStencilTexture.enableStencilTesting();
 	}
 }

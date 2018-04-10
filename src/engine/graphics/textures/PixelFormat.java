@@ -10,6 +10,9 @@ import static org.lwjgl.opengl.GL30.*;
 //TODO: Import all from GL30
 
 // From ftp://ftp.sgi.com/opengl/contrib/blythe/advanced99/notes/node51.html
+
+// TODO: ALL WRONG https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glTexImage2D.xhtml internal formats
+// TODO: Rename to InternalFormat?
 public enum PixelFormat {
 	RED         (GL_RED,                8,  0,  0,  0),
 	GREEN       (GL_GREEN,              0,  8,  0,  0),
@@ -35,11 +38,12 @@ public enum PixelFormat {
 	RGBA16F     (GL_RGB16F,             16, 16, 16, 16),
 	RGB32F      (GL_RGB32F,             32, 32, 32, 0),
 	R3G3B2      (GL_R3_G3_B2,           3,  3,  2,  0),
-	DEPTH8      (GL_DEPTH_COMPONENT,    0,  0,  0,  8),
+	DEPTH8      (GL_DEPTH_COMPONENT,    0,  0,  0,  8), // TODO: Looks dodgy
 	DEPTH16     (GL_DEPTH_COMPONENT16,  0,  0,  0,  16),
 	DEPTH24     (GL_DEPTH_COMPONENT24,  0,  0,  0,  24),
 	DEPTH32     (GL_DEPTH_COMPONENT32,  0,  0,  0,  32),
-	DEPTH32F    (GL_DEPTH_COMPONENT32F, 0,  0,  0,  32);
+	DEPTH32F    (GL_DEPTH_COMPONENT32F, 0,  0,  0,  32),
+	DEPTH24_STENCIL8(GL_DEPTH24_STENCIL8, 0,0,0,0);
 
 	//TODO: Add GLDataType
 	//TODO: Add isFullFloatingPoint

@@ -27,16 +27,14 @@ import engine.general.Stack;
 import engine.graphics.shading.ShaderCompilationException;
 import engine.graphics.shading.posteffects.PostEffect;
 import engine.graphics.shading.posteffects.PostProcessor;
-import engine.graphics.textures.FrameBuffer;
-import engine.graphics.textures.FrameBufferManager;
-import engine.graphics.textures.Texture;
+import engine.graphics.textures.*;
 import org.lwjgl.opengl.Display;
 
-import engine.graphics.cameras.Camera;
 import engine.graphics.models.VertexArrayManager;
 import engine.graphics.models.VertexBufferManager;
 import engine.graphics.shading.ShaderManager;
-import engine.graphics.textures.TextureManager;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL30;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -72,6 +70,7 @@ public abstract class Renderer implements Disposable {
 	private static final Stack<DepthTestingEnabledState> DepthTestingEnabledStack = new Stack();
 	private static final Stack<ScissorTestingEnabledState> ScissorTestingEnabledStack = new Stack();
 	private static final Stack<DepthBufferWriteEnabledState> DepthBufferWriteEnabledStack = new Stack();
+	private static final Stack<ColorBufferWriteMaskState> ColorBufferWriteMaskStack = new Stack();
 
 	private static class GLEnabledState extends GenericStackable {
 		protected int glEnum;
@@ -143,14 +142,27 @@ public abstract class Renderer implements Disposable {
 		}
 
 		@Override
-		public void enable() {
-			glDepthMask(enabled);
-		}
+		public void enable() { glDepthMask(enabled); }
 
 		@Override
 		public void disable() {}
 
 		public boolean isEnabled() { return enabled; }
+	}
+	private static class ColorBufferWriteMaskState extends GenericStackable {
+		private boolean red, green, blue, alpha;
+		public ColorBufferWriteMaskState(boolean red, boolean green, boolean blue, boolean alpha) {
+			this.red = red;
+			this.green = green;
+			this.blue = blue;
+			this.alpha = alpha;
+		}
+
+		@Override
+		public void enable() { glColorMask(red, green, blue, alpha); }
+
+		@Override
+		public void disable() {}
 	}
 
 	private static final CullFaceEnabledState EnabledCullFaceState = new CullFaceEnabledState(true);
@@ -168,12 +180,13 @@ public abstract class Renderer implements Disposable {
 
 	static {
 		// Set inital state
-		enableFaceCulling(true);
 		enableBlending(false);
 		enableDepthTesting(true);
+		enableFaceCulling(true);
 		setFaceCulling(engine.graphics.rendering.CullFaceState.Back);
-		enableDepthTesting(true);
 		enableDepthBufferWriting(true);
+		FrameBufferDepthStencilTexture.enableStencilTesting(false);
+		enableColorBufferWriting(true, true, true, true);
 
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_FRAMEBUFFER_SRGB); // TODO: Pull this out to public methods
@@ -284,6 +297,19 @@ public abstract class Renderer implements Disposable {
 		return laststate.isEnabled();
 	}
 
+	/**
+	 * Allows or blocks write access to each element of the color buffer
+	 * @param red Enable writing to the red component
+	 * @param green Enable writing to the green component
+	 * @param blue Enable writing to the blue component
+	 * @param alpha Enable writing to the alpha component
+	 */
+	public static void enableColorBufferWriting(boolean red, boolean green, boolean blue, boolean alpha) {
+		ColorBufferWriteMaskStack.push(new ColorBufferWriteMaskState(red, green, blue, alpha));
+	}
+	public static void popColorBufferWritingState() { ColorBufferWriteMaskStack.pop(); }
+
+
 	public static void enableScissorTesting(boolean enabled) {
 		if (enabled)
 			ScissorTestingEnabledStack.push(EnabledScissorTestingState);
@@ -348,6 +374,39 @@ public abstract class Renderer implements Disposable {
 	public static final float getTimeDelta() { return Delta; }
 	public static final float getTimeScaler() { return timeScaler; }
 
+	public static final void checkErrors() {
+		int errorcode;
+		do {
+			errorcode = GL11.glGetError();
+			String errorinfo = null;
+			switch (errorcode) {
+				case GL11.GL_INVALID_ENUM:
+					errorinfo = "An unexpected enum value has been used.";
+					break;
+				case GL11.GL_INVALID_VALUE:
+					errorinfo = "An invalid value has been provided.";
+					break;
+				case GL11.GL_INVALID_OPERATION:
+					errorinfo = "The operation is not allowed in the current state";
+					break;
+				case GL30.GL_INVALID_FRAMEBUFFER_OPERATION:
+					errorinfo = "The framebuffer object is not complete";
+					break;
+				case GL11.GL_OUT_OF_MEMORY:
+					errorinfo = "here is not enough memory left to execute the command";
+					break;
+				case GL11.GL_STACK_UNDERFLOW:
+					errorinfo = "An attempt has been made to perform an operation that would cause an internal stack to underflow.";
+					break;
+				case GL11.GL_STACK_OVERFLOW:
+					errorinfo = "An attempt has been made to perform an operation that would cause an internal stack to overflow.";
+					break;
+			}
+			if (errorinfo != null)
+				System.err.println(errorinfo);
+		} while (errorcode != GL11.GL_NO_ERROR);
+	}
+
 	public static void updateTimeDelta() {
 		long now = System.nanoTime();
 		Delta = (now - lastFrame) / 1000000f;
@@ -367,7 +426,4 @@ public abstract class Renderer implements Disposable {
 		if (deferedRenderer != null)
 			deferedRenderer.dispose();
 	}
-
-	// TODO: Remove. Replace with Scene.setCurrentCamera(Camera cam)
-	public static void setCamera(Camera camera) { currentRenderer.scene.currentCamera = camera; }
 }

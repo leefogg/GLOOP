@@ -1,7 +1,9 @@
 package engine.graphics.models;
 
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL30.GL_UNSIGNED_INT_24_8;
 
+//TODO: Add all from https://www.khronos.org/registry/OpenGL-Refpages/es3.0/html/glTexImage2D.xhtml type
 public enum DataType {
 	// Integer data types
 	Byte	(GL_BYTE, 1),
@@ -13,7 +15,8 @@ public enum DataType {
 	//TODO: Does GPU support long data type?
 	// Floating-point data types
 	Float	(GL_FLOAT, 4),
-	Double	(GL_DOUBLE, 8);
+	Double	(GL_DOUBLE, 8),
+	UInteger24_8(GL_UNSIGNED_INT_24_8, 32);
 
 	private final int GLType, Size;
 	DataType(int type, int size) {

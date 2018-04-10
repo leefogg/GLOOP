@@ -1,6 +1,7 @@
 package engine.graphics.textures;
 
 import engine.graphics.models.DataType;
+import engine.graphics.rendering.Renderer;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -21,11 +22,12 @@ public class CubeMap extends Texture {
 				size
 		);
 		// bind rest of sides
-		writeData(TextureTarget.CubeMapLeft, 	null, PixelComponents.RGB);
-		writeData(TextureTarget.CubeMapTop, 	null, PixelComponents.RGB);
-		writeData(TextureTarget.CubeMapBottom, 	null, PixelComponents.RGB);
-		writeData(TextureTarget.CubeMapBack, 	null, PixelComponents.RGB);
-		writeData(TextureTarget.CubeMapFront, 	null, PixelComponents.RGB);
+		writeData(TextureTarget.CubeMapLeft, internalformat, PixelComponents.RGB, dataType, null);
+		writeData(TextureTarget.CubeMapTop, internalformat, PixelComponents.RGB, dataType, null);
+		writeData(TextureTarget.CubeMapBottom, internalformat, PixelComponents.RGB, dataType, null);
+		writeData(TextureTarget.CubeMapBack, internalformat, PixelComponents.RGB, dataType, null);
+		writeData(TextureTarget.CubeMapFront, internalformat, PixelComponents.RGB, dataType, null);
+		Renderer.checkErrors();
 
 		setWrapMode(TextureWrapMode.EdgeClamp);
 		setFilteringMode(Filter.Nearest);
@@ -48,16 +50,18 @@ public class CubeMap extends Texture {
 				images[0].getHeight()
 		);
 		// bind rest of sides
-		writeData(TextureTarget.CubeMapLeft, 	getPixelData(images[1], externalformat), externalformat);
-		writeData(TextureTarget.CubeMapTop, 	getPixelData(images[2], externalformat), externalformat);
-		writeData(TextureTarget.CubeMapBottom, 	getPixelData(images[3], externalformat), externalformat);
-		writeData(TextureTarget.CubeMapBack, 	getPixelData(images[4], externalformat), externalformat);
-		writeData(TextureTarget.CubeMapFront, 	getPixelData(images[5], externalformat), externalformat);
+		writeData(TextureTarget.CubeMapLeft, internalformat, externalformat, dataType, getPixelData(images[1], externalformat));
+		writeData(TextureTarget.CubeMapTop, internalformat, externalformat, dataType, getPixelData(images[2], externalformat));
+		writeData(TextureTarget.CubeMapBottom, internalformat, externalformat, dataType, getPixelData(images[3], externalformat));
+		writeData(TextureTarget.CubeMapBack, internalformat, externalformat, dataType, getPixelData(images[4], externalformat));
+		writeData(TextureTarget.CubeMapFront, internalformat, externalformat, dataType, getPixelData(images[5], externalformat));
 
 		setWrapMode(TextureWrapMode.EdgeClamp);
 		setFilteringMode(Filter.Nearest);
 
 		type = TextureType.Cubemap;
+
+		Renderer.checkErrors();
 	}
 
 	private static final BufferedImage[] loadFaces(String[] paths) throws IOException {

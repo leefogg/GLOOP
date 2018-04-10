@@ -55,9 +55,7 @@ public class DeferredRenderer extends Renderer {
 				PixelFormat.RGBA16F, // World-space XYZ and depth in W
 				PixelFormat.RGB8 // Lighting buffer
 		};
-		GBuffers = new FrameBuffer(buffers);
-		GBuffers.createDepthAttachment();
-		// TODO: Gbuffers.createStencilAttachment()
+		GBuffers = new FrameBuffer(Viewport.getWidth(), Viewport.getHeight(), buffers, true, true);
 
 		// Save for deferred shading pass
 		FrameBufferColorTexture[] attachments = GBuffers.getAllColorAttachments();
@@ -104,6 +102,8 @@ public class DeferredRenderer extends Renderer {
 			lightingshader = new LightingPassShader(defines.toArray(new String[0]));
 			lightingPosteffect = new LightingPassPostEffect(lightingshader, normalsTexture, specularTexture, positionTexture);
 		}
+
+		Renderer.checkErrors();
 	}
 
 	static DeferredGBuffersShader getGBuffersShader() {
@@ -128,7 +128,6 @@ public class DeferredRenderer extends Renderer {
 		} else {
 			targetFBO = new FrameBuffer(Viewport.getWidth(), Viewport.getHeight(), PixelFormat.RGB16);
 		}
-		targetFBO.createDepthAttachment();
 
 		// Store
 		resolveTexture = targetFBO.getColorTexture(0);
