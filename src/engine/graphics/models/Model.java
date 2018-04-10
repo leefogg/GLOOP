@@ -17,6 +17,8 @@ public abstract class Model implements Renderable {
 	public Model(VertexArray mesh, Material material) {
 		this.modelData = mesh;
 		this.material = material;
+
+		Renderer.checkErrors();
 	}
 
 	public void setMaterial(Material material) {

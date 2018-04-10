@@ -1,6 +1,7 @@
 package engine.graphics.textures;
 
 import engine.graphics.models.DataType;
+import engine.graphics.rendering.Renderer;
 import org.lwjgl.opengl.GL30;
 
 public final class FrameBufferColorTexture extends Texture {
@@ -23,6 +24,8 @@ public final class FrameBufferColorTexture extends Texture {
 		setWrapMode(TextureWrapMode.EdgeClamp);
 
 		GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0 + attachment, TextureType.Bitmap.getGLEnum(), ID, 0);
+
+		Renderer.checkErrors();
 	}
 
 }

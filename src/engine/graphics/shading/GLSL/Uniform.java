@@ -1,5 +1,6 @@
 package engine.graphics.shading.GLSL;
 
+import engine.graphics.rendering.Renderer;
 import engine.graphics.shading.ShaderProgram;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.util.vector.*;
@@ -17,6 +18,7 @@ abstract class Uniform<T> {
 
 	public Uniform(ShaderProgram program, String name) {
 		location = getUniformLocation(program.getID(), name);
+		Renderer.checkErrors();
 	}
 
 	public abstract void set(T value);

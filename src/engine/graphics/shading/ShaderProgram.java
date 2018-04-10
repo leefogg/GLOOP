@@ -2,6 +2,7 @@ package engine.graphics.shading;
 
 import engine.Disposable;
 import engine.graphics.cameras.Camera;
+import engine.graphics.rendering.Renderer;
 import engine.graphics.shading.GLSL.Uniform16f;
 import engine.resources.ResourceManager;
 import org.lwjgl.opengl.GL11;
@@ -58,10 +59,13 @@ public abstract class ShaderProgram implements Disposable {
 		bindAttributes();
 		getAllUniformLocations();
 
+		Renderer.checkErrors();
+
 		this.vertexShader = vertexshader;
 		this.fragmentShader = fragmentshader;
 
 		ShaderManager.register(this);
+
 	}
 
 	protected abstract void bindAttributes();
@@ -79,7 +83,7 @@ public abstract class ShaderProgram implements Disposable {
 	private void getAllUniformLocations() {
 		getMandatoryUniformLocations();
 		getCustomUniformLocations();
-		setDefaultCustomUniformValues();
+		//setDefaultCustomUniformValues(); // TODO: GLGetErrors doesn't like this?
 	}
 
 	public void setCameraUniforms(Camera camera, Matrix4f modelmatrix) {
@@ -101,11 +105,13 @@ public abstract class ShaderProgram implements Disposable {
 	protected void bindFragmentOutputLocations() {}
 
 	protected void bindAttribute(String attributename, int attributeindex) {
-		int location = GL20.glGetAttribLocation(programID, attributename);
-		if (location == -1)
+		int location = glGetAttribLocation(programID, attributename);
+		if (location == -1) {
 			System.err.println("Attribute \"" + attributename + "\" not found!");
-		else
+		} else {
+			glEnableVertexAttribArray(location);
 			glBindAttribLocation(programID, attributeindex, attributename);
+		}
 	}
 
 	protected void bindFragmentOutput(String name, int fraglocation) { //TODO: Test
