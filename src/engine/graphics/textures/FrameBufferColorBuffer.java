@@ -23,7 +23,7 @@ class FrameBufferColorBuffer extends Texture { // TODO: Test and implement. Keep
 				height
 		);
 
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, ID);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + attachment, GL_RENDERBUFFER, ID);
 	}
 
 	@Override
