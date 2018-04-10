@@ -2,10 +2,7 @@ package tests;
 
 import engine.graphics.cameras.DebugCamera;
 import engine.graphics.models.Model3D;
-import engine.graphics.rendering.ForwardRenderer;
-import engine.graphics.rendering.Renderer;
-import engine.graphics.rendering.Scene;
-import engine.graphics.rendering.Viewport;
+import engine.graphics.rendering.*;
 import engine.graphics.shading.ShaderCompilationException;
 import engine.graphics.shading.lighting.PointLight;
 import engine.graphics.shading.materials.LambartMaterial;
@@ -16,13 +13,8 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL30;
 
 import java.io.IOException;
-
-import static com.sun.org.apache.xalan.internal.xsltc.compiler.sym.error;
-import static org.lwjgl.opengl.GL11.*;
 
 public final class StencilTest {
 	public static void main(String[] args) {
@@ -78,10 +70,7 @@ public final class StencilTest {
 
 		System.gc();
 
-		FrameBufferDepthStencilTexture.enableStencilTesting();
-		FrameBufferDepthStencilTexture.setFunctions(GL_KEEP, GL_KEEP, GL_REPLACE);
-		FrameBufferDepthStencilTexture.setWriteValue(0xFF);
-		glEnable(GL_STENCIL_TEST);
+		Renderer.enableStencilTesting(true);
 
 		boolean isrunning = true;
 		double sincos = (float)Math.PI, step = (float)Math.PI/300f;
@@ -95,17 +84,19 @@ public final class StencilTest {
 			light1.setPosition((float)Math.sin(sincos)*20, 0, (float)Math.cos(sincos)*20);
 
 			Renderer.setRenderer(renderer);
-			FrameBufferDepthStencilTexture.setPassCondition(GL_ALWAYS);
-			FrameBufferDepthStencilTexture.setWriteValue(88);
+			Renderer.setStencilBufferState(Condition.Always, 88, 0xFF);
 			Renderer.render();
-			FrameBufferDepthStencilTexture.setWriteValue(1);
+			Renderer.popStencilBufferState();
+			Renderer.setStencilBufferState(Condition.Always, 1, 0xFF);
 			Renderer.enableDepthBufferWriting(false);
 			Renderer.enableColorBufferWriting(false, false, false, false);
 			mask.render();
 			Renderer.popColorBufferWritingState();
 			Renderer.popDepthBufferWritingState();
-			FrameBufferDepthStencilTexture.setPassCondition(GL_EQUAL);
+			Renderer.popStencilBufferState();
+			Renderer.setStencilBufferState(Condition.Equals, 1, 0xFF);
 			charizard.render();
+			Renderer.popStencilBufferState();
 			Renderer.swapBuffers();
 
 			Viewport.setTitle("Development Engine " + Viewport.getCurrentFrameRate() + "Hz");

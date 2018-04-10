@@ -1,24 +1,6 @@
 package engine.graphics.rendering;
 
-import static org.lwjgl.opengl.GL11.GL_BLEND;
-import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11.GL_SCISSOR_TEST;
-import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11.GL_STENCIL_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.glBlendFunc;
-import static org.lwjgl.opengl.GL11.glClear;
-import static org.lwjgl.opengl.GL11.glClearColor;
-import static org.lwjgl.opengl.GL11.glColorMask;
-import static org.lwjgl.opengl.GL11.glCullFace;
-import static org.lwjgl.opengl.GL11.glDepthFunc;
-import static org.lwjgl.opengl.GL11.glDepthMask;
-import static org.lwjgl.opengl.GL11.glDisable;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glScissor;
+import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER_SRGB;
 
 import engine.Disposable;
@@ -71,6 +53,8 @@ public abstract class Renderer implements Disposable {
 	private static final Stack<ScissorTestingEnabledState> ScissorTestingEnabledStack = new Stack();
 	private static final Stack<DepthBufferWriteEnabledState> DepthBufferWriteEnabledStack = new Stack();
 	private static final Stack<ColorBufferWriteMaskState> ColorBufferWriteMaskStack = new Stack();
+	private static final Stack<StencilTestingEnabledState> StencilTestingEnabledStack = new Stack();
+	private static final Stack<StencilBufferState> StencilBufferStateStack = new Stack();
 
 	private static class GLEnabledState extends GenericStackable {
 		protected int glEnum;
@@ -135,6 +119,11 @@ public abstract class Renderer implements Disposable {
 			super(GL_SCISSOR_TEST, enabled);
 		}
 	}
+	private static class StencilTestingEnabledState extends GLEnabledState {
+		public StencilTestingEnabledState(boolean enabled) {
+			super(GL_STENCIL_TEST, enabled);
+		}
+	}
 	private static class DepthBufferWriteEnabledState extends GenericStackable {
 		private boolean enabled;
 		public DepthBufferWriteEnabledState(boolean enabled) {
@@ -164,6 +153,22 @@ public abstract class Renderer implements Disposable {
 		@Override
 		public void disable() {}
 	}
+	private static class StencilBufferState extends GenericStackable {
+		private Condition PassCondition;
+		private int WriteValue, FunctionMask;
+		public StencilBufferState(Condition passcondition, int writevalue, int functionmask) {
+			PassCondition = passcondition;
+			WriteValue = writevalue;
+			FunctionMask = functionmask;
+		}
+
+		@Override
+		public void enable() { glStencilFunc(PassCondition.getGLEnum(), WriteValue, FunctionMask); }
+
+		@Override
+		public void disable() {}
+	}
+	// TODO: Add glStencilOp
 
 	private static final CullFaceEnabledState EnabledCullFaceState = new CullFaceEnabledState(true);
 	private static final CullFaceEnabledState DisabledCullFaceState = new CullFaceEnabledState(false);
@@ -177,6 +182,8 @@ public abstract class Renderer implements Disposable {
 	private static final ScissorTestingEnabledState DisabledScissorTestingState = new ScissorTestingEnabledState(false);
 	private static final DepthBufferWriteEnabledState EnabledDepthBufferWriteState = new DepthBufferWriteEnabledState(true);
 	private static final DepthBufferWriteEnabledState DisabledDepthBufferWriteState = new DepthBufferWriteEnabledState(false);
+	private static final StencilTestingEnabledState EnableStencilTestingState = new StencilTestingEnabledState(true);
+	private static final StencilTestingEnabledState DisabledStencilTestingState = new StencilTestingEnabledState(false);
 
 	static {
 		// Set inital state
@@ -185,8 +192,10 @@ public abstract class Renderer implements Disposable {
 		enableFaceCulling(true);
 		setFaceCulling(engine.graphics.rendering.CullFaceState.Back);
 		enableDepthBufferWriting(true);
-		FrameBufferDepthStencilTexture.enableStencilTesting(false);
 		enableColorBufferWriting(true, true, true, true);
+		enableStencilTesting(false);
+		setStencilBufferState(Condition.Always, 1, 0xFF);
+		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_FRAMEBUFFER_SRGB); // TODO: Pull this out to public methods
@@ -243,6 +252,21 @@ public abstract class Renderer implements Disposable {
 
 
 	///////////////////////////////// GL States /////////////////////////////////
+	public static void setStencilBufferState(Condition passcondition, int writevalue, int functionmask) {
+		StencilBufferStateStack.push(new StencilBufferState(passcondition, writevalue, functionmask));
+	}
+	public static void popStencilBufferState() { StencilBufferStateStack.pop(); }
+
+	public static void enableStencilTesting(boolean enabled) {
+		StencilTestingEnabledStack.push(enabled ? EnableStencilTestingState : DisabledStencilTestingState);
+	}
+	public static boolean popStencilTestingState() {
+		StencilTestingEnabledState laststate = StencilTestingEnabledStack.pop();
+		if (laststate == null)
+			return false; // OpengGL's default
+		return laststate.isEnabled();
+	}
+
 	public static void enableFaceCulling(boolean enabled) {
 		CullFaceEnabledStack.push(enabled ? EnabledCullFaceState : DisabledCullFaceState);
 	}

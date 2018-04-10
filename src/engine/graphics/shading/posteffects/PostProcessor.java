@@ -28,13 +28,13 @@ public class PostProcessor {
 		fullscreenquad.setScale(Viewport.getWidth(), Viewport.getHeight());
 
 		// rendering post effects shouldn't affect the depth buffer
-		FrameBufferDepthStencilTexture.disableStencilTesting();
-		Renderer.enableDepthTesting(false);
-			Renderer.enableDepthBufferWriting(false);
-				fullscreenquad.setMaterial(material);
-				fullscreenquad.render();
-			Renderer.popDepthBufferWritingState();
-		Renderer.popDepthTestingEnabledState();
-		FrameBufferDepthStencilTexture.enableStencilTesting();
+		Renderer.enableStencilTesting(false);
+			Renderer.enableDepthTesting(false);
+				Renderer.enableDepthBufferWriting(false);
+					fullscreenquad.setMaterial(material);
+					fullscreenquad.render();
+				Renderer.popDepthBufferWritingState();
+			Renderer.popDepthTestingEnabledState();
+		Renderer.popStencilTestingState();
 	}
 }

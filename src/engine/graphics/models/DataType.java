@@ -12,11 +12,11 @@ public enum DataType {
 	UShort	(GL_UNSIGNED_SHORT, 2),
 	Integer	(GL_INT, 4),
 	UInteger(GL_UNSIGNED_INT, 4),
+	UInteger24_8(GL_UNSIGNED_INT_24_8, 32),
 	//TODO: Does GPU support long data type?
 	// Floating-point data types
 	Float	(GL_FLOAT, 4),
-	Double	(GL_DOUBLE, 8),
-	UInteger24_8(GL_UNSIGNED_INT_24_8, 32);
+	Double	(GL_DOUBLE, 8);
 
 	private final int GLType, Size;
 	DataType(int type, int size) {
