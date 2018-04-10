@@ -53,5 +53,10 @@ public class Model3D extends Model {
 		transform.getModelMatrix(out);
 	}
 
+	public Model3D clone() {
+		//TODO: Doesn't clone transforms
+		return new Model3D(modelData, material);
+	}
+
 	//TODO: ToModel2D method
 }
