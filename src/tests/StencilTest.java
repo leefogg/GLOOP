@@ -1,6 +1,7 @@
 package tests;
 
 import engine.graphics.cameras.DebugCamera;
+import engine.graphics.cameras.PerspectiveCamera;
 import engine.graphics.models.Model3D;
 import engine.graphics.rendering.*;
 import engine.graphics.shading.ShaderCompilationException;
@@ -13,6 +14,7 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
+import org.lwjgl.util.vector.Vector3f;
 
 import java.io.IOException;
 
@@ -39,22 +41,35 @@ public final class StencilTest {
 
 		Model3D mask = null;
 		Model3D charizard = null;
+		Model3D teapot = null;
+		Model3D box = null;
 		try {
 			Texture albedo = TextureManager.newTexture("res\\textures\\brick.png", PixelComponents.RGB, PixelFormat.SRGB8);
 			albedo.generateAnisotropicMipMaps(100);
-			Model3D model1 = new Model3D("res/models/plane.obj", new LambartMaterial(albedo));
-			scene.add(model1);
+			Model3D floor = new Model3D("res/models/plane.obj", new LambartMaterial(albedo));
+			scene.add(floor);
 
-			mask = new Model3D("res/models/plane.obj", new SingleColorMaterial());
-			Quaternion rotation = new Quaternion();
-			rotation.rotate(-90,0,0);
-			mask.setRotation(rotation);
-			mask.setPosition(0,10,8);
-			mask.setScale(1/20f, 1/20f, 1/20f);
+			SingleColorMaterial whitematerial = new SingleColorMaterial();
+			whitematerial.setColor(1,1,1);
+			Model3D frame = new Model3D("res/models/masking/frame.obj", whitematerial);
+			frame.setScale(3,3,3);
+			scene.add(frame);
+
+			albedo = TextureManager.newTexture("res\\textures\\180.jpg", PixelComponents.RGB, PixelFormat.SRGB8);
+			LambartMaterial lambartmaterial = new LambartMaterial(albedo);
+			box = new Model3D("res/models/masking/box.obj", lambartmaterial);
+			box.setScale(3,3,3);
+			box.setPosition(0,0.1f,0);
+
+			mask = new Model3D("res/models/masking/face.obj", whitematerial);
+			mask.setScale(3,3,3);
 
 			albedo = TextureManager.newTexture("res/textures/charizard.png", PixelComponents.RGB, PixelFormat.SRGB8);
 			albedo.setFilteringMode(TextureFilter.Linear);
 			charizard = new Model3D("res/models/charizard.obj", new LambartMaterial(albedo));
+
+			teapot = new Model3D("res/models/teapot.obj", whitematerial);
+			teapot.setScale(10,10,10);
 		} catch (IOException | ShaderCompilationException e) {
 			System.err.println("Couldn't load Model!");
 			System.err.println(e.getMessage());
@@ -63,14 +78,16 @@ public final class StencilTest {
 
 		Renderer.checkErrors();
 
-		DebugCamera camera = new DebugCamera();
-		camera.setzfar(100);
-		camera.setPosition(-1,7,19);
+		PerspectiveCamera camera = new PerspectiveCamera();
 		scene.currentCamera = camera;
 
 		System.gc();
 
 		Renderer.enableStencilTesting(true);
+		Quaternion initialrotation = new Quaternion();
+		Quaternion around = new Quaternion();
+		Vector3f centre = new Vector3f(0,6,0);
+		around.rotate(0,180,0);
 
 		boolean isrunning = true;
 		double sincos = (float)Math.PI, step = (float)Math.PI/300f;
@@ -80,23 +97,41 @@ public final class StencilTest {
 			float timescaler = Renderer.getTimeScaler();
 			camera.update(delta, timescaler);
 
-			//sincos += step * timescaler;
+			sincos += step * timescaler;
+			camera.setPosition((float)Math.cos(sincos) * 20, 10, (float)Math.sin(sincos) * 20);
+			camera.lookAt(centre);
 			light1.setPosition((float)Math.sin(sincos)*20, 0, (float)Math.cos(sincos)*20);
+
 
 			Renderer.setRenderer(renderer);
 			Renderer.setStencilBufferState(Condition.Always, 88, 0xFF);
 			Renderer.render();
 			Renderer.popStencilBufferState();
-			Renderer.setStencilBufferState(Condition.Always, 1, 0xFF);
+
 			Renderer.enableDepthBufferWriting(false);
 			Renderer.enableColorBufferWriting(false, false, false, false);
+			Renderer.setStencilBufferState(Condition.Always, 1, 0xFF);
+			mask.setRotation(initialrotation);
 			mask.render();
+			Renderer.popStencilBufferState();
+			mask.setRotation(around);
+			Renderer.setStencilBufferState(Condition.Always, 2, 0xFF);
+			mask.render();
+			Renderer.popStencilBufferState();
 			Renderer.popColorBufferWritingState();
 			Renderer.popDepthBufferWritingState();
-			Renderer.popStencilBufferState();
+
 			Renderer.setStencilBufferState(Condition.Equals, 1, 0xFF);
 			charizard.render();
+			box.setRotation(initialrotation);
+			box.render();
 			Renderer.popStencilBufferState();
+			Renderer.setStencilBufferState(Condition.Equals, 2, 0xFF);
+			teapot.render();
+			box.setRotation(around);
+			box.render();
+			Renderer.popStencilBufferState();
+
 			Renderer.swapBuffers();
 
 			Viewport.setTitle("Development Engine " + Viewport.getCurrentFrameRate() + "Hz");
