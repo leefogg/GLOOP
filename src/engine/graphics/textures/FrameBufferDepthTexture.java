@@ -13,7 +13,7 @@ public final class FrameBufferDepthTexture extends Texture {
 				null,
 				TextureTarget.Bitmap,
 				PixelComponents.DEPTHCOMPONENT,
-				PixelFormat.DEPTH8,
+				PixelFormat.DEPTH24,
 				TextureType.Bitmap,
 				DataType.Float,
 				width,
