@@ -11,6 +11,7 @@ import static org.lwjgl.opengl.GL41.GL_RGB565;
 // From ftp://ftp.sgi.com/opengl/contrib/blythe/advanced99/notes/node51.html
 
 // TODO: Add all from https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glTexImage2D.xhtml internal formats
+// TODO: Add all from https://www.khronos.org/opengl/wiki/Image_Format
 // TODO: Rename to InternalFormat?
 public enum PixelFormat {
 	R8          (GL_R8,                 8,  0,  0,  0),
