@@ -30,7 +30,7 @@ public class ForwardRenderer extends Renderer {
 	@Override
 	protected void renderScene() {
 		for (Model model : scene.getModels()) {
-			if (model.getMaterial().useDeferredPipeline())
+			if (model.getMaterial().usesDeferredPipeline())
 				continue;
 			//TODO: Add PBR material filter when added
 

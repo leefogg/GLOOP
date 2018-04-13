@@ -10,10 +10,8 @@ import engine.graphics.shading.posteffects.PostProcessor;
 import engine.graphics.textures.*;
 import engine.graphics.rendering.UI.GUIRenderer;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Vector4f;
-import sun.java2d.pipe.RenderBuffer;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -145,7 +143,7 @@ public class DeferredRenderer extends Renderer {
 		clear(true, true, false);
 
 		for (Model model : scene.getModels()) {
-			if (!model.getMaterial().useDeferredPipeline())
+			if (!model.getMaterial().usesDeferredPipeline())
 				continue;
 
 			model.render();

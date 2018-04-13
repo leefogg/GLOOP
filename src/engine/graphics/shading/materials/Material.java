@@ -19,7 +19,7 @@ public abstract class Material<T extends ShaderProgram> {
 
 	public boolean isTransparent() { return getShader().supportsTransparency() && hasTransparency(); }
 
-	public boolean useDeferredPipeline() { return false; } // TODO: Maybe use a private boolean?
+	public boolean usesDeferredPipeline() { return false; } // TODO: Maybe use a private boolean?
 
 	protected abstract boolean hasTransparency();
 }

@@ -84,7 +84,7 @@ public class DecalMaterial extends Material<DecalShader> {
 
 
 	@Override
-	public boolean useDeferredPipeline() { return true; }
+	public boolean usesDeferredPipeline() { return true; }
 
 	@Override
 	protected boolean hasTransparency() {
