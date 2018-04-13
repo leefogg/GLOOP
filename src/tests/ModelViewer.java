@@ -8,10 +8,8 @@ import engine.graphics.rendering.DeferredRenderer;
 import engine.graphics.shading.ShaderCompilationException;
 import engine.graphics.shading.lighting.PointLight;
 import engine.graphics.rendering.DeferredMaterial;
-import engine.graphics.shading.materials.DecalMaterial;
 import engine.graphics.shading.materials.SingleColorMaterial;
 import engine.graphics.textures.*;
-import engine.math.Quaternion;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -44,10 +42,10 @@ public class ModelViewer {
 		forwardrenderer.setScene(scene);
 
 		PointLight light1 = new PointLight();
-		light1.quadraticAttenuation = 0.12f;
+		light1.quadraticAttenuation = 0.03f;
 		scene.add(light1);
 
-		scene.getAmbientlight().setColor(0.02f, 0.02f, .02f);
+		scene.getAmbientlight().setColor(0.04f, 0.04f, .04f);
 
 		Model3D lightmodel = null;
 		try {
@@ -67,11 +65,11 @@ public class ModelViewer {
 			Texture albedo = TextureManager.newTexture("res\\models\\SOMA\\ark\\albedo.bmp", PixelComponents.RGB, PixelFormat.SRGB8);
 			material.setAlbedoTexture(albedo);
 			Texture normals = TextureManager.newTexture("res\\models\\SOMA\\ark\\normals.bmp", PixelComponents.RGB, PixelFormat.RGB8);
-			material.setNormalTexture(normals);
+			material.setNormalMap(normals);
 			Texture specular = TextureManager.newTexture("res\\models\\SOMA\\ark\\specular.png", PixelComponents.R, PixelFormat.RED);
-			material.setSpecularTexture(specular);
+			material.setSpecularMap(specular);
 			material.setRoughness(0.2f);
-			material.setEnvironmentTexture(cubemap);
+			material.setEnvironmentMap(cubemap);
 			material.setReflectivity(0.1f);
 			Model3D model = new Model3D("res\\models\\SOMA\\ark\\model.obj", material);
 			model.setScale(20,20,20);

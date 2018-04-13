@@ -6,7 +6,6 @@ import engine.graphics.models.Model3D;
 import engine.graphics.rendering.*;
 import engine.graphics.shading.ShaderCompilationException;
 import engine.graphics.shading.lighting.PointLight;
-import engine.graphics.shading.materials.DecalMaterial;
 import engine.graphics.textures.*;
 import engine.math.Quaternion;
 import org.lwjgl.LWJGLException;
@@ -52,7 +51,7 @@ public class DecalTest {
 
 			DeferredMaterial bunnymaerial = deferredrenderer.getNewMaterial();
 			Model3D bunny = new Model3D("res/models/bunny.obj", bunnymaerial);
-			bunnymaerial.setDiffuseColor(1,1,1,1);
+			bunnymaerial.setAlbedoColor(1,1,1,1);
 			bunny.setPosition(-6.794f, 0f, -8.714f);
 			bunny.setScale(5,5,5);
 			scene.add(bunny);

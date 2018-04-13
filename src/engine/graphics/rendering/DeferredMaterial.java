@@ -40,29 +40,29 @@ public final class DeferredMaterial extends Material<DeferredGBuffersShader> {
 
 	public void setAlbedoTexture(Texture texture) {
 		this.albedoMap = texture;
-		setDiffuseColor(1, 1, 1, 1);
+		setAlbedoColor(1, 1, 1, 1);
 	}
-	public Texture getAlbedoTexture() {
+	public Texture getAlbedoMap() {
 		return albedoMap;
 	}
-	public void setNormalTexture(Texture texture) {
+	public void setNormalMap(Texture texture) {
 		this.normalMap = texture;
 	}
-	public Texture getNormalTexture() {
+	public Texture getNormalMap() {
 		return normalMap;
 	}
-	public void setSpecularTexture(Texture texture) {
+	public void setSpecularMap(Texture texture) {
 		this.specularMap = texture;
 	}
-	public Texture getSpecularTexture() {
+	public Texture getSpecularMap() {
 		return specularMap;
 	}
 	public void setDepthMap(Texture texture) {
 		this.depthMap = texture;
 	}
 	public Texture getDepthMap() { return depthMap; }
-	public void setEnvironmentTexture(CubeMap texture) { this.reflectionMap = texture; }
-	public CubeMap getEnvironmentTexture() {
+	public void setEnvironmentMap(CubeMap texture) { this.reflectionMap = texture; }
+	public CubeMap getEnvironmentMap() {
 		return reflectionMap;
 	}
 
@@ -70,8 +70,8 @@ public final class DeferredMaterial extends Material<DeferredGBuffersShader> {
 
 	public void setRoughness(float roughness) { this.roughness = Math.min(Math.max(roughness,0),1);}
 
-	public final void setDiffuseColor(Vector4f diffusecolor) { setDiffuseColor(diffusecolor.x, diffusecolor.y, diffusecolor.z, diffusecolor.w); }
-	public final void setDiffuseColor(float r, float g, float b, float a) {
+	public final void setAlbedoColor(Vector4f diffusecolor) { setAlbedoColor(diffusecolor.x, diffusecolor.y, diffusecolor.z, diffusecolor.w); }
+	public final void setAlbedoColor(float r, float g, float b, float a) {
 		diffuseColor.set(r, g, b, a);
 	}
 

@@ -63,19 +63,19 @@ public final class ReflectionRefraction {
 
 
 			DeferredMaterial material = deferredrenderer.getNewMaterial();
-			material.setDiffuseColor(0,0,0,1);
-			material.setEnvironmentTexture(cubemaptexture);
+			material.setAlbedoColor(0,0,0,1);
+			material.setEnvironmentMap(cubemaptexture);
 			material.setRefractivity(0);
 			material.setReflectivity(1);
-			material.setDiffuseColor(0,0,0,1);
+			material.setAlbedoColor(0,0,0,1);
 			model1 = new Model3D("res\\models\\teapot.obj", material);
 			model1.setScale(5,5,5);
 			model1.setPosition(-4f, 0, -5f);
 
 			refractiveballmaterial = deferredrenderer.getNewMaterial();
-			refractiveballmaterial.setDiffuseColor(0,0,0,1);
+			refractiveballmaterial.setAlbedoColor(0,0,0,1);
 			refractiveballmaterial.setRefractivity(1);
-			refractiveballmaterial.setEnvironmentTexture(cubemaptexture);
+			refractiveballmaterial.setEnvironmentMap(cubemaptexture);
 			refractiveballmaterial.setReflectivity(1f);
 			Model3D sphere = new Model3D("res\\models\\sphere.obj", refractiveballmaterial);
 			sphere.setPosition(0, 1, 5);
@@ -87,13 +87,13 @@ public final class ReflectionRefraction {
 
 
 			material = deferredrenderer.getNewMaterial();
-			material.setDiffuseColor(0,0,0,1);
+			material.setAlbedoColor(0,0,0,1);
 			Texture albedomap = TextureManager.newTexture("res\\textures\\Metal_Weave_002_SD\\Metal_Weave_002_COLOR.jpg", PixelComponents.RGB, PixelFormat.SRGB8);
 			Texture normalmap = TextureManager.newTexture("res\\textures\\Metal_Weave_002_SD\\Metal_Weave_002_NORM.jpg", PixelComponents.RGB, PixelFormat.RGB8);
 			material.setAlbedoTexture(albedomap);
-			material.setNormalTexture(normalmap);
+			material.setNormalMap(normalmap);
 			material.setTextureRepeat(10,10);
-			material.setEnvironmentTexture(cubemaptexture);
+			material.setEnvironmentMap(cubemaptexture);
 			material.setReflectivity(0.4f);
 			material.setRefractivity(0);
 			floor = new Model3D("res\\models\\plane.obj", material);
@@ -103,10 +103,10 @@ public final class ReflectionRefraction {
 			for (int y=0; y<10; y++) {
 				for (int x=0; x<10; x++) {
 					material = deferredrenderer.getNewMaterial();
-					material.setDiffuseColor(0,0,0,1);
+					material.setAlbedoColor(0,0,0,1);
 					material.setReflectivity((float)y/10f);
 					material.setRefractivity((float)x/10f);
-					material.setEnvironmentTexture(cubemaptexture);
+					material.setEnvironmentMap(cubemaptexture);
 					material.setRefractionIndex(1.5f);
 					sphere = new Model3D("res\\models\\sphere.obj", material);
 					sphere.setPosition(-7, y+1f, x-5);
@@ -115,13 +115,13 @@ public final class ReflectionRefraction {
 			}
 
 			material = deferredrenderer.getNewMaterial();
-			material.setDiffuseColor(0,0,0,1);
+			material.setAlbedoColor(0,0,0,1);
 			material.setReflectivity(1f);
 			normalmap = TextureManager.newTexture("res\\textures\\Worn Temple Wall.jpg", PixelComponents.RGB, PixelFormat.RGB8);
 			normalmap.setWrapMode(TextureWrapMode.Repeat);
-			material.setNormalTexture(normalmap);
+			material.setNormalMap(normalmap);
 			material.setNormalMapScale(1f);
-			material.setEnvironmentTexture(cubemaptexture);
+			material.setEnvironmentMap(cubemaptexture);
 			sphere = new Model3D("res\\models\\sphere.obj", material);
 			sphere.setPosition(-5, 2, 0);
 			sphere.setScale(4,4,4);

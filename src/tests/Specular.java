@@ -1,6 +1,5 @@
 package tests;
 
-import engine.graphics.data.ImageConversion;
 import engine.graphics.rendering.*;
 import engine.graphics.cameras.DebugCamera;
 import engine.graphics.models.Model3D;
@@ -15,11 +14,7 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.util.vector.Vector3f;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 
 public final class Specular {
@@ -66,7 +61,7 @@ public final class Specular {
 					float roughness = z / 10f;
 					float specular = x / 10f;
 					DeferredMaterial material = deferredrenderer.getNewMaterial();
-					material.setDiffuseColor(1, 1, 1, 1f);
+					material.setAlbedoColor(1, 1, 1, 1f);
 					material.setSpecularity(specular);
 					material.setRoughness(roughness);
 					Model3D model = new Model3D("res\\models\\sphere.obj", material);

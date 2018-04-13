@@ -1,13 +1,11 @@
 package tests;
 
-import engine.graphics.Settings;
 import engine.graphics.cameras.DebugCamera;
 import engine.graphics.models.Model3D;
 import engine.graphics.rendering.*;
 import engine.graphics.rendering.DeferredMaterial;
 import engine.graphics.rendering.DeferredRenderer;
 import engine.graphics.shading.lighting.PointLight;
-import engine.graphics.shading.materials.SingleColorMaterial;
 import engine.graphics.textures.PixelComponents;
 import engine.graphics.textures.PixelFormat;
 import engine.graphics.textures.Texture;
@@ -87,13 +85,13 @@ public final class Lighting {
 		Model3D	ballmodel = null;
 		try {
 			DeferredMaterial floormaterial = deferredrenderer.getNewMaterial();
-			floormaterial.setDiffuseColor(1,1,1,1);
+			floormaterial.setAlbedoColor(1,1,1,1);
 			Texture albedomap = TextureManager.newTexture("res\\textures\\plane-d.png", PixelComponents.RGB, PixelFormat.SRGB8);
 			floormaterial.setAlbedoTexture(albedomap);
 			Texture normalmap = TextureManager.newTexture("res\\textures\\plane-n.png", PixelComponents.RGB, PixelFormat.RGB8);
-			floormaterial.setNormalTexture(normalmap);
+			floormaterial.setNormalMap(normalmap);
 			Texture specularmap = TextureManager.newTexture("res\\textures\\plane-s.png", PixelComponents.RGBA, PixelFormat.RED);
-			floormaterial.setSpecularTexture(specularmap);
+			floormaterial.setSpecularMap(specularmap);
 			floormaterial.setTextureRepeat(2,2);
 			floormaterial.setSpecularity(1);
 			floormaterial.setRoughness(0.5f);
@@ -103,14 +101,14 @@ public final class Lighting {
 			scene.add(outerbox);
 
 			DeferredMaterial material = deferredrenderer.getNewMaterial();
-			material.setDiffuseColor(1,1,1,1);
+			material.setAlbedoColor(1,1,1,1);
 			Model3D box = new Model3D("res\\models\\bunny.obj", material);
 			box.setPosition(0, 25, 0);
 			box.setScale(10,10,10);
 			scene.add(box);
 
 			material = deferredrenderer.getNewMaterial();
-			material.setDiffuseColor(1,1,1, 1);
+			material.setAlbedoColor(1,1,1, 1);
 			ballmodel = new Model3D("res\\models\\sphere.obj", material);
 
 			for (int i=0; i<balls.length; i++)
