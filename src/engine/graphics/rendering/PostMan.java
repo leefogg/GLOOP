@@ -1,6 +1,7 @@
 package engine.graphics.rendering;
 
 import engine.graphics.shading.posteffects.PostEffect;
+import engine.graphics.shading.posteffects.PostProcess;
 import engine.graphics.shading.posteffects.PostProcessor;
 import engine.graphics.textures.FrameBuffer;
 import engine.graphics.textures.PixelFormat;
@@ -36,9 +37,8 @@ abstract class PostMan {
 	public static final void render(PostEffect effect) {
 		render(getCurrentTexture(), effect);
 	}
-	private static final void render(Texture image, PostEffect effect) {
-		getCurrentBuffer().bind();
-		PostProcessor.render(image, effect);
+	private static final void render(Texture image, PostProcess effect) {
+		effect.render(getCurrentBuffer(), image);
 		swapBuffers();
 	}
 	private static final void render(Texture image) {
