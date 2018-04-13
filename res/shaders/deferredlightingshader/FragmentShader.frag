@@ -136,28 +136,26 @@ void main(void) {
 	norm = TBNMatrix * norm; // To world space
 	norm = normalize(norm);
 	
+	// Calculate Fresnel effect
+	float fresnalbias = 0;
+	#if defined FRESNEL
+	fresnalbias = FresnelBias + FresnelScale * pow(dot(normalize(fragLocalPos), -norm), FresnelScale);
+	#endif
 	
+	vec3 reflectioncolor;
+	vec3 refractioncolor;
 	#if defined ENVIRONMENTMAP
 	if (HasEnvironmentMap) {
-		bool isreflective = reflectivity > 1.0/256.0;
-		bool isrefractive = refractivity > 1.0/256.0;
-		vec3 reflectioncolor = vec3(0.0);
-		vec3 refractioncolor = vec3(0.0);
 		#if defined REFLECTIVITY
+		bool isreflective = reflectivity > 1.0/256.0;
 		if (isreflective) {
 			vec3 reflectdirection = reflect(fragLocalPos, norm);
 			reflectioncolor = texture(environmentMap, reflectdirection).rgb;
-			
-			// Calculate Fresnel effect
-			float fresnalbias = 1;
-			#if defined FRESNEL
-			fresnalbias = FresnelBias+FresnelScale*pow(dot(normalize(fragLocalPos), -norm), FresnelPower);
-			#endif
-			albedobuffer.rgb = mix(albedobuffer.rgb, reflectioncolor, fresnalbias * reflectivity);
 		}
 		#endif
-		
+
 		#if defined REFRACTIVITY
+		bool isrefractive = refractivity > 1.0/256.0;		
 		if (isrefractive) {
 			vec3 raydir = normalize(fraglocalpos);
 			vec3 normal = norm;
@@ -176,11 +174,24 @@ void main(void) {
 			refractioncolor = texture(environmentMap, refractiondir).rgb;
 			#endif
 			
-			albedobuffer.rgb = mix(albedobuffer.rgb, refractioncolor, refractivity);
 		}
 		#endif
 	}
 	#endif
+	
+	
+	#if defined FRESNEL
+	// Triangular mix :D
+	vec3 reflectionrefractioncolor = 
+		mix(
+			mix(refractioncolor, reflectioncolor, reflectivity),
+			mix(reflectioncolor, refractioncolor, refractivity),
+			max(0.0,fresnalbias)
+		);
+	#else
+	vec3 reflectionrefractioncolor = reflectioncolor * reflectivity + refractioncolor * refractivity;
+	#endif
+	albedobuffer.rgb = mix(albedobuffer.rgb, reflectionrefractioncolor, min(1.0, reflectivity + refractivity));
 	
 	
 	float specularity, roughness;

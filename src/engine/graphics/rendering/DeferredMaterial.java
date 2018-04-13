@@ -29,8 +29,8 @@ public final class DeferredMaterial extends Material<DeferredGBuffersShader> {
 		specularity = 0,
 		roughness = 0,
 		fresnelBias = 0,
-		fresnelScale = 0.5f,
-		fresnelExponent = 2f;
+		fresnelScale = 1f,
+		fresnelExponent = 10f;
 	public static final float MaxSpecularExponent = 256f;
 
 	@Override

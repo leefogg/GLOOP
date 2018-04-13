@@ -21,6 +21,7 @@ public final class ReflectionRefraction {
 	public static void main(String[] args) {
 		try {
 			Settings.EnableChromaticAberration = true;
+			Settings.EnableFresnel = true;
 			Viewport.create(1280, 720, "Reflection and Refraction");
 			Viewport.show();
 		} catch (LWJGLException e) {
@@ -75,6 +76,7 @@ public final class ReflectionRefraction {
 			refractiveballmaterial.setDiffuseColor(0,0,0,1);
 			refractiveballmaterial.setRefractivity(1);
 			refractiveballmaterial.setEnvironmentTexture(cubemaptexture);
+			refractiveballmaterial.setReflectivity(1f);
 			Model3D sphere = new Model3D("res\\models\\sphere.obj", refractiveballmaterial);
 			sphere.setPosition(0, 1, 5);
 			scene.add(sphere);
@@ -86,12 +88,14 @@ public final class ReflectionRefraction {
 
 			material = deferredrenderer.getNewMaterial();
 			material.setDiffuseColor(0,0,0,1);
-			Texture normalmap = TextureManager.newTexture("res\\textures\\4918-normal.jpg", PixelComponents.RGB, PixelFormat.RGB8);
-			normalmap.setWrapMode(TextureWrapMode.Repeat);
-			material.setTextureRepeat(4,4);
+			Texture albedomap = TextureManager.newTexture("res\\textures\\Metal_Weave_002_SD\\Metal_Weave_002_COLOR.jpg", PixelComponents.RGB, PixelFormat.SRGB8);
+			Texture normalmap = TextureManager.newTexture("res\\textures\\Metal_Weave_002_SD\\Metal_Weave_002_NORM.jpg", PixelComponents.RGB, PixelFormat.RGB8);
+			material.setAlbedoTexture(albedomap);
 			material.setNormalTexture(normalmap);
+			material.setTextureRepeat(10,10);
 			material.setEnvironmentTexture(cubemaptexture);
-			material.setReflectivity(1f);
+			material.setReflectivity(0.4f);
+			material.setRefractivity(0);
 			floor = new Model3D("res\\models\\plane.obj", material);
 			floor.setPosition(0, 0, 0);
 
