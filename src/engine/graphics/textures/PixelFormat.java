@@ -6,17 +6,15 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL14.*;
 import static org.lwjgl.opengl.GL21.*;
 import static org.lwjgl.opengl.GL30.*;
-
-//TODO: Import all from GL30
+import static org.lwjgl.opengl.GL41.GL_RGB565;
 
 // From ftp://ftp.sgi.com/opengl/contrib/blythe/advanced99/notes/node51.html
 
-// TODO: ALL WRONG https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glTexImage2D.xhtml internal formats
+// TODO: Add all from https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glTexImage2D.xhtml internal formats
 // TODO: Rename to InternalFormat?
 public enum PixelFormat {
-	RED         (GL_RED,                8,  0,  0,  0),
-	GREEN       (GL_GREEN,              0,  8,  0,  0),
-	BLUE        (GL_BLUE,               0,  0,  8,  0),
+	R8          (GL_R8,                 8,  0,  0,  0),
+	RG8         (GL_RG8,                8,  8,  0,  0),
 	RGB4        (GL_RGB4,               4,  4,  4,  0),
 	RGB5        (GL_RGB5,               5,  5,  5,  0),
 	RGB5A1      (GL_RGB5_A1,            5,  5,  5,  1),
@@ -30,6 +28,9 @@ public enum PixelFormat {
 	RGBA2       (GL_RGBA2,              2,  2,  2,  2),
 	RGBA4       (GL_RGBA4,              4,  4,  4,  4),
 	RGBA8       (GL_RGBA8,              8,  8,  8,  8),
+	RGB9E5      (GL_RGB9_E5,            9,  9,  9,  0), // Not drawable in framebuffers
+	RG5B6       (GL_RGB565,             5,  5,  6,  0),
+	R11G11B10F  (GL_R11F_G11F_B10F,     11,11, 10,  0),
 	SRGBA8      (GL_SRGB8_ALPHA8,       8,  8,  8,  8),
 	RGBA12      (GL_RGBA12,             12, 12, 12, 12),
 	RGBA16      (GL_RGBA16,             16, 16, 16, 16),
@@ -38,7 +39,6 @@ public enum PixelFormat {
 	RGBA16F     (GL_RGB16F,             16, 16, 16, 16),
 	RGB32F      (GL_RGB32F,             32, 32, 32, 0),
 	R3G3B2      (GL_R3_G3_B2,           3,  3,  2,  0),
-	DEPTH8      (GL_DEPTH_COMPONENT,    0,  0,  0,  8), // TODO: Looks dodgy
 	DEPTH16     (GL_DEPTH_COMPONENT16,  0,  0,  0,  16),
 	DEPTH24     (GL_DEPTH_COMPONENT24,  0,  0,  0,  24),
 	DEPTH32     (GL_DEPTH_COMPONENT32,  0,  0,  0,  32),

@@ -90,7 +90,7 @@ public final class Lighting {
 			floormaterial.setAlbedoTexture(albedomap);
 			Texture normalmap = TextureManager.newTexture("res\\textures\\plane-n.png", PixelComponents.RGB, PixelFormat.RGB8);
 			floormaterial.setNormalMap(normalmap);
-			Texture specularmap = TextureManager.newTexture("res\\textures\\plane-s.png", PixelComponents.RGBA, PixelFormat.RED);
+			Texture specularmap = TextureManager.newTexture("res\\textures\\plane-s.png", PixelComponents.RGBA, PixelFormat.R8);
 			floormaterial.setSpecularMap(specularmap);
 			floormaterial.setTextureRepeat(2,2);
 			floormaterial.setSpecularity(1);

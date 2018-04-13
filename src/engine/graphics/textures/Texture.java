@@ -6,7 +6,6 @@ import engine.graphics.models.DataType;
 import engine.graphics.rendering.Renderer;
 import org.lwjgl.opengl.*;
 
-import static com.sun.org.apache.xalan.internal.xsltc.compiler.sym.error;
 import static org.lwjgl.opengl.GL30.*;
 
 import org.lwjgl.util.vector.Vector3f;
@@ -267,7 +266,7 @@ public class Texture extends Buffer {
 	}
 
 	protected static final ByteBuffer getPixelData(BufferedImage image, PixelComponents pixelcomponents) {
-		int numberofcomponents = pixelcomponents.getNumberOfBytes();
+		int numberofcomponents = pixelcomponents.getNumberOfComponents();
 		byte[] data = new byte[image.getWidth() * image.getHeight() * numberofcomponents];
 		int component = 0;
 		for (int y=0; y<image.getHeight(); y++) {

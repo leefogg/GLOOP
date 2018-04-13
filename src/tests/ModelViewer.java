@@ -66,7 +66,7 @@ public class ModelViewer {
 			material.setAlbedoTexture(albedo);
 			Texture normals = TextureManager.newTexture("res\\models\\SOMA\\ark\\normals.bmp", PixelComponents.RGB, PixelFormat.RGB8);
 			material.setNormalMap(normals);
-			Texture specular = TextureManager.newTexture("res\\models\\SOMA\\ark\\specular.png", PixelComponents.R, PixelFormat.RED);
+			Texture specular = TextureManager.newTexture("res\\models\\SOMA\\ark\\specular.png", PixelComponents.R, PixelFormat.R8);
 			material.setSpecularMap(specular);
 			material.setRoughness(0.2f);
 			material.setEnvironmentMap(cubemap);
