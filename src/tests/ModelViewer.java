@@ -9,6 +9,7 @@ import engine.graphics.shading.ShaderCompilationException;
 import engine.graphics.shading.lighting.PointLight;
 import engine.graphics.rendering.DeferredMaterial;
 import engine.graphics.shading.materials.SingleColorMaterial;
+import engine.graphics.shading.posteffects.BloomPostEffect;
 import engine.graphics.textures.*;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
@@ -81,6 +82,15 @@ public class ModelViewer {
 		} catch (IOException | ShaderCompilationException e) {
 			System.err.println("Couldn't load Model!");
 			e.printStackTrace(System.err);
+			exitCleanly(1);
+		}
+
+
+		try {
+			Renderer.addPostEffect(new BloomPostEffect());
+			Renderer.enablePostEffects();
+		} catch (IOException e) {
+			e.printStackTrace();
 			exitCleanly(1);
 		}
 

@@ -1,31 +1,21 @@
 #version 150
 
-out vec3 out_colour;
+uniform sampler2D Texture;
+uniform float weight[5] = float[] (0.227027, 0.1945946, 0.1216216, 0.054054, 0.016216);
 
 in vec2 blurTextureCoords[11];
 in vec2 texCoord;
-uniform int screenWidth;
 
-uniform sampler2D Texture;
-
+out vec3 PixelColor;
 
 void main(void) {
-	float weights[11];
-	weights[0] = 0.000003;
-	weights[1] = 0.000229;
-	weights[2] = 0.005977;
-	weights[3] = 0.060598;
-	weights[4] = 0.24173;
-	weights[5] = 0.382925;
-	weights[6] = 0.24173;
-	weights[7] = 0.060598;
-	weights[8] = 0.005977;
-	weights[9] = 0.000229;
-	weights[10] = 0.000003;
+	PixelColor = vec3(0.0);
 	
-	float pixelsize = 1.0 / screenWidth;
-	out_colour = vec3(0.0);
-	for (int i=-5; i<=5; i++) {
-		out_colour += texture(Texture, texCoord + vec2(pixelsize * i, 0)).rgb * weights[i+5];
+	float pixelsize = 1.0 / textureSize(Texture, 0).x;
+	for(int i = 1; i < 5; ++i) {
+		PixelColor += texture(Texture, texCoord + vec2(pixelsize * i, 0.0)).rgb * weight[i];
+		PixelColor += texture(Texture, texCoord - vec2(pixelsize * i, 0.0)).rgb * weight[i];
 	}
+	
+	PixelColor *= 2.0;
 }

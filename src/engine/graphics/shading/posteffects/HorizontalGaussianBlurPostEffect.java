@@ -10,7 +10,7 @@ import java.io.IOException;
 public final class HorizontalGaussianBlurPostEffect extends PostEffect<HorizontalGaussianBlurShader> {
 	private static HorizontalGaussianBlurShader shader;
 
-	public HorizontalGaussianBlurPostEffect(HorizontalGaussianBlurShader shader) throws IOException {
+	public HorizontalGaussianBlurPostEffect() throws IOException {
 		this.shader = getShaderSingleton();
 	}
 
@@ -29,7 +29,7 @@ public final class HorizontalGaussianBlurPostEffect extends PostEffect<Horizonta
 	@Override
 	public void commit() {
 		shader.setTexture(TextureUnit.AlbedoMap); // TODO: Test if this is required
-		shader.setScreenWidth(Viewport.getWidth()/4);
+		shader.setScreenWidth(Viewport.getWidth());
 	}
 
 	@Override

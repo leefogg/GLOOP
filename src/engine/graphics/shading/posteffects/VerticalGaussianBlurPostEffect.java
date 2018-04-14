@@ -8,21 +8,26 @@ import engine.graphics.textures.TextureUnit;
 import java.io.IOException;
 
 public final class VerticalGaussianBlurPostEffect extends PostEffect<VerticalGaussianBlurShader> {
-	private final VerticalGaussianBlurShader shader;
+	private static VerticalGaussianBlurShader shader;
 
 	public VerticalGaussianBlurPostEffect() throws IOException {
-		this.shader = new VerticalGaussianBlurShader();
+		this.shader = getShaderSingleton();
 	}
 
-	@Override
-	public VerticalGaussianBlurShader getShader() {
+	public static final VerticalGaussianBlurShader getShaderSingleton() throws IOException {
+		if (shader == null)
+			shader = new VerticalGaussianBlurShader();
+
 		return shader;
 	}
 
 	@Override
+	public VerticalGaussianBlurShader getShader() {	return shader; }
+
+	@Override
 	public void commit() {
 		shader.setTexture(TextureUnit.AlbedoMap); // TODO: Test if this is required
-		shader.setScreenHeight(Viewport.getHeight()/4);
+		shader.setScreenHeight(Viewport.getHeight());
 	}
 
 	@Override
