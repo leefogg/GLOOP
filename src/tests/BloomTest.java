@@ -1,5 +1,6 @@
 package tests;
 
+import engine.graphics.Settings;
 import engine.graphics.cameras.DebugCamera;
 import engine.graphics.models.Model3D;
 import engine.graphics.rendering.ForwardRenderer;
@@ -55,7 +56,7 @@ public final class BloomTest {
 				SingleColorMaterial mat = new SingleColorMaterial();
 				Vector3f color = new Vector3f(r.nextFloat(), r.nextFloat(), r.nextFloat());
 				color.normalise();
-				mat.setColor(1,1,1);
+				mat.setColor(1.2f,1.2f,1.2f);
 
 				Model3D sphere = new Model3D("res\\models\\sphere.obj", mat);
 				sphere.setScale(2,2,2);

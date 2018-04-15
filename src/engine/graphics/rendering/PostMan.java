@@ -1,5 +1,6 @@
 package engine.graphics.rendering;
 
+import engine.graphics.Settings;
 import engine.graphics.shading.posteffects.PostEffect;
 import engine.graphics.shading.posteffects.PostProcess;
 import engine.graphics.shading.posteffects.PostProcessor;
@@ -15,10 +16,15 @@ abstract class PostMan {
 	public static final void init() {
 		if (isActive())
 			return;
-		
-		frontBuffer = new FrameBuffer(PixelFormat.RGB8);
+
+		loadGBuffers();
+	}
+
+	private static void loadGBuffers() {
+		PixelFormat pixelrangeformat = Settings.EnableHDR ? PixelFormat.RGB16F : PixelFormat.RGB8;
+		frontBuffer = new FrameBuffer(pixelrangeformat);
 		frontTexture = frontBuffer.getColorTexture(0);
-		backBuffer = new FrameBuffer(PixelFormat.RGB8);
+		backBuffer = new FrameBuffer(pixelrangeformat);
 		backTexture = backBuffer.getColorTexture(0);
 	}
 

@@ -11,6 +11,7 @@ import engine.graphics.shading.lighting.PointLight;
 import engine.graphics.rendering.DeferredMaterial;
 import engine.graphics.shading.materials.SingleColorMaterial;
 import engine.graphics.shading.posteffects.BloomPostEffect;
+import engine.graphics.shading.posteffects.ToneMappingPostEffect;
 import engine.graphics.textures.*;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
@@ -20,13 +21,14 @@ import org.lwjgl.util.vector.Vector3f;
 
 import java.io.IOException;
 
-public class ModelViewer {
+public class HDRTest {
 	public static void main(String[] args) {
 		try {
 			Viewport.create(1280, 720, "Engine Testing");
 //			Viewport.setVSyncEnabled(false);
 //			Viewport.limitFrameRate(false);
 			Viewport.show();
+			Settings.EnableHDR = true;
 		} catch (LWJGLException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -44,8 +46,14 @@ public class ModelViewer {
 		forwardrenderer.setScene(scene);
 
 		PointLight light1 = new PointLight();
-		light1.quadraticAttenuation = 0.03f;
+		light1.quadraticAttenuation = 0.00f;
 		scene.add(light1);
+		for (int i=0; i<64; i++) {
+			PointLight light = new PointLight();
+			light.setPosition(0,0,-25);
+			light.quadraticAttenuation = 0.01f;
+			scene.add(light);
+		}
 
 		scene.getAmbientlight().setColor(0.04f, 0.04f, .04f);
 
@@ -71,11 +79,21 @@ public class ModelViewer {
 			Texture specular = TextureManager.newTexture("res\\models\\SOMA\\ark\\specular.png", PixelComponents.R, PixelFormat.R8);
 			material.setSpecularMap(specular);
 			material.setRoughness(0.2f);
-			material.setEnvironmentMap(cubemap);
 			material.setReflectivity(0.1f);
+			material.setEnvironmentMap(cubemap);
+
 			Model3D model = new Model3D("res\\models\\SOMA\\ark\\model.obj", material);
-			model.setScale(20,20,20);
+			//model.setScale(20,20,20);
+			model.setPosition(10,10,10);
 			scene.add(model);
+
+			material = deferredrenderer.getNewMaterial();
+			albedo = TextureManager.newTexture("res\\textures\\wood.png", PixelComponents.RGB, PixelFormat.SRGB8);
+			material.setAlbedoTexture(albedo);
+			Model3D tunnel = new Model3D("res\\models\\masking\\box.obj", material);
+			tunnel.setScale(1, 1, 10);
+			tunnel.setPosition(0, -2.5f,0);
+			scene.add(tunnel);
 
 			SingleColorMaterial fullbright = new SingleColorMaterial();
 			lightmodel = new Model3D("res\\models\\sphere.obj", fullbright);
@@ -86,35 +104,43 @@ public class ModelViewer {
 			exitCleanly(1);
 		}
 
+		ToneMappingPostEffect tonemap = null;
+		try {
+			tonemap = new ToneMappingPostEffect();
+			Renderer.addPostEffect(tonemap);
+			Renderer.enablePostEffects();
+		} catch (IOException e) {
+			e.printStackTrace();
+			exitCleanly(1);
+		}
+
 		DebugCamera camera = new DebugCamera();
-		camera.setPosition(-1,7,19);
+		camera.setPosition(0,0,20);
 		scene.currentCamera = camera;
 
 		System.gc();
 
 		boolean isrunning = true;
-		double sincos = (float)Math.PI, step = (float)Math.PI/300f;
-		Vector3f lightposition = new Vector3f();
+		float exposure = 1f;
 		while(isrunning) {
 			Renderer.updateTimeDelta();
 			float delta = Renderer.getTimeDelta();
 			float timescaler = Renderer.getTimeScaler();
 			camera.update(delta, timescaler);
 
-			sincos += step * timescaler;
-			lightposition.set((float)Math.sin(sincos)*22,5, (float)Math.cos(sincos)*22);
-			light1.setPosition(lightposition);
-			lightmodel.setPosition(lightposition);
+			exposure += (float)Mouse.getDWheel() / 5000f;
+			tonemap.setExposure(exposure);
 
 			Renderer.setRenderer(deferredrenderer);
 			Renderer.render();
 			Renderer.setRenderer(forwardrenderer);
 			Renderer.render();
+
 			Renderer.swapBuffers();
-			//deferredrenderer.renderAttachments();
+			deferredrenderer.renderAttachments();
 
 			Viewport.update();
-			Viewport.setTitle("ModelViewer " + Viewport.getCurrentFrameRate() + "Hz");
+			Viewport.setTitle("HDR Testing " + Viewport.getCurrentFrameRate() + "Hz");
 
 			if (Display.isCloseRequested())
 				isrunning = false;

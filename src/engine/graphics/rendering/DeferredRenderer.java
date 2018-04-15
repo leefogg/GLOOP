@@ -44,14 +44,15 @@ public class DeferredRenderer extends Renderer {
 	private void load() throws IOException {
 		System.out.println("Starting up deferred rendering pipeline.");
 
-		setHDREnabled(false);
+		setHDREnabled();
 
+		PixelFormat precisionrange = HDREnabled ? PixelFormat.RGB16F : PixelFormat.RGB8;
 		PixelFormat[] buffers = new PixelFormat[]{
-				PixelFormat.RGB8, // Albedo TODO: Needs to be RGB16F for HDR
+				precisionrange,
 				PixelFormat.RGB8, // Specularity, roughness and stencil
 				PixelFormat.RGB8, // Normals in world space
 				PixelFormat.RGBA16F, // World-space XYZ and depth in W
-				PixelFormat.RGB8 // Lighting buffer
+				precisionrange // Lighting buffer
 		};
 		GBuffers = new FrameBuffer(Viewport.getWidth(), Viewport.getHeight(), buffers, true, true);
 
@@ -108,24 +109,20 @@ public class DeferredRenderer extends Renderer {
 		return GBuffersShader;
 	}
 
-	public void setHDREnabled(boolean enabled) {
+	public void setHDREnabled() {
 		// If different setting
 		if (targetFBO != null)
-			if (enabled == HDREnabled)
+			if (Settings.EnableHDR == HDREnabled)
 				return;
 
-		HDREnabled = enabled;
+		HDREnabled = Settings.EnableHDR;
+
 		// Delete
 		if (targetFBO != null)
 			targetFBO.dispose();
 
 		// Recreate
-		// TODO: Should really make albedo texture HDR too
-		if (HDREnabled) {
-			targetFBO = new FrameBuffer(Viewport.getWidth(), Viewport.getHeight(), PixelFormat.RGB16F);
-		} else {
-			targetFBO = new FrameBuffer(Viewport.getWidth(), Viewport.getHeight(), PixelFormat.RGB16);
-		}
+		targetFBO = new FrameBuffer(Viewport.getWidth(), Viewport.getHeight(), HDREnabled ? PixelFormat.RGB16F : PixelFormat.RGB16);
 
 		// Store
 		resolveTexture = targetFBO.getColorTexture(0);
@@ -177,7 +174,7 @@ public class DeferredRenderer extends Renderer {
 		PostProcessor.render(lightingPosteffect);
 
 		targetFBO.bind();
-		GBuffers.blitTo(targetFBO, true, true, false);
+		GBuffers.blitTo(targetFBO, true, true, false); //TODO: Check stencil is making its way from the GBuffer to forward renderer
 		Renderer.enableBlending(true); // Multiply not add
 		glBlendFunc(GL_DST_COLOR, GL_ZERO);
 		PostProcessor.render(lightTexture);
@@ -274,6 +271,7 @@ public class DeferredRenderer extends Renderer {
 	}
 
 	public void reload() throws IOException {
+		// TODO: reload GBuffers and update HDREnabled
 		glFlush();
 		glFinish();
 		GBuffersShader.dispose();
