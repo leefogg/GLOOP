@@ -32,7 +32,7 @@ public class FullBrightShader extends ShaderProgram {
 
 	@Override
 	protected void getCustomUniformLocations() {
-		texture = new Uniform1i(this, "TextureID");
+		texture = new Uniform1i(this, "Texture");
 	}
 
 	@Override

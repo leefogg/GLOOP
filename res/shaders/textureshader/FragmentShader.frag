@@ -4,8 +4,8 @@ in vec2 FaceTextureCoord;
 
 out vec4 out_Color;
 
-uniform sampler2D TextureID;
+uniform sampler2D Texture;
 
 void main(void) {
-	out_Color = texture(TextureID, FaceTextureCoord);
+	out_Color = texture(Texture, FaceTextureCoord);
 }
