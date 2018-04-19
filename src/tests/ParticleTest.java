@@ -52,10 +52,13 @@ public final class ParticleTest {
 			floor.setPosition(0,-2,0);
 			scene.add(floor);
 
-			albedo = TextureManager.newTexture("res\\textures\\kitten.png", PixelComponents.RGB, PixelFormat.SRGB8);
-			ps = new ParticleSystem(190, albedo);
+			albedo = TextureManager.newTexture("res\\textures\\sprites\\sonic_3_hd_bubble.png", PixelComponents.RGBA, PixelFormat.SRGBA8);
+			albedo.setFilteringMode(TextureFilter.Nearest);
+			ps = new ParticleSystem(200, albedo);
+			ps.setParticleLifeTime(100);
 			emitter = new OmniEmitter(ps, new Vector3f(0,10,0), new Vector3f(0,0,0));
 			emitter.setEmitVelocityError(new Vector3f(0.1f, 0.1f, 0.1f));
+			emitter.setEmmisionSpeed(1);
 		} catch (IOException | ShaderCompilationException e) {
 			System.err.println("Couldn't load Model!");
 			System.err.println(e.getMessage());
@@ -80,8 +83,8 @@ public final class ParticleTest {
 			//sincos += step * timescaler;
 			light1.setPosition((float)Math.sin(sincos)*20, 0, (float)Math.cos(sincos)*20);
 
-			emitter.update();
-			ps.update();
+			ps.update(delta, timescaler);
+			emitter.update(delta, timescaler);
 
 			Renderer.setRenderer(renderer);
 			Renderer.render();

@@ -35,7 +35,7 @@ public class ParticleSystem {
 	private Texture texture;
 	private int lastDead = 0;
 	private Particle[] particles;
-	private float LifeTime = 200;
+	private int LifeTime = 200;
 
 	public ParticleSystem(int numparticles, Texture texture) {
 		particles = new Particle[numparticles];
@@ -45,9 +45,9 @@ public class ParticleSystem {
 		this.texture = texture;
 	}
 
-	public void update() {
+	public void update(float delta, float timescaler) {
 		for (int i=0; i<particles.length; i++)
-			particles[i].update();
+			particles[i].update(delta, timescaler);
 	}
 
 	public void render() {
@@ -82,4 +82,6 @@ public class ParticleSystem {
 	private boolean particleIsDead(Particle particle) {
 		return particle.lifetime > LifeTime;
 	}
+
+	public void setParticleLifeTime(int frames) { LifeTime = frames; }
 }
