@@ -22,7 +22,7 @@ public abstract class ShaderProgram implements Disposable {
 	private final VertexShader vertexShader;
 	private final FragmentShader fragmentShader;
 
-	private Matrix4f vpmatrix = new Matrix4f();
+	private Matrix4f vpmatrix = new Matrix4f(); // TODO: Make static
 
 	// Uniform locations
 	private Uniform16f
