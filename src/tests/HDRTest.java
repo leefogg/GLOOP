@@ -57,7 +57,6 @@ public class HDRTest {
 
 		scene.getAmbientlight().setColor(0.04f, 0.04f, .04f);
 
-		Model3D lightmodel = null;
 		try {
 			String[] skyboxpaths = new String[] {
 					"res\\textures\\skyboxes\\stormydays\\right.png",
@@ -94,10 +93,6 @@ public class HDRTest {
 			tunnel.setScale(1, 1, 10);
 			tunnel.setPosition(0, -2.5f,0);
 			scene.add(tunnel);
-
-			SingleColorMaterial fullbright = new SingleColorMaterial();
-			lightmodel = new Model3D("res\\models\\sphere.obj", fullbright);
-			scene.add(lightmodel);
 		} catch (IOException | ShaderCompilationException e) {
 			System.err.println("Couldn't load Model!");
 			e.printStackTrace(System.err);
