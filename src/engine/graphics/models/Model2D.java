@@ -9,20 +9,10 @@ import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
 public class Model2D extends Model {
-	private static final VertexArray quadGeometry;
+	private static final VertexArray quadGeometry = getQuadGeometry();
 	private static GUIShader shader;
 
 	static {
-		//TODO: Create via MeshBuilder
-		float[] strippedVAOdata = new float[] {
-			0,-1,0,	0,0, // Top left
-			1,-1,0,	1,0, // Top right
-			0,0,0,	0,1, // Bottom left
-			1,0,0,	1,1  // Bottom right
-		};
-		quadGeometry = VertexArrayManager.newVAO("GUI", strippedVAOdata, true, false, false);
-		quadGeometry.renderMode = RenderMode.TriangleStrip;
-
 		try {
 			shader = new GUIShader();
 		} catch (Exception e) {
@@ -30,6 +20,23 @@ public class Model2D extends Model {
 			Viewport.close();
 			System.exit(1);
 		}
+	}
+
+	public static VertexArray getQuadGeometry() {
+		if (quadGeometry == null) {
+			//TODO: Create via MeshBuilder
+			float[] strippedVAOdata = new float[] {
+					0,-1,0,	0,0, // Top left
+					1,-1,0,	1,0, // Top right
+					0,0,0,	0,1, // Bottom left
+					1,0,0,	1,1  // Bottom right
+			};
+			VertexArray quadgeometry = VertexArrayManager.newVAO("Quad", strippedVAOdata, true, false, false);
+			quadgeometry.renderMode = RenderMode.TriangleStrip;
+			return quadgeometry;
+		}
+
+		return quadGeometry;
 	}
 
 	private final Vector2f
