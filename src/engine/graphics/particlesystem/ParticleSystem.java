@@ -1,5 +1,6 @@
 package engine.graphics.particlesystem;
 
+import engine.Disposable;
 import engine.graphics.models.Model2D;
 import engine.graphics.models.VertexArray;
 import engine.graphics.rendering.Renderer;
@@ -8,14 +9,14 @@ import engine.graphics.textures.Texture;
 import engine.graphics.textures.TextureManager;
 import engine.math.MathFunctions;
 import engine.math.Quaternion;
+import engine.resources.ResourceManager;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.io.IOException;
 
-// TODO: Implement Disposable
 // TODO: Implement Renderable
-public class ParticleSystem {
+public class ParticleSystem implements Disposable {
 	private static VertexArray QuadGeometry = Model2D.getQuadGeometry();
 	private static ParticleMaterial material;
 	private static Matrix4f ModelMatrix = new Matrix4f();
@@ -77,4 +78,18 @@ public class ParticleSystem {
 	}
 
 	public void setParticleLifeTime(int frames) { LifeTime = frames; }
+
+
+	@Override
+	public void requestDisposal() {	ResourceManager.queueDisposal(this);	}
+
+	@Override
+	public boolean isDisposed() {
+		return material.getShader().isDisposed() || QuadGeometry.isDisposed();
+	}
+
+	@Override
+	public void dispose() {
+		material.getShader().dispose();
+	}
 }
