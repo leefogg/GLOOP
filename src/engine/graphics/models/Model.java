@@ -2,8 +2,6 @@ package engine.graphics.models;
 
 import engine.graphics.rendering.Renderable;
 import engine.graphics.rendering.Renderer;
-import engine.graphics.shading.ShaderManager;
-import engine.graphics.shading.ShaderProgram;
 import engine.graphics.shading.materials.Material;
 import org.lwjgl.util.vector.Matrix4f;
 
