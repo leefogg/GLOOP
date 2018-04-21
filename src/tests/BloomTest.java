@@ -32,6 +32,7 @@ public final class BloomTest {
 //			Viewport.setVSyncEnabled(false);
 //			Viewport.limitFrameRate(false);
 			Viewport.show();
+			Settings.EnableHDR = true;
 		} catch (LWJGLException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -70,7 +71,9 @@ public final class BloomTest {
 		}
 
 		try {
-			Renderer.addPostEffect(new BloomPostEffect());
+			BloomPostEffect bloompost = new BloomPostEffect();
+			bloompost.setNumberOfPasses(5);
+			Renderer.addPostEffect(bloompost);
 			Renderer.enablePostEffects();
 		} catch (IOException e) {
 			e.printStackTrace();

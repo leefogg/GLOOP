@@ -15,6 +15,7 @@ public class BloomPostEffect extends PostEffect<ExtractBrightShader> implements 
 	private static FrameBuffer vblurbuffer, hblurbuffer;
 	private static VerticalGaussianBlurPostEffect vblureffect;
 	private static HorizontalGaussianBlurPostEffect hblureffect;
+	private int PassesCount = 3;
 
 	public BloomPostEffect() throws IOException {
 		shader = getShaderSingleton();
@@ -60,7 +61,7 @@ public class BloomPostEffect extends PostEffect<ExtractBrightShader> implements 
 		hblurbuffer.bind();
 		PostProcessor.render(target.getColorTexture(0), hblureffect);
 
-		for (int i=0; i<5; i++) {
+		for (int i=0; i<PassesCount; i++) {
 			vblurbuffer.bind();
 			PostProcessor.render(hblurbuffer.getColorTexture(0), hblureffect);
 			hblurbuffer.bind();
@@ -77,4 +78,6 @@ public class BloomPostEffect extends PostEffect<ExtractBrightShader> implements 
 
 	@Override
 	public void setTexture(Texture texture) { TextureManager.bindTextureToUnit(texture, TextureUnit.AlbedoMap);	}
+
+	public void setNumberOfPasses(int passes) { PassesCount = passes; }
 }
