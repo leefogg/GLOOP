@@ -6,7 +6,6 @@ import engine.graphics.shading.GLSL.Uniform16f;
 import engine.graphics.shading.GLSL.Uniform1i;
 import engine.graphics.shading.ShaderCompilationException;
 import engine.graphics.shading.ShaderProgram;
-import engine.graphics.textures.Texture;
 import engine.graphics.textures.TextureUnit;
 import org.lwjgl.util.vector.Matrix4f;
 
@@ -45,7 +44,7 @@ public class ParticleShader extends ShaderProgram {
 	}
 
 	@Override
-	public boolean supportsTransparency() {	return false; }
+	public boolean supportsTransparency() {	return true; }
 
 	@Override
 	public void setCameraUniforms(Camera camera, Matrix4f modelmatrix) {
