@@ -2,7 +2,6 @@ package tests;
 
 import engine.graphics.cameras.DebugCamera;
 import engine.graphics.models.Model3D;
-import engine.graphics.particlesystem.OmniEmitter;
 import engine.graphics.particlesystem.Particle;
 import engine.graphics.particlesystem.StaticParticleSystem;
 import engine.graphics.rendering.ForwardRenderer;
