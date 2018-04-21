@@ -62,7 +62,7 @@ public class BloomPostEffect extends PostEffect<ExtractBrightShader> implements 
 
 		for (int i=0; i<5; i++) {
 			vblurbuffer.bind();
-			PostProcessor.render(target.getColorTexture(0), hblureffect);
+			PostProcessor.render(hblurbuffer.getColorTexture(0), hblureffect);
 			hblurbuffer.bind();
 			PostProcessor.render(vblurbuffer.getColorTexture(0), vblureffect);
 		}
