@@ -11,11 +11,11 @@ uniform mat4
 out vec2 textureCoord;
 
 void main(void) {
-	mat4 mvpmatrix = ViewMatrix * ModelMatrix;
+	mat4 mvmatrix = ViewMatrix * ModelMatrix;
 	// Wipe rotation to make it always look at camera
-	mvpmatrix[0].xyz = vec3(1,0,0);
-	mvpmatrix[1].xyz = vec3(0,1,0);
-	mvpmatrix[2].xyz = vec3(0,0,1);
-	gl_Position = ProjectionMatrix * mvpmatrix * vec4(Position, 1.0);
+	mvmatrix[0].xyz = vec3(1,0,0);
+	mvmatrix[1].xyz = vec3(0,1,0);
+	mvmatrix[2].xyz = vec3(0,0,1);
+	gl_Position = ProjectionMatrix * mvmatrix * vec4(Position, 1.0);
 	textureCoord = TextureCoords;
 }
