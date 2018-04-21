@@ -17,5 +17,5 @@ void main(void) {
 		PixelColor += texture(Texture, texCoord - vec2(pixelsize * i, 0.0)).rgb * weight[i];
 	}
 	
-	PixelColor *= 2.0;
+	PixelColor *= 1.3;
 }
