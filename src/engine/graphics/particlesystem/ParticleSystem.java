@@ -15,70 +15,38 @@ import org.lwjgl.util.vector.Vector3f;
 
 import java.io.IOException;
 
-// TODO: Implement Renderable
-public class ParticleSystem implements Disposable {
-	private static VertexArray QuadGeometry = Model2D.getQuadGeometry();
-	private static ParticleMaterial material;
-	private static Matrix4f ModelMatrix = new Matrix4f();
-	private static Quaternion Rotation = new Quaternion();
-	private static Vector3f Scale = new Vector3f(1,1,1);
+abstract class ParticleSystem implements Disposable {
+	protected static VertexArray QuadGeometry = Model2D.getQuadGeometry();
+	protected static ParticleMaterial material;
+	protected static Matrix4f ModelMatrix = new Matrix4f();
+	protected static Quaternion Rotation = new Quaternion();
+	protected static Vector3f Scale = new Vector3f(1,1,1);
 
-	private Texture texture;
-	private int lastDead = 0;
-	private Particle[] particles;
-	private int LifeTime = 200;
+	protected Texture texture;
+	protected Particle[] particles;
 
 	public ParticleSystem(int numparticles, Texture texture) throws IOException {
 		material = new ParticleMaterial(texture);
 
-		particles = new Particle[numparticles];
-		for (int i=0; i<particles.length; i++)
-			particles[i] = new Particle();
+		initializeParticles(numparticles);
 
 		this.texture = texture;
 	}
 
-	public void update(float delta, float timescaler) {
+	protected void initializeParticles(int numparticles) {
+		particles = new Particle[numparticles];
+		for (int i=0; i<particles.length; i++)
+			particles[i] = new Particle();
+	}
+
+	public final void update(float delta, float timescaler) {
 		for (int i=0; i<particles.length; i++)
 			particles[i].update(delta, timescaler);
 	}
 
-	public void render() {
-		if (QuadGeometry.isDisposed())
-			return;
+	public abstract void render();
 
-		material.bind();
-		material.commit();
-		TextureManager.bindAlbedoMap(texture);
-		for (int i=0; i<particles.length; i++) {
-			Particle particle = particles[i];
-			if (particleIsDead(particle))
-				continue;
-
-			MathFunctions.createTransformationMatrix(particle.position, Rotation, Scale, ModelMatrix);
-			material.setCameraAttributes(Renderer.getRenderer().getScene().currentCamera, ModelMatrix);
-			QuadGeometry.render();
-		}
-	}
-
-	public Particle getNextDead() {
-		int start = lastDead % particles.length;
-		for(; lastDead<particles.length; lastDead++)
-			if (particleIsDead(particles[lastDead]))
-				return particles[lastDead];
-		for(lastDead = 0; lastDead<start; lastDead++)
-			if (particleIsDead(particles[lastDead]))
-				return particles[lastDead];
-
-		return null;
-	}
-
-	private boolean particleIsDead(Particle particle) {
-		return particle.lifetime > LifeTime;
-	}
-
-	public void setParticleLifeTime(int frames) { LifeTime = frames; }
-
+	public int getMaxParticleCount() { return particles.length; }
 
 	@Override
 	public void requestDisposal() {	ResourceManager.queueDisposal(this);	}

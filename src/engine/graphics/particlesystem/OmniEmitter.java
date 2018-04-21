@@ -8,11 +8,11 @@ public class OmniEmitter {
 	private static final Random random = new Random();
 
 	private Vector3f emitPosition, emitVelocity;
-	private ParticleSystem system;
+	private DynamicParticleSystem system;
 	private float speed = 1; // Emit per frame
 	private Vector3f randomVelocity = new Vector3f();
 
-	public OmniEmitter(ParticleSystem system, Vector3f position, Vector3f velocity) {
+	public OmniEmitter(DynamicParticleSystem system, Vector3f position, Vector3f velocity) {
 		this.system = system;
 		this.emitPosition = position;
 		this.emitVelocity = velocity;
