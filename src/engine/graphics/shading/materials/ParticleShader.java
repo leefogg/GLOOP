@@ -1,6 +1,5 @@
 package engine.graphics.shading.materials;
 
-import engine.graphics.cameras.Camera;
 import engine.graphics.models.VertexArray;
 import engine.graphics.shading.GLSL.Uniform16f;
 import engine.graphics.shading.GLSL.Uniform1i;
@@ -46,12 +45,7 @@ public class ParticleShader extends ShaderProgram {
 	@Override
 	public boolean supportsTransparency() {	return true; }
 
-	@Override
-	public void setCameraUniforms(Camera camera, Matrix4f modelmatrix) {
-		Matrix4f projectionmatrix = camera.getProjectionMatrix();
-		Matrix4f viewmatrix = camera.getViewMatrix();
-		ViewMatrix.set(viewmatrix);
-		ProjectionMatrix.set(projectionmatrix);
-		setModelMatrix(modelmatrix);
-	}
+	public void setProjectionMatrix(Matrix4f projectionmatrix) { ProjectionMatrix.set(projectionmatrix); }
+
+	public void setViewMatrix(Matrix4f viewmatrix) { ViewMatrix.set(viewmatrix); }
 }

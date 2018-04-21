@@ -3,8 +3,7 @@ package engine.graphics.particlesystem;
 import engine.graphics.models.Model2D;
 import engine.graphics.models.VertexArray;
 import engine.graphics.rendering.Renderer;
-import engine.graphics.rendering.Viewport;
-import engine.graphics.shading.materials.ParticleShader;
+import engine.graphics.shading.materials.ParticleMaterial;
 import engine.graphics.textures.Texture;
 import engine.graphics.textures.TextureManager;
 import engine.math.MathFunctions;
@@ -12,32 +11,25 @@ import engine.math.Quaternion;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
+import java.io.IOException;
+
 // TODO: Implement Disposable
 // TODO: Implement Renderable
 public class ParticleSystem {
 	private static VertexArray QuadGeometry = Model2D.getQuadGeometry();
-	private static ParticleShader Shader;
-	private static Matrix4f TempModelMatrix = new Matrix4f();
+	private static ParticleMaterial material;
+	private static Matrix4f ModelMatrix = new Matrix4f();
 	private static Quaternion Rotation = new Quaternion();
 	private static Vector3f Scale = new Vector3f(1,1,1);
-
-	static {
-		try {
-			Shader = new ParticleShader();
-		} catch (Exception e) {
-			e.printStackTrace();
-			Viewport.close();
-			System.exit(1);
-		}
-	}
-
 
 	private Texture texture;
 	private int lastDead = 0;
 	private Particle[] particles;
 	private int LifeTime = 200;
 
-	public ParticleSystem(int numparticles, Texture texture) {
+	public ParticleSystem(int numparticles, Texture texture) throws IOException {
+		material = new ParticleMaterial(texture);
+
 		particles = new Particle[numparticles];
 		for (int i=0; i<particles.length; i++)
 			particles[i] = new Particle();
@@ -54,15 +46,16 @@ public class ParticleSystem {
 		if (QuadGeometry.isDisposed())
 			return;
 
-		Shader.bind();
+		material.bind();
+		material.commit();
 		TextureManager.bindAlbedoMap(texture);
 		for (int i=0; i<particles.length; i++) {
 			Particle particle = particles[i];
 			if (particleIsDead(particle))
 				continue;
 
-			MathFunctions.createTransformationMatrix(particle.position, Rotation, Scale, TempModelMatrix);
-			Shader.setCameraUniforms(Renderer.getRenderer().getScene().currentCamera, TempModelMatrix);
+			MathFunctions.createTransformationMatrix(particle.position, Rotation, Scale, ModelMatrix);
+			material.setCameraAttributes(Renderer.getRenderer().getScene().currentCamera, ModelMatrix);
 			QuadGeometry.render();
 		}
 	}

@@ -1,6 +1,8 @@
 package engine.graphics.shading.materials;
 
+import engine.graphics.cameras.Camera;
 import engine.graphics.textures.Texture;
+import org.lwjgl.util.vector.Matrix4f;
 
 import java.io.IOException;
 
@@ -11,6 +13,7 @@ public class ParticleMaterial extends Material<ParticleShader> {
 
 	public ParticleMaterial(Texture texture) throws IOException {
 		shader = getShaderSingleton();
+		this.texture = texture;
 	}
 
 	private static ParticleShader getShaderSingleton() throws IOException {
@@ -29,7 +32,14 @@ public class ParticleMaterial extends Material<ParticleShader> {
 	}
 
 	@Override
+	public void setCameraAttributes(Camera currentcamera, Matrix4f modelmatrix) {
+		shader.setProjectionMatrix(currentcamera.getProjectionMatrix());
+		shader.setViewMatrix(currentcamera.getViewMatrix());
+		shader.setModelMatrix(modelmatrix);
+	}
+
+	@Override
 	protected boolean hasTransparency() {
-		return false;
+		return texture.isTransparent() && shader.supportsTransparency();
 	}
 }
