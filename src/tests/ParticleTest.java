@@ -37,7 +37,7 @@ public final class ParticleTest {
 		Scene scene = renderer.getScene();
 
 		PointLight light1 = new PointLight();
-		light1.setPosition(0,1,0);
+		light1.setPosition(0,2,0);
 		light1.quadraticAttenuation = 0.01f;
 		scene.add(light1);
 
@@ -47,6 +47,7 @@ public final class ParticleTest {
 		scene.currentCamera = camera;
 
 		StaticParticleSystem ps = null;
+		Particle[] particles = null;
 		try {
 			Texture albedo = TextureManager.newTexture("res\\textures\\brick.png", PixelComponents.RGB, PixelFormat.SRGB8);
 			albedo.generateAnisotropicMipMaps(100);
@@ -56,19 +57,27 @@ public final class ParticleTest {
 
 			albedo = TextureManager.newTexture("res\\textures\\sprites\\sonic_3_hd_bubble.png", PixelComponents.RGBA, PixelFormat.SRGBA8);
 			albedo.setFilteringMode(TextureFilter.Nearest);
-			Particle[] particles = new Particle[300000];
+			particles = new Particle[100000];
 			Random r = new Random();
 			for (int i=0; i<particles.length; i++) {
 				Particle particle = new Particle(
-					new Vector3f(
-						r.nextFloat()*100f-50,
-						r.nextFloat()*100f,
-						r.nextFloat()*100f-50
-					)
+					new Vector3f(0,0,0)
 				);
 				particles[i] = particle;
 			}
+
 			ps = new StaticParticleSystem(particles, albedo);
+
+			for (int i=0; i<particles.length; i++) {
+				Particle particle = new Particle(
+						new Vector3f(
+								r.nextFloat()*100f-50,
+								r.nextFloat()*100f,
+								r.nextFloat()*100f-50
+						)
+				);
+				particles[i] = particle;
+			}
 		} catch (IOException | ShaderCompilationException e) {
 			System.err.println(e.getMessage());
 			exitCleanly(1);
@@ -77,15 +86,12 @@ public final class ParticleTest {
 		System.gc();
 
 		boolean isrunning = true;
-		double sincos = (float)Math.PI, step = (float)Math.PI/300f;
+		int index = 0;
 		while(isrunning) {
 			Viewport.update();
 			float delta = Renderer.getTimeDelta();
 			float timescaler = Renderer.getTimeScaler();
 			camera.update(delta, timescaler);
-
-			//sincos += step * timescaler;
-			light1.setPosition((float)Math.sin(sincos)*20, 0, (float)Math.cos(sincos)*20);
 
 			//ps.update(delta, timescaler);
 
@@ -93,6 +99,15 @@ public final class ParticleTest {
 			Renderer.render();
 			ps.render();
 			Renderer.swapBuffers();
+
+			if (index < particles.length-1000) {
+				ps.addParticles(particles, index, 1000);
+				index += 1000;
+			} else if (index != particles.length){
+				int remaining = particles.length - index;
+				ps.addParticles(particles, index, remaining);
+				index += remaining;
+			}
 
 			Viewport.setTitle("Development Engine " + Viewport.getCurrentFrameRate() + "Hz");
 

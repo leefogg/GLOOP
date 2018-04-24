@@ -27,13 +27,17 @@ public final class DataConversion {
 	}
 
 	public static FloatBuffer toGLBuffer(float[] data) {
+		return toGLBuffer(data, 0, data.length);
+	}
+	public static FloatBuffer toGLBuffer(float[] data, int start, int length) {
 		FloatBuffer array = BufferUtils.createFloatBuffer(data.length);
-		array.put(data);
+		array.put(data, start, length);
 		array.flip();
 
 		return array;
 	}
 
+	// TODO: Add start index and length optional arguments to all variations
 	public static FloatBuffer toGLBuffer(Vector3f[] data) {
 		FloatBuffer array = BufferUtils.createFloatBuffer(data.length*3);
 		for (Vector3f v : data)

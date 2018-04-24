@@ -6,7 +6,6 @@ import engine.graphics.rendering.Renderer;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 
-import javax.lang.model.type.ArrayType;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
@@ -19,12 +18,17 @@ public final class VertexBuffer extends Buffer {
 	private final int ID = GL15.glGenBuffers();
 	private DataType Type;
 	private final GLArrayType Arraytype;
-	private DataVolatility Volatility = DataVolatility.Static;
+	private DataVolatility Volatility;
 
 	public VertexBuffer(GLArrayType arraytype) {
-		super(0);
-		System.out.println("Created VBO ID " + ID);
-		this.Arraytype = arraytype;
+		this(arraytype, 0, DataVolatility.Static, DataType.Float);
+	}
+	public VertexBuffer(GLArrayType arraytype, long size, DataVolatility volatility, DataType type) {
+		super(size);
+		Volatility = volatility;
+		Arraytype = arraytype;
+		Type = type;
+		createEmptyBuffer(size);
 
 		VertexBufferManager.register(this);
 		Renderer.checkErrors();
@@ -33,7 +37,6 @@ public final class VertexBuffer extends Buffer {
 	public void store(FloatBuffer buffer) {
 		store(buffer, DataType.Float);
 	}
-
 	public void store(FloatBuffer buffer, DataType datatype) {
 		Type = datatype;
 
@@ -71,7 +74,8 @@ public final class VertexBuffer extends Buffer {
 				buffer,
 				Volatility.getGLEnum()
 			);
-		alloc(buffer.capacity());
+
+		alloc(buffer.capacity() * DataType.Integer.getSize());
 	}
 	private void bindBuffer(FloatBuffer buffer) {
 		if (!bind())
@@ -82,9 +86,10 @@ public final class VertexBuffer extends Buffer {
 				buffer,
 				Volatility.getGLEnum()
 			);
-		alloc(buffer.capacity());
+
+		alloc(buffer.capacity() * DataType.Float.getSize());
 	}
-	private void createEmptyBuffer(int size) {
+	private void createEmptyBuffer(long size) {
 		if (!bind())
 			return;
 
@@ -93,7 +98,22 @@ public final class VertexBuffer extends Buffer {
 				size,
 				Volatility.getGLEnum()
 			);
+
 		alloc(size);
+	}
+
+	public void update(float[] data, int startindex) {
+		update(data, 0, startindex, data.length);
+	}
+	public void update(float[] data, int startelement, int startindex, int length) {
+		if (startindex + length > size)
+			throw new IllegalArgumentException("Provided data is too long. " + (startindex + data.length) + " bytes is required while buffer is only " + size + " bytes big.");
+		if (startindex < 0)
+			throw new IllegalArgumentException("Start index may not be less than 0");
+		if (!bind())
+			return;
+
+		GL15.glBufferSubData(Arraytype.getGLEnum(), startelement*Type.getSize(), DataConversion.toGLBuffer(data, startindex, length));
 	}
 
 	void bindAttribute(int index) {
@@ -145,6 +165,7 @@ public final class VertexBuffer extends Buffer {
 
 	@Override
 	protected void alloc(long size) {
+		this.size = size;
 		TotalBytes += size;
 		BytesAdded += size;
 	}

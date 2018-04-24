@@ -4,7 +4,7 @@ import engine.Disposable;
 import engine.resources.ResourceManager;
 
 public abstract class Buffer implements Disposable {
-	protected final long size;
+	protected long size;
 
 	private boolean disposed = false;
 
