@@ -2,6 +2,7 @@ package engine.graphics.models;
 
 import engine.Disposable;
 import engine.graphics.data.DataConversion;
+import engine.graphics.rendering.Renderer;
 import engine.resources.ResourceManager;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -22,7 +23,7 @@ public class VertexArray implements Disposable {
 
 	private final String name;
 	private final int ID = GL30.glGenVertexArrays();
-	private final VertexBuffer[] VBOs = new VertexBuffer[5];
+	private final VertexBuffer[] VBOs = new VertexBuffer[6];
 	private int NumberOfIndices, NumberofVertcies;
 	public RenderMode renderMode = RenderMode.Triangles;
 
@@ -133,62 +134,95 @@ public class VertexArray implements Disposable {
 		}
 
 		data.flip();
-		storeStripped(data, true, true, true);
+		storeStriped(data, true, true, true);
 	}
 
 	public void storeMesh(Geometry mesh) {
 		storeAll(mesh.getVertcesArray(), mesh.getTextureCoordinatesArray(), mesh.getFaceNormalsArray(), mesh.getTangentsArray());
 		storeIndicies(mesh.getIndexBuffer());
 	}
-	public void storeStripped(float[] data, boolean textureprovided, boolean normalprovided, boolean tangentsprovided) {
-		storeStripped(DataConversion.toGLBuffer(data), textureprovided, normalprovided, tangentsprovided);
+	public void storeStriped(float[] data, boolean textureprovided, boolean normalprovided, boolean tangentsprovided) {
+		storeStriped(DataConversion.toGLBuffer(data), textureprovided, normalprovided, tangentsprovided);
 	}
-	public void storeStripped(FloatBuffer data, boolean uvsprovided, boolean normalprovided, boolean tangentsprovided) { // TODO: Derive from passed Geo object
+	public void storeStriped(FloatBuffer data, boolean uvsprovided, boolean normalprovided, boolean tangentsprovided) { // TODO: Derive from passed Geo object
+		int elementcount = 1;
+		if (uvsprovided) {
+			elementcount++;
+			if (normalprovided) {
+				elementcount++;
+				if (tangentsprovided)
+					elementcount++;
+			}
+		}
+		int[] datawidths = new int[elementcount];
+		boolean[] isinstanced = new boolean[elementcount];
+		datawidths[0] = 3;
+		if (uvsprovided) {
+			datawidths[1] = 2;
+			if (normalprovided) {
+				datawidths[2] = 3;
+				if (tangentsprovided)
+					datawidths[3] = 3;
+			}
+		}
+		storeStriped(data, datawidths, isinstanced, 0);
+	}
+	public void storeStriped(FloatBuffer data, int[] datawidths, boolean[] isinstanced, int startindex) {
+		if (datawidths.length != isinstanced.length)
+			throw new IllegalArgumentException("datawidths and isinstanced arguments must be the same length.");
+
+		int stride = 0;
+		for (int i=0; i<datawidths.length; i++) {
+			int width = datawidths[i];
+			if (width < 0 || width > 4)
+				throw new IllegalArgumentException("Component width must be between 0-4 inclusive.");
+
+			stride += width;
+		}
+
+		if (data.capacity() % stride != 0)
+			throw new IllegalArgumentException("Total data width is not a multiple of the input data.");
+
 		VertexBuffer strippedbuffer = new VertexBuffer(GLArrayType.Array);
 		strippedbuffer.store(data);
-
-		int
-		offset = 0,
-		size = 3;
-		if (uvsprovided)
-			size += 2;
-		if (normalprovided)
-			size += 3;
-		if (tangentsprovided)
-			size += 3;
-
-		bindAttribute(strippedbuffer, VertciesIndex, 				3, size, offset, false); 	// bind vertices
-		offset += 3;
-		if (uvsprovided) {
-			bindAttribute(strippedbuffer, TextureCoordinatesIndex,  2, size, offset, false); 	// bind texture coordinates
-			offset += 2;
-		}
-		if (normalprovided) {
-			bindAttribute(strippedbuffer, VertexNormalsIndex, 		3, size, offset, false); 	// bind face normals
-			offset += 3;
-		}
-		if (tangentsprovided) {
-			bindAttribute(strippedbuffer, VertexTangentsIndex, 		3, size, offset, false); 	// bind tangents
-			offset += 3;
+		for (int i=0, offset=0; i<datawidths.length; i++) {
+			bindAttribute(
+					strippedbuffer,
+					startindex,
+					datawidths[i],
+					stride,
+					offset,
+					isinstanced[i]
+			);
+			offset += datawidths[i];
+			startindex++;
 		}
 
-		NumberofVertcies = data.capacity() / size;
+		NumberofVertcies = data.capacity() / stride;
 	}
 
 	public void bindAttribute(VertexBuffer vbo, int index, int datawidth) {
 		bindAttribute(vbo, index, datawidth, 0, 0, false);
 	}
+
+	/*
+		datawidth: Specifies the number of components of this vertex attribute. Must be 1, 2, 3, 4
+		stride: Specifies the offset between consecutive generic vertex attributes in components
+		offset: Specifies a offset of this component in components
+	 */
 	public void bindAttribute(VertexBuffer vbo, int index, int datawidth, int stride, int offset, boolean instanced) {
 		if (!bind())
 			return;
 
+		GL20.glEnableVertexAttribArray(index);
 		int datatypeinbytes = vbo.getDataType().getSize();
 		vbo.bindAttribute(index, false, datawidth, stride*datatypeinbytes, offset*datatypeinbytes);
 		if (instanced)
 			setAttributeInstaced(index);
-		GL20.glEnableVertexAttribArray(index);
 
 		VBOs[index] = vbo;
+
+		Renderer.checkErrors();
 	}
 
 	public void enable() {
@@ -206,9 +240,6 @@ public class VertexArray implements Disposable {
 	}
 
 	public void enableAllAttributes() {
-		if (!bind())
-			return;
-
 		for (int i=0; i<VBOs.length; i++) {
 			if (VBOs[i] == null)
 				return;

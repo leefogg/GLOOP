@@ -1,9 +1,12 @@
 package engine.graphics.models;
 
 import engine.graphics.data.Buffer;
+import engine.graphics.data.DataConversion;
+import engine.graphics.rendering.Renderer;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 
+import javax.lang.model.type.ArrayType;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
@@ -24,6 +27,7 @@ public final class VertexBuffer extends Buffer {
 		this.Arraytype = arraytype;
 
 		VertexBufferManager.register(this);
+		Renderer.checkErrors();
 	}
 
 	public void store(FloatBuffer buffer) {
@@ -96,6 +100,11 @@ public final class VertexBuffer extends Buffer {
 		bindAttribute(index, false, 4, 0, 0);
 	}
 
+	/*
+		datawidth: Specifies the number of components per generic vertex attribute. Must be 1, 2, 3, 4
+		stride: Specifies the byte offset between consecutive generic vertex attributes
+		offset: Specifies a offset of this component in bytes
+	 */
 	void bindAttribute(int index, boolean isnormalised, int datawidth, int stride, int offset) {
 		if (!bind())
 			return;

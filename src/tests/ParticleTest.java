@@ -41,6 +41,11 @@ public final class ParticleTest {
 		light1.quadraticAttenuation = 0.01f;
 		scene.add(light1);
 
+		DebugCamera camera = new DebugCamera();
+		camera.setzfar(200);
+		camera.setPosition(-1,53,148);
+		scene.currentCamera = camera;
+
 		StaticParticleSystem ps = null;
 		try {
 			Texture albedo = TextureManager.newTexture("res\\textures\\brick.png", PixelComponents.RGB, PixelFormat.SRGB8);
@@ -51,27 +56,23 @@ public final class ParticleTest {
 
 			albedo = TextureManager.newTexture("res\\textures\\sprites\\sonic_3_hd_bubble.png", PixelComponents.RGBA, PixelFormat.SRGBA8);
 			albedo.setFilteringMode(TextureFilter.Nearest);
-			ps = new StaticParticleSystem(20000, albedo);
+			Particle[] particles = new Particle[300000];
 			Random r = new Random();
-			for (int i=0; i<ps.getMaxParticleCount(); i++) {
+			for (int i=0; i<particles.length; i++) {
 				Particle particle = new Particle(
 					new Vector3f(
 						r.nextFloat()*100f-50,
-						r.nextFloat()*100f-50,
+						r.nextFloat()*100f,
 						r.nextFloat()*100f-50
 					)
 				);
-				ps.addParticle(particle);
+				particles[i] = particle;
 			}
+			ps = new StaticParticleSystem(particles, albedo);
 		} catch (IOException | ShaderCompilationException e) {
 			System.err.println(e.getMessage());
 			exitCleanly(1);
 		}
-
-		DebugCamera camera = new DebugCamera();
-		camera.setzfar(100);
-		camera.setPosition(-1,7,19);
-		scene.currentCamera = camera;
 
 		System.gc();
 
@@ -86,7 +87,7 @@ public final class ParticleTest {
 			//sincos += step * timescaler;
 			light1.setPosition((float)Math.sin(sincos)*20, 0, (float)Math.cos(sincos)*20);
 
-			ps.update(delta, timescaler);
+			//ps.update(delta, timescaler);
 
 			Renderer.setRenderer(renderer);
 			Renderer.render();

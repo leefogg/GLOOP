@@ -14,7 +14,8 @@ public class ParticleShader extends ShaderProgram {
 
 
 	private Uniform1i texture;
-	private Uniform16f ProjectionMatrix, ModelViewMatrix;
+	private Uniform16f ProjectionMatrix;
+	private Uniform16f ViewMatrix;
 
 	public ParticleShader() throws ShaderCompilationException, IOException {
 		super(
@@ -27,14 +28,15 @@ public class ParticleShader extends ShaderProgram {
 	protected void bindAttributes() {
 		bindAttribute("Position", VertexArray.VertciesIndex);
 		bindAttribute("TextureCoords", VertexArray.TextureCoordinatesIndex);
+		//bindAttribute("color", 2);
 	}
 
 
 	@Override
 	protected void getCustomUniformLocations() {
 		ProjectionMatrix = new Uniform16f(this, "ProjectionMatrix");
-		ModelViewMatrix = new Uniform16f(this, "ModelViewMatrix");
-		texture          = new Uniform1i(this, "Texture");
+		ViewMatrix = new Uniform16f(this, "ViewMatrix");
+		texture = new Uniform1i(this, "Texture");
 	}
 
 	@Override
@@ -47,5 +49,5 @@ public class ParticleShader extends ShaderProgram {
 
 	public void setProjectionMatrix(Matrix4f projectionmatrix) { ProjectionMatrix.set(projectionmatrix); }
 
-	public void setModelViewMatrix(Matrix4f modelviewmatrix) { ModelViewMatrix.set(modelviewmatrix); }
+	public void setViewMatrix(Matrix4f viewmatrix) { ViewMatrix.set(viewmatrix); }
 }

@@ -46,7 +46,7 @@ public final class VertexArrayManager {
 		System.out.println("First load. Returning new.");
 		// Load
 		VertexArray newvao = new VertexArray(name); // Saved automatically
-		newvao.storeStripped(data, textureprovided, normalprovided, tangentprovided);
+		newvao.storeStriped(data, textureprovided, normalprovided, tangentprovided);
 
 		return newvao;
 	}

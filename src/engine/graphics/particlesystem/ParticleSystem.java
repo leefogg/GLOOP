@@ -21,11 +21,14 @@ abstract class ParticleSystem implements Disposable {
 	protected static Matrix4f ModelMatrix = new Matrix4f();
 	protected static Quaternion Rotation = new Quaternion();
 	protected static Vector3f Scale = new Vector3f(1,1,1);
+	private static int InstanceCount=0;
 
 	protected Texture texture;
 	protected Particle[] particles;
 
 	public ParticleSystem(int numparticles, Texture texture) throws IOException {
+		InstanceCount++;
+
 		material = new ParticleMaterial(texture);
 
 		initializeParticles(numparticles);
@@ -47,6 +50,8 @@ abstract class ParticleSystem implements Disposable {
 	public abstract void render();
 
 	public int getMaxParticleCount() { return particles.length; }
+
+	protected int getInstanceCount() { return InstanceCount; }
 
 	@Override
 	public void requestDisposal() {	ResourceManager.queueDisposal(this);	}
