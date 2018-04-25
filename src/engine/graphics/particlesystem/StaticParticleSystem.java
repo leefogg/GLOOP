@@ -24,6 +24,7 @@ public class StaticParticleSystem extends ParticleSystem {
 
 		this.particles = particles;
 		constructVertexArray();
+		addParticles(particles);
 
 		Renderer.checkErrors();
 	}
