@@ -1,17 +1,10 @@
 package engine.graphics.particlesystem;
 
-import engine.Disposable;
-import engine.graphics.models.Model2D;
-import engine.graphics.models.VertexArray;
+import engine.graphics.cameras.Camera;
+import engine.graphics.models.DataVolatility;
 import engine.graphics.rendering.Renderer;
-import engine.graphics.shading.materials.ParticleMaterial;
 import engine.graphics.textures.Texture;
 import engine.graphics.textures.TextureManager;
-import engine.math.MathFunctions;
-import engine.math.Quaternion;
-import engine.resources.ResourceManager;
-import org.lwjgl.util.vector.Matrix4f;
-import org.lwjgl.util.vector.Vector3f;
 
 import java.io.IOException;
 
@@ -21,7 +14,13 @@ public class DynamicParticleSystem extends ParticleSystem {
 	private int LifeTime = 200;
 
 	public DynamicParticleSystem(int numparticles, Texture texture) throws IOException {
-		super(numparticles, texture);
+		super(numparticles, texture, DataVolatility.Stream);
+	}
+
+	@Override
+	public void update(float delta, float timescaler) {
+		super.update(delta, timescaler);
+		positionsbuffer.update(getPositionsBuffer(particles), 0);
 	}
 
 	@Override
@@ -29,18 +28,13 @@ public class DynamicParticleSystem extends ParticleSystem {
 		if (QuadGeometry.isDisposed())
 			return;
 
+		Camera camera = Renderer.getRenderer().getScene().currentCamera;
 		material.bind();
+		material.setProjectionMatrix(camera.getProjectionMatrix());
+		material.setViewMatrix(camera.getViewMatrix());
 		material.commit();
 		TextureManager.bindAlbedoMap(texture);
-		for (int i=0; i<particles.length; i++) {
-			Particle particle = particles[i];
-			if (particleIsDead(particle))
-				continue;
-
-			MathFunctions.createTransformationMatrix(particle.position, Rotation, Scale, ModelMatrix);
-			material.setCameraAttributes(Renderer.getRenderer().getScene().currentCamera, ModelMatrix);
-			QuadGeometry.render();
-		}
+		data.renderInstanced(particles.length);
 	}
 
 	public Particle getNextDead() {

@@ -2,6 +2,8 @@ package tests;
 
 import engine.graphics.cameras.DebugCamera;
 import engine.graphics.models.Model3D;
+import engine.graphics.particlesystem.DynamicParticleSystem;
+import engine.graphics.particlesystem.OmniEmitter;
 import engine.graphics.particlesystem.Particle;
 import engine.graphics.particlesystem.StaticParticleSystem;
 import engine.graphics.rendering.ForwardRenderer;
@@ -46,8 +48,9 @@ public final class ParticleTest {
 		camera.setPosition(-1,53,148);
 		scene.currentCamera = camera;
 
-		StaticParticleSystem ps = null;
-		Particle[] particles = null;
+		StaticParticleSystem sps = null;
+		DynamicParticleSystem dps = null;
+		OmniEmitter omniemitter = null;
 		try {
 			Texture albedo = TextureManager.newTexture("res\\textures\\brick.png", PixelComponents.RGB, PixelFormat.SRGB8);
 			albedo.generateAnisotropicMipMaps(100);
@@ -55,29 +58,27 @@ public final class ParticleTest {
 			floor.setPosition(0,-2,0);
 			scene.add(floor);
 
-			albedo = TextureManager.newTexture("res\\textures\\sprites\\sonic_3_hd_bubble.png", PixelComponents.RGBA, PixelFormat.SRGBA8);
-			albedo.setFilteringMode(TextureFilter.Nearest);
-			particles = new Particle[100000];
+			Particle[] particles = new Particle[10000];
 			Random r = new Random();
 			for (int i=0; i<particles.length; i++) {
 				Particle particle = new Particle(
-					new Vector3f(0,0,0)
-				);
-				particles[i] = particle;
-			}
-
-			ps = new StaticParticleSystem(particles, albedo);
-
-			for (int i=0; i<particles.length; i++) {
-				Particle particle = new Particle(
 						new Vector3f(
-								r.nextFloat()*100f-50,
+								r.nextFloat()*50f,
 								r.nextFloat()*100f,
 								r.nextFloat()*100f-50
 						)
 				);
 				particles[i] = particle;
 			}
+
+			albedo = TextureManager.newTexture("res\\textures\\sprites\\sonic_3_hd_bubble.png", PixelComponents.RGBA, PixelFormat.SRGBA8);
+			albedo.setFilteringMode(TextureFilter.Nearest);
+			sps = new StaticParticleSystem(particles, albedo);
+
+			dps = new DynamicParticleSystem(10000, albedo);
+			omniemitter = new OmniEmitter(dps, new Vector3f(-25, 10,0), new Vector3f(0,.1f, 0));
+			omniemitter.setEmitVelocityError(new Vector3f(.1f, .1f, .1f));
+			omniemitter.setEmmisionSpeed(5);
 		} catch (IOException | ShaderCompilationException e) {
 			System.err.println(e.getMessage());
 			exitCleanly(1);
@@ -86,28 +87,21 @@ public final class ParticleTest {
 		System.gc();
 
 		boolean isrunning = true;
-		int index = 0;
 		while(isrunning) {
 			Viewport.update();
 			float delta = Renderer.getTimeDelta();
 			float timescaler = Renderer.getTimeScaler();
 			camera.update(delta, timescaler);
 
-			//ps.update(delta, timescaler);
+			omniemitter.update(delta, timescaler);
+			sps.update(delta, timescaler);
+			dps.update(delta, timescaler);
 
 			Renderer.setRenderer(renderer);
 			Renderer.render();
-			ps.render();
+			sps.render();
+			dps.render();
 			Renderer.swapBuffers();
-
-			if (index < particles.length-1000) {
-				ps.addParticles(particles, index, 1000);
-				index += 1000;
-			} else if (index != particles.length){
-				int remaining = particles.length - index;
-				ps.addParticles(particles, index, remaining);
-				index += remaining;
-			}
 
 			Viewport.setTitle("Development Engine " + Viewport.getCurrentFrameRate() + "Hz");
 
