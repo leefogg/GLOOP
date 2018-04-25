@@ -286,16 +286,16 @@ public class VertexArray implements Disposable {
 			GL11.glDrawArrays(renderMode.getGLType(), 0, NumberofVertcies);
 	}
 
-	public void renderInstanced(int instnaces) {
+	public void renderInstanced(int instances) {
 		if (!bind())
 			return;
 
-		instnaces = Math.min(MaxInstances, instnaces);
+		instances = Math.min(MaxInstances, instances);
 
 		if (isIndexed()) {
 			//TODO: Support indexed buffers with GLDrawElementsInstanced
 		} else {
-			GL31.glDrawArraysInstanced(renderMode.getGLType(), 0, NumberofVertcies, instnaces);
+			GL31.glDrawArraysInstanced(renderMode.getGLType(), 0, NumberofVertcies, instances);
 		}
 	}
 

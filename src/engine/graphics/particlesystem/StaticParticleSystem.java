@@ -1,10 +1,8 @@
 package engine.graphics.particlesystem;
 
-import engine.graphics.cameras.Camera;
 import engine.graphics.models.DataVolatility;
 import engine.graphics.rendering.Renderer;
 import engine.graphics.textures.Texture;
-import engine.graphics.textures.TextureManager;
 
 import java.io.IOException;
 import java.nio.BufferOverflowException;
@@ -22,18 +20,7 @@ public class StaticParticleSystem extends ParticleSystem {
 
 	@Override
 	public void render() {
-		if (data.isDisposed())
-			return;
-		if (ParticleCount == 0)
-			return;
-
-		Camera camera = Renderer.getRenderer().getScene().currentCamera;
-		material.bind();
-		material.setProjectionMatrix(camera.getProjectionMatrix());
-		material.setViewMatrix(camera.getViewMatrix());
-		material.commit();
-		TextureManager.bindAlbedoMap(texture);
-		data.renderInstanced(ParticleCount);
+		render(ParticleCount);
 	}
 
 	public void addParticles(Particle[] particles) {

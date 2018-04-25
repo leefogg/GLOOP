@@ -1,11 +1,13 @@
 package engine.graphics.particlesystem;
 
 import engine.Disposable;
+import engine.graphics.cameras.Camera;
 import engine.graphics.data.DataConversion;
 import engine.graphics.models.*;
 import engine.graphics.rendering.Renderer;
 import engine.graphics.shading.materials.ParticleMaterial;
 import engine.graphics.textures.Texture;
+import engine.graphics.textures.TextureManager;
 import engine.math.MathFunctions;
 import engine.math.Quaternion;
 import engine.resources.ResourceManager;
@@ -91,7 +93,23 @@ abstract class ParticleSystem implements Disposable {
 		return translations;
 	}
 
-	public abstract void render();
+	public void render() {
+		render(particles.length);
+	}
+	protected void render(int particlecount) {
+		if (data.isDisposed())
+			return;
+		if (particlecount == 0)
+			return;
+
+		Camera camera = Renderer.getRenderer().getScene().currentCamera;
+		material.bind();
+		material.setProjectionMatrix(camera.getProjectionMatrix());
+		material.setViewMatrix(camera.getViewMatrix());
+		material.commit();
+		TextureManager.bindAlbedoMap(texture);
+		data.renderInstanced(particlecount);
+	}
 
 	public int getMaxParticleCount() { return particles.length; }
 

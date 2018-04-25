@@ -1,10 +1,7 @@
 package engine.graphics.particlesystem;
 
-import engine.graphics.cameras.Camera;
 import engine.graphics.models.DataVolatility;
-import engine.graphics.rendering.Renderer;
 import engine.graphics.textures.Texture;
-import engine.graphics.textures.TextureManager;
 
 import java.io.IOException;
 
@@ -21,20 +18,6 @@ public class DynamicParticleSystem extends ParticleSystem {
 	public void update(float delta, float timescaler) {
 		super.update(delta, timescaler);
 		positionsbuffer.update(getPositionsBuffer(particles), 0);
-	}
-
-	@Override
-	public void render() {
-		if (QuadGeometry.isDisposed())
-			return;
-
-		Camera camera = Renderer.getRenderer().getScene().currentCamera;
-		material.bind();
-		material.setProjectionMatrix(camera.getProjectionMatrix());
-		material.setViewMatrix(camera.getViewMatrix());
-		material.commit();
-		TextureManager.bindAlbedoMap(texture);
-		data.renderInstanced(particles.length);
 	}
 
 	public Particle getNextDead() {
