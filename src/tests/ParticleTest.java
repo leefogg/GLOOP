@@ -26,9 +26,7 @@ import java.util.Random;
 public final class ParticleTest {
 	public static void main(String[] args) {
 		try {
-			Viewport.create(1280, 720, "Engine Testing");
-//			Viewport.setVSyncEnabled(false);
-//			Viewport.limitFrameRate(false);
+			Viewport.create(1280, 720, "Particle Testing");
 			Viewport.show();
 		} catch (LWJGLException e) {
 			e.printStackTrace();
@@ -103,7 +101,7 @@ public final class ParticleTest {
 			dps.render();
 			Renderer.swapBuffers();
 
-			Viewport.setTitle("Development Engine " + Viewport.getCurrentFrameRate() + "Hz");
+			Viewport.setTitle("Particle Testing " + Viewport.getCurrentFrameRate() + "Hz");
 
 			if (Display.isCloseRequested())
 				isrunning = false;
