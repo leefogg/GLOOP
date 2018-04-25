@@ -153,7 +153,7 @@ public final class VertexBuffer extends Buffer {
 
 	@Override
 	public void dispose() {
-		System.out.println("Delting VBO ID " + ID);
+		System.out.println("Deleting VBO ID " + ID);
 
 		GL15.glDeleteBuffers(ID);
 		VertexBufferManager.unregister(this);
