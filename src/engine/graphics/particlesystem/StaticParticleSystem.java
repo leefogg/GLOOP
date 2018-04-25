@@ -10,8 +10,6 @@ import engine.graphics.rendering.Renderer;
 import engine.graphics.textures.Texture;
 import engine.graphics.textures.TextureManager;
 import engine.math.MathFunctions;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL31;
 
 import java.io.IOException;
 import java.nio.BufferOverflowException;
@@ -67,7 +65,7 @@ public class StaticParticleSystem extends ParticleSystem {
 		material.setViewMatrix(camera.getViewMatrix());
 		material.commit();
 		TextureManager.bindAlbedoMap(texture);
-		data.renderInstanced(Math.min(ParticleCount, getMaxParticleCount()));
+		data.renderInstanced(ParticleCount);
 	}
 
 	public void addParticles(Particle[] particles) {
