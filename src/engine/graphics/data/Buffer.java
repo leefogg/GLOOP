@@ -4,12 +4,12 @@ import engine.Disposable;
 import engine.resources.ResourceManager;
 
 public abstract class Buffer implements Disposable {
-	protected long size;
+	protected long Size;
 
 	private boolean disposed = false;
 
 	public Buffer(long size) {
-		this.size = size;
+		this.Size = size;
 
 		alloc(size);
 	}
@@ -29,4 +29,6 @@ public abstract class Buffer implements Disposable {
 	public boolean isDisposed() {
 		return disposed;
 	}
+
+	public long getSizeInBytes() { return Size; }
 }

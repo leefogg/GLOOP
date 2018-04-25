@@ -5,10 +5,7 @@ import engine.graphics.data.DataConversion;
 import engine.graphics.rendering.Renderer;
 import engine.resources.ResourceManager;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
-import org.lwjgl.opengl.GL33;
+import org.lwjgl.opengl.*;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -16,15 +13,15 @@ import java.nio.IntBuffer;
 public class VertexArray implements Disposable {
 	private boolean isDisposed = false;
 	public static final int
-	VertciesIndex = 0,
-	TextureCoordinatesIndex = 1,
-	VertexNormalsIndex = 2,
-	VertexTangentsIndex = 3;
+		VertciesIndex = 0,
+		TextureCoordinatesIndex = 1,
+		VertexNormalsIndex = 2,
+		VertexTangentsIndex = 3;
 
 	private final String name;
 	private final int ID = GL30.glGenVertexArrays();
 	private final VertexBuffer[] VBOs = new VertexBuffer[6];
-	private int NumberOfIndices, NumberofVertcies;
+	private int NumberOfIndices, NumberofVertcies, MaxInstances;
 	public RenderMode renderMode = RenderMode.Triangles;
 
 	public VertexArray(String name) {
@@ -217,8 +214,16 @@ public class VertexArray implements Disposable {
 		GL20.glEnableVertexAttribArray(index);
 		int datatypeinbytes = vbo.getDataType().getSize();
 		vbo.bindAttribute(index, false, datawidth, stride*datatypeinbytes, offset*datatypeinbytes);
-		if (instanced)
+		if (instanced) {
 			setAttributeInstaced(index);
+
+			int newinstances = (int)(vbo.getSizeInBytes() / vbo.getDataType().getSize() / 3);
+			if (MaxInstances == 0) {
+				MaxInstances = newinstances;
+			} else {
+				MaxInstances = Math.min(MaxInstances, newinstances);
+			}
+		}
 
 		VBOs[index] = vbo;
 
@@ -280,6 +285,20 @@ public class VertexArray implements Disposable {
 		else
 			GL11.glDrawArrays(renderMode.getGLType(), 0, NumberofVertcies);
 	}
+
+	public void renderInstanced(int instnaces) {
+		if (!bind())
+			return;
+
+		instnaces = Math.min(MaxInstances, instnaces);
+
+		if (isIndexed()) {
+			//TODO: Support indexed buffers with GLDrawElementsInstanced
+		} else {
+			GL31.glDrawArraysInstanced(renderMode.getGLType(), 0, NumberofVertcies, instnaces);
+		}
+	}
+
 	public void unbind() {
 		GL30.glBindVertexArray(0);
 	}

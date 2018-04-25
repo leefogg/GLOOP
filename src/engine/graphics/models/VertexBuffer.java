@@ -106,8 +106,8 @@ public final class VertexBuffer extends Buffer {
 		update(data, 0, startindex, data.length);
 	}
 	public void update(float[] data, int startelement, int startindex, int length) {
-		if (startindex + length > size)
-			throw new IllegalArgumentException("Provided data is too long. " + (startindex + data.length) + " bytes is required while buffer is only " + size + " bytes big.");
+		if (startindex + length > Size)
+			throw new IllegalArgumentException("Provided data is too long. " + (startindex + data.length) + " bytes is required while buffer is only " + Size + " bytes big.");
 		if (startindex < 0)
 			throw new IllegalArgumentException("Start index may not be less than 0");
 		if (!bind())
@@ -160,12 +160,12 @@ public final class VertexBuffer extends Buffer {
 
 		super.dispose();
 
-		TotalBytes -= size;
+		TotalBytes -= Size;
 	}
 
 	@Override
 	protected void alloc(long size) {
-		this.size = size;
+		this.Size = size;
 		TotalBytes += size;
 		BytesAdded += size;
 	}

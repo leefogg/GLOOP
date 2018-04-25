@@ -67,8 +67,7 @@ public class StaticParticleSystem extends ParticleSystem {
 		material.setViewMatrix(camera.getViewMatrix());
 		material.commit();
 		TextureManager.bindAlbedoMap(texture);
-		data.bind();
-		GL31.glDrawArraysInstanced(GL11.GL_TRIANGLE_STRIP, 0, 4, Math.min(ParticleCount, getMaxParticleCount()));
+		data.renderInstanced(Math.min(ParticleCount, getMaxParticleCount()));
 	}
 
 	public void addParticles(Particle[] particles) {
