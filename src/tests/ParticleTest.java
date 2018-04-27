@@ -92,7 +92,6 @@ public final class ParticleTest {
 			camera.update(delta, timescaler);
 
 			omniemitter.update(delta, timescaler);
-			sps.update(delta, timescaler);
 			dps.update(delta, timescaler);
 
 			Renderer.setRenderer(renderer);

@@ -1,5 +1,6 @@
 package engine.graphics.particlesystem;
 
+import engine.graphics.data.DataConversion;
 import engine.graphics.models.DataVolatility;
 import engine.graphics.textures.Texture;
 
@@ -9,15 +10,30 @@ import java.io.IOException;
 public class DynamicParticleSystem extends ParticleSystem {
 	private int lastDead = 0;
 	private int LifeTime = 200;
+	protected Particle[] particles;
 
 	public DynamicParticleSystem(int numparticles, Texture texture) throws IOException {
 		super(numparticles, texture, DataVolatility.Stream);
+
+		initializeParticles(numparticles);
+		updateParticlesBuffer();
 	}
 
-	@Override
+	protected void initializeParticles(int numparticles) {
+		particles = new Particle[numparticles];
+		for (int i=0; i<particles.length; i++)
+			particles[i] = new Particle();
+	}
+
+	private void updateParticlesBuffer() {
+		positionsbuffer.store(DataConversion.toGLBuffer(getPositionsBuffer(particles)));
+	}
+
 	public void update(float delta, float timescaler) {
-		super.update(delta, timescaler);
-		positionsbuffer.update(getPositionsBuffer(particles), 0);
+		for (int i=0; i<particles.length; i++)
+			particles[i].update(delta, timescaler);
+
+		updateParticlesBuffer();
 	}
 
 	public Particle getNextDead() {

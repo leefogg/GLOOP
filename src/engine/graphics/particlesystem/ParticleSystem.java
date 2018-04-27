@@ -25,37 +25,30 @@ abstract class ParticleSystem implements Disposable {
 	private static int InstanceCount=0;
 
 	protected final Texture texture;
+	private final int MaxParticles;
 	//TODO: Make these final
-	protected Particle[] particles;
 	protected VertexArray data;
 	protected VertexBuffer positionsbuffer;
 
 	public ParticleSystem(int numparticles, Texture texture, DataVolatility volatility) throws IOException {
-		this(texture);
+		this(numparticles, texture);
 
-		initializeParticles(numparticles);
-		constructVertexArray(volatility);
+		constructVertexArray(numparticles, volatility);
 	}
 	public ParticleSystem(Particle[] particles, Texture texture, DataVolatility volatility) throws IOException {
-		this(texture);
+		this(particles.length, texture);
 
-		this.particles = particles;
-		constructVertexArray(volatility);
+		constructVertexArray(particles.length, volatility);
 	}
-	private ParticleSystem(Texture texture) throws IOException {
+	private ParticleSystem(int numparticles, Texture texture) throws IOException {
+		MaxParticles = numparticles;
 		this.texture = texture;
 		material = new ParticleMaterial(texture);
 
 		InstanceCount++;
 	}
 
-	private void initializeParticles(int numparticles) {
-		particles = new Particle[numparticles];
-		for (int i=0; i<particles.length; i++)
-			particles[i] = new Particle();
-	}
-
-	private void constructVertexArray(DataVolatility volatility) {
+	private void constructVertexArray(int numparticles,DataVolatility volatility) {
 		data = new VertexArray("ParticleSystemBuffer" + InstanceCount);
 		Renderer.checkErrors();
 		data.storeStriped(DataConversion.toGLBuffer(new float[] {
@@ -68,15 +61,9 @@ abstract class ParticleSystem implements Disposable {
 				new boolean[] {false, false},
 				0);
 
-		positionsbuffer = new VertexBuffer(GLArrayType.Array, particles.length * 3 * 4, volatility, DataType.Float);
-		positionsbuffer.store(DataConversion.toGLBuffer(getPositionsBuffer(particles)));
+		positionsbuffer = new VertexBuffer(GLArrayType.Array, numparticles * 3 * 4, volatility, DataType.Float);
 		data.bindAttribute(positionsbuffer, 2,3,3,0,true);
 		data.setRenderingMode(RenderMode.TriangleStrip);
-	}
-
-	public void update(float delta, float timescaler) {
-		for (int i=0; i<particles.length; i++)
-			particles[i].update(delta, timescaler);
 	}
 
 	protected float[] getPositionsBuffer(Particle[] particles) {
@@ -94,7 +81,7 @@ abstract class ParticleSystem implements Disposable {
 	}
 
 	public void render() {
-		render(particles.length);
+		render(MaxParticles);
 	}
 	protected void render(int particlecount) {
 		if (data.isDisposed())
@@ -111,7 +98,7 @@ abstract class ParticleSystem implements Disposable {
 		data.renderInstanced(particlecount);
 	}
 
-	public int getMaxParticleCount() { return particles.length; }
+	public int getMaxParticleCount() { return MaxParticles; }
 
 	@Override
 	public void requestDisposal() {	ResourceManager.queueDisposal(this);	}
