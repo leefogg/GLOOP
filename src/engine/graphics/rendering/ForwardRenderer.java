@@ -2,6 +2,7 @@ package engine.graphics.rendering;
 
 import engine.graphics.Settings;
 import engine.graphics.models.Model;
+import engine.graphics.particlesystem.ParticleSystem;
 import engine.graphics.textures.FrameBuffer;
 import engine.graphics.textures.PixelFormat;
 import engine.graphics.textures.Texture;
@@ -37,6 +38,10 @@ public class ForwardRenderer extends Renderer {
 			//TODO: Add PBR material filter when added
 
 			model.render();
+		}
+
+		for (ParticleSystem ps : scene.getParticleSystems()) {
+			ps.render();
 		}
 	}
 

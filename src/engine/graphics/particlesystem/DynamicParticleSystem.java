@@ -29,6 +29,7 @@ public class DynamicParticleSystem extends ParticleSystem {
 		positionsbuffer.store(DataConversion.toGLBuffer(getPositionsBuffer(particles)));
 	}
 
+	@Override
 	public void update(float delta, float timescaler) {
 		for (int i=0; i<particles.length; i++)
 			particles[i].update(delta, timescaler);

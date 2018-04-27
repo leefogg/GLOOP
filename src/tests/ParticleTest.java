@@ -72,11 +72,14 @@ public final class ParticleTest {
 			albedo = TextureManager.newTexture("res\\textures\\sprites\\sonic_3_hd_bubble.png", PixelComponents.RGBA, PixelFormat.SRGBA8);
 			albedo.setFilteringMode(TextureFilter.Nearest);
 			sps = new StaticParticleSystem(particles, albedo);
+			scene.add(sps);
 
 			dps = new DynamicParticleSystem(10000, albedo);
+			scene.add(dps);
 			omniemitter = new OmniEmitter(dps, new Vector3f(-25, 10,0), new Vector3f(0,.1f, 0));
 			omniemitter.setEmitVelocityError(new Vector3f(.1f, .1f, .1f));
 			omniemitter.setEmmisionSpeed(5);
+			scene.add(omniemitter);
 		} catch (IOException | ShaderCompilationException e) {
 			System.err.println(e.getMessage());
 			exitCleanly(1);
@@ -91,13 +94,10 @@ public final class ParticleTest {
 			float timescaler = Renderer.getTimeScaler();
 			camera.update(delta, timescaler);
 
-			omniemitter.update(delta, timescaler);
-			dps.update(delta, timescaler);
+			scene.update(delta, timescaler);
 
 			Renderer.setRenderer(renderer);
 			Renderer.render();
-			sps.render();
-			dps.render();
 			Renderer.swapBuffers();
 
 			Viewport.setTitle("Particle Testing " + Viewport.getCurrentFrameRate() + "Hz");

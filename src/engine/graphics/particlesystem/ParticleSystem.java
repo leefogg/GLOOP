@@ -16,7 +16,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 import java.io.IOException;
 
-abstract class ParticleSystem implements Disposable {
+public abstract class ParticleSystem implements Disposable {
 	protected static final VertexArray QuadGeometry = Model2D.getQuadGeometry();
 	protected static ParticleMaterial material;
 	protected static final Matrix4f ModelMatrix = new Matrix4f();
@@ -79,6 +79,8 @@ abstract class ParticleSystem implements Disposable {
 
 		return translations;
 	}
+
+	public void update(float delta, float timescaler){}
 
 	public void render() {
 		render(MaxParticles);
