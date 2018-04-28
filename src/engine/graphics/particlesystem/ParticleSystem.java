@@ -118,11 +118,12 @@ public abstract class ParticleSystem implements Disposable {
 
 	@Override
 	public boolean isDisposed() {
-		return material.getShader().isDisposed() || QuadGeometry.isDisposed();
+		return material.getShader().isDisposed() || QuadGeometry.isDisposed() || positionsbuffer.isDisposed();
 	}
 
 	@Override
 	public void dispose() {
+		data.dispose();
 		material.getShader().dispose();
 	}
 }
