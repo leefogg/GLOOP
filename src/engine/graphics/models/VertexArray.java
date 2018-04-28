@@ -307,6 +307,7 @@ public class VertexArray implements Disposable {
 		return NumberOfIndices != 0;
 	}
 
+	// Doesn't delete VBOs as they may be being used. Will get custom GC do that.
 	@Override
 	public void dispose() {
 		if (isDisposed())
