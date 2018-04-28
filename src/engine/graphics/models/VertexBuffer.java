@@ -20,6 +20,8 @@ public final class VertexBuffer extends Buffer {
 	private final GLArrayType Arraytype;
 	private DataVolatility Volatility;
 
+	// TODO: Constructor to create striped VBO using variadic T[]
+
 	public VertexBuffer(GLArrayType arraytype) {
 		this(arraytype, 0, DataVolatility.Static, DataType.Float);
 	}
