@@ -182,6 +182,10 @@ public class VertexArray implements Disposable {
 
 		VertexBuffer strippedbuffer = new VertexBuffer(GLArrayType.Array);
 		strippedbuffer.store(data);
+
+		storeStriped(strippedbuffer, stride, datawidths, isinstanced, startindex, data.capacity());
+	}
+	public void storeStriped(VertexBuffer strippedbuffer, int stride, int[] datawidths, boolean[] isinstanced, int startindex, int totalsize) {
 		for (int i=0, offset=0; i<datawidths.length; i++) {
 			bindAttribute(
 					strippedbuffer,
@@ -195,7 +199,7 @@ public class VertexArray implements Disposable {
 			startindex++;
 		}
 
-		NumberofVertcies = data.capacity() / stride;
+		NumberofVertcies = totalsize / stride;
 	}
 
 	public void bindAttribute(VertexBuffer vbo, int index, int datawidth) {

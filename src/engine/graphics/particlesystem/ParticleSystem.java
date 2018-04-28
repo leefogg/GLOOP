@@ -17,7 +17,7 @@ import org.lwjgl.util.vector.Vector3f;
 import java.io.IOException;
 
 public abstract class ParticleSystem implements Disposable {
-	protected static final VertexArray QuadGeometry = Model2D.getQuadGeometry();
+	protected static VertexBuffer QuadGeometry = getQuadBufferSingleton();
 	protected static ParticleMaterial material;
 	protected static final Matrix4f ModelMatrix = new Matrix4f();
 	protected static final Quaternion Rotation = new Quaternion();
@@ -51,19 +51,29 @@ public abstract class ParticleSystem implements Disposable {
 	private void constructVertexArray(int numparticles,DataVolatility volatility) {
 		data = new VertexArray("ParticleSystemBuffer" + InstanceCount);
 		Renderer.checkErrors();
-		data.storeStriped(DataConversion.toGLBuffer(new float[] {
-						0,-1,0,	0,0, // Top left
-						1,-1,0,	1,0, // Top right
-						0,0,0,	0,1, // Bottom left
-						1,0,0,	1,1  // Bottom right
-				}),
+		data.storeStriped(getQuadBufferSingleton(), 5,
 				new int[] {3,2},
 				new boolean[] {false, false},
-				0);
+				0, 4*5);
 
 		positionsbuffer = new VertexBuffer(GLArrayType.Array, numparticles * 3 * 4, volatility, DataType.Float);
 		data.bindAttribute(positionsbuffer, 2,3,3,0,true);
 		data.setRenderingMode(RenderMode.TriangleStrip);
+	}
+
+	public static final VertexBuffer getQuadBufferSingleton() {
+		if (QuadGeometry == null) {
+			QuadGeometry = new VertexBuffer(GLArrayType.Array);
+			float[] quaddata = new float[] {
+					0,-1,0,	0,0, // Top left
+					1,-1,0,	1,0, // Top right
+					0,0,0,	0,1, // Bottom left
+					1,0,0,	1,1  // Bottom right
+			};
+			QuadGeometry.store(DataConversion.toGLBuffer(quaddata));
+		}
+
+		return QuadGeometry;
 	}
 
 	protected float[] getPositionsBuffer(Particle[] particles) {
