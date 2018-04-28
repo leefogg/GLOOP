@@ -23,10 +23,12 @@ public class DynamicParticleSystem extends ParticleSystem {
 		particles = new Particle[numparticles];
 		for (int i=0; i<particles.length; i++)
 			particles[i] = new Particle();
+
+		positionsbuffer.store(DataConversion.toGLBuffer(getPositionsBuffer(particles)));
 	}
 
 	private void updateParticlesBuffer() {
-		positionsbuffer.store(DataConversion.toGLBuffer(getPositionsBuffer(particles)));
+		updateParticles(particles);
 	}
 
 	@Override

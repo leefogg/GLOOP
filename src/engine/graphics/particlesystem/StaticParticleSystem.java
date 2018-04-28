@@ -39,11 +39,5 @@ public class StaticParticleSystem extends ParticleSystem {
 		ParticleCount += length;
 	}
 
-	public void updateParticles(Particle[] particles, int index){
-		updateParticles(particles, index, 0, particles.length);
-	}
 
-	public void updateParticles(Particle[] particles, int index, int startindex, int length) {
-		positionsbuffer.update(getPositionsBuffer(particles), index, startindex, length);
-	}
 }

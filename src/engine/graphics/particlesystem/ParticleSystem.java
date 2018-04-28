@@ -100,6 +100,17 @@ public abstract class ParticleSystem implements Disposable {
 		data.renderInstanced(particlecount);
 	}
 
+	public void updateParticles(Particle[] particles){
+		updateParticles(particles, 0);
+	}
+	public void updateParticles(Particle[] particles, int startelement){
+		updateParticles(particles, startelement, 0, particles.length);
+	}
+
+	public void updateParticles(Particle[] particles, int startelement, int startindex, int length) {
+		positionsbuffer.update(getPositionsBuffer(particles), startelement, startindex, length);
+	}
+
 	public int getMaxParticleCount() { return MaxParticles; }
 
 	@Override
