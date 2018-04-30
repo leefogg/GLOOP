@@ -8,10 +8,7 @@ public class RectangleEmitter extends ParticleEmitter {
 			Size;
 
 	public RectangleEmitter(DynamicParticleSystem particleSystem, Vector3f position, Vector3f size) {
-		this(particleSystem, DefaultEmissionSpeed, position, size);
-	}
-	public RectangleEmitter(DynamicParticleSystem particleSystem, float emissionSpeed, Vector3f position, Vector3f size) {
-		super(particleSystem, emissionSpeed);
+		super(particleSystem);
 		Position = position;
 		Size = size;
 		// Half scale here to make math more readable down there
