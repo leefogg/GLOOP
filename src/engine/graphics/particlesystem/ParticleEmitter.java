@@ -4,10 +4,11 @@ import java.util.Random;
 
 public abstract class ParticleEmitter {
 	protected static final Random random = new Random();
+	protected static final float DefaultEmissionSpeed = 1;
 
 	protected DynamicParticleSystem ParticleSystem;
 
-	protected float EmissionSpeed = 1;
+	protected float EmissionSpeed = DefaultEmissionSpeed;
 
 	public ParticleEmitter(DynamicParticleSystem particleSystem) {
 		this(particleSystem, 1);

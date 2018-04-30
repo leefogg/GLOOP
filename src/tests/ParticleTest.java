@@ -2,10 +2,7 @@ package tests;
 
 import engine.graphics.cameras.DebugCamera;
 import engine.graphics.models.Model3D;
-import engine.graphics.particlesystem.DynamicParticleSystem;
-import engine.graphics.particlesystem.OmniEmitter;
-import engine.graphics.particlesystem.Particle;
-import engine.graphics.particlesystem.StaticParticleSystem;
+import engine.graphics.particlesystem.*;
 import engine.graphics.rendering.ForwardRenderer;
 import engine.graphics.rendering.Renderer;
 import engine.graphics.rendering.Scene;
@@ -46,9 +43,6 @@ public final class ParticleTest {
 		camera.setPosition(-1,53,148);
 		scene.currentCamera = camera;
 
-		StaticParticleSystem sps = null;
-		DynamicParticleSystem dps = null;
-		OmniEmitter omniemitter = null;
 		try {
 			Texture albedo = TextureManager.newTexture("res\\textures\\brick.png", PixelComponents.RGB, PixelFormat.SRGB8);
 			albedo.generateAnisotropicMipMaps(100);
@@ -71,15 +65,13 @@ public final class ParticleTest {
 
 			albedo = TextureManager.newTexture("res\\textures\\sprites\\sonic_3_hd_bubble.png", PixelComponents.RGBA, PixelFormat.SRGBA8);
 			albedo.setFilteringMode(TextureFilter.Nearest);
-			sps = new StaticParticleSystem(particles, albedo);
+			StaticParticleSystem sps = new StaticParticleSystem(particles, albedo);
 			scene.add(sps);
 
-			dps = new DynamicParticleSystem(10000, albedo);
+			DynamicParticleSystem dps = new DynamicParticleSystem(10000, albedo);
 			scene.add(dps);
-			omniemitter = new OmniEmitter(dps, new Vector3f(-25, 10,0), new Vector3f(0,.1f, 0));
-			omniemitter.setEmitVelocityError(new Vector3f(.1f, .1f, .1f));
-			omniemitter.setEmmisionSpeed(5);
-			scene.add(omniemitter);
+			RectangleEmitter emitter = new RectangleEmitter(dps,  new Vector3f(-25, 10,0), new Vector3f(10,10,10));
+			scene.add(emitter);
 		} catch (IOException | ShaderCompilationException e) {
 			System.err.println(e.getMessage());
 			exitCleanly(1);
