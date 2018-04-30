@@ -5,8 +5,7 @@ import org.lwjgl.util.vector.Vector3f;
 public class RectangleEmitter extends ParticleEmitter {
 	private Vector3f
 			Position,
-			Size,
-			newparticleposition = new Vector3f();
+			Size;
 
 	public RectangleEmitter(DynamicParticleSystem particleSystem, Vector3f position, Vector3f size) {
 		this(particleSystem, DefaultEmissionSpeed, position, size);
@@ -28,11 +27,11 @@ public class RectangleEmitter extends ParticleEmitter {
 
 			nextparticle.reset();
 
-			newparticleposition.set(Position);
-			newparticleposition.x += Size.x * (random.nextFloat()*2-1);
-			newparticleposition.y += Size.y * (random.nextFloat()*2-1);
-			newparticleposition.z += Size.z * (random.nextFloat()*2-1);
-			nextparticle.position.set(newparticleposition);
+			TempVector.set(Position);
+			TempVector.x += Size.x * (random.nextFloat()*2-1);
+			TempVector.y += Size.y * (random.nextFloat()*2-1);
+			TempVector.z += Size.z * (random.nextFloat()*2-1);
+			nextparticle.position.set(TempVector);
 		}
 	}
 }

@@ -1,10 +1,13 @@
 package engine.graphics.particlesystem;
 
+import org.lwjgl.util.vector.Vector3f;
+
 import java.util.Random;
 
 public abstract class ParticleEmitter {
 	protected static final Random random = new Random();
 	protected static final float DefaultEmissionSpeed = 1;
+	protected static final Vector3f TempVector = new Vector3f();
 
 	protected DynamicParticleSystem ParticleSystem;
 
