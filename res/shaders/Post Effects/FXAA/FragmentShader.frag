@@ -1,4 +1,4 @@
-#version 400 core
+#version 150
 
 in vec2 FaceTextureCoord;
 
@@ -18,7 +18,7 @@ void main(void) {
     vec3 rgbNE = texture(Texture, FaceTextureCoord+(vec2(1.0,-1.0)/texture_size)).xyz;
     vec3 rgbSW = texture(Texture, FaceTextureCoord+(vec2(-1.0,1.0)/texture_size)).xyz;
     vec3 rgbSE = texture(Texture, FaceTextureCoord+(vec2(1.0,1.0)/texture_size)).xyz;
-    vec3 rgbM = texture(Texture, FaceTextureCoord).xyz;
+    vec3 rgbM =  texture(Texture, FaceTextureCoord).xyz;
 
     vec3 luma=vec3(0.299, 0.587, 0.114);
     float lumaNW = dot(rgbNW, luma);

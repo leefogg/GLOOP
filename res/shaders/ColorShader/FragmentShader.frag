@@ -1,4 +1,4 @@
-#version 400 core
+#version 150
 
 out vec4 out_Color;
 

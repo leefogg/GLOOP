@@ -1,4 +1,4 @@
-#version 400 core
+#version 150
 
 out vec3 FragColor;
 
