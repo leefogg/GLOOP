@@ -34,7 +34,6 @@ public class VignettePostEffect extends PostEffect<VignetteShader> {
 	@Override
 	public void commit() {
 		shader.setResolution(Viewport.getWidth(), Viewport.getHeight());
-		shader.setTime(Viewport.getElapsedSeconds());
 
 		shader.setStrength(Strength);
 	}
