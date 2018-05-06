@@ -112,10 +112,14 @@ public final class VertexBuffer extends Buffer {
 			throw new IllegalArgumentException("Provided data is too long. " + (startindex + data.length) + " bytes is required while buffer is only " + Size + " bytes big.");
 		if (startindex < 0)
 			throw new IllegalArgumentException("Start index may not be less than 0");
+
+		update(DataConversion.toGLBuffer(data, startindex, length), startelement);
+	}
+	public void update(FloatBuffer data, int startelement) {
 		if (!bind())
 			return;
 
-		GL15.glBufferSubData(Arraytype.getGLEnum(), startelement*Type.getSize(), DataConversion.toGLBuffer(data, startindex, length));
+		GL15.glBufferSubData(Arraytype.getGLEnum(), startelement*Type.getSize(), data);
 	}
 
 	void bindAttribute(int index) {

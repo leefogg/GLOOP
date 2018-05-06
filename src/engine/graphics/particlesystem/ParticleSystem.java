@@ -8,13 +8,14 @@ import engine.graphics.rendering.Renderer;
 import engine.graphics.shading.materials.ParticleMaterial;
 import engine.graphics.textures.Texture;
 import engine.graphics.textures.TextureManager;
-import engine.math.MathFunctions;
 import engine.math.Quaternion;
 import engine.resources.ResourceManager;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.io.IOException;
+import java.nio.FloatBuffer;
 
 public abstract class ParticleSystem implements Disposable {
 	protected static VertexBuffer QuadGeometry = getQuadBufferSingleton();
@@ -29,6 +30,7 @@ public abstract class ParticleSystem implements Disposable {
 	//TODO: Make these final
 	protected VertexArray data;
 	protected VertexBuffer positionsbuffer;
+	private final FloatBuffer translations;
 
 	public ParticleSystem(int numparticles, Texture texture, DataVolatility volatility) throws IOException {
 		this(numparticles, texture);
@@ -42,6 +44,7 @@ public abstract class ParticleSystem implements Disposable {
 	}
 	private ParticleSystem(int numparticles, Texture texture) throws IOException {
 		MaxParticles = numparticles;
+		translations = BufferUtils.createFloatBuffer(MaxParticles * 3);
 		this.texture = texture;
 		material = new ParticleMaterial(texture);
 
@@ -76,16 +79,18 @@ public abstract class ParticleSystem implements Disposable {
 		return QuadGeometry;
 	}
 
-	protected float[] getPositionsBuffer(Particle[] particles) {
-		float[] translations = new float[particles.length * 3];
-		for (int i=0, x=0; i<particles.length; i++) {
+	protected FloatBuffer getPositionsBuffer(Particle[] particles) {
+		translations.rewind();
+		for (int i=0; i<particles.length; i++) {
 			Particle p = particles[i];
-			MathFunctions.createTransformationMatrix(p.position, Rotation, Scale, ModelMatrix);
+			//MathFunctions.createTransformationMatrix(p.position, Rotation, Scale, ModelMatrix);
 			// Just uploading translation part for now
-			translations[x++] = ModelMatrix.m30;
-			translations[x++] = ModelMatrix.m31;
-			translations[x++] = ModelMatrix.m32;
+			translations.put(p.position.x);
+			translations.put(p.position.y);
+			translations.put(p.position.z);
 		}
+
+		translations.flip();
 
 		return translations;
 	}
@@ -118,7 +123,7 @@ public abstract class ParticleSystem implements Disposable {
 	}
 
 	public void updateParticles(Particle[] particles, int startelement, int startindex, int length) {
-		positionsbuffer.update(getPositionsBuffer(particles), startelement, startindex, length);
+		positionsbuffer.update(getPositionsBuffer(particles), startelement);
 	}
 
 	public int getMaxParticleCount() { return MaxParticles; }

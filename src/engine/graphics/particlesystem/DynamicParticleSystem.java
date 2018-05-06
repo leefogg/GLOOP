@@ -8,9 +8,9 @@ import java.io.IOException;
 
 // TODO: Implement Renderable
 public class DynamicParticleSystem extends ParticleSystem {
-	private int lastDead = 0;
+	private int LastDead = 0;
 	private int LifeTime = 200;
-	protected Particle[] particles;
+	protected Particle[] Particles;
 
 	public DynamicParticleSystem(int numparticles, Texture texture) throws IOException {
 		super(numparticles, texture, DataVolatility.Stream);
@@ -20,33 +20,33 @@ public class DynamicParticleSystem extends ParticleSystem {
 	}
 
 	protected void initializeParticles(int numparticles) {
-		particles = new Particle[numparticles];
-		for (int i=0; i<particles.length; i++)
-			particles[i] = new Particle();
+		Particles = new Particle[numparticles];
+		for (int i = 0; i< Particles.length; i++)
+			Particles[i] = new Particle();
 
-		positionsbuffer.store(DataConversion.toGLBuffer(getPositionsBuffer(particles)));
+		positionsbuffer.store(getPositionsBuffer(Particles));
 	}
 
 	private void updateParticlesBuffer() {
-		updateParticles(particles);
+		updateParticles(Particles);
 	}
 
 	@Override
 	public void update(float delta, float timescaler) {
-		for (int i=0; i<particles.length; i++)
-			particles[i].update(delta, timescaler);
+		for (Particle particle : Particles)
+			particle.update(delta, timescaler);
 
 		updateParticlesBuffer();
 	}
 
 	public Particle getNextDead() {
-		int start = lastDead % particles.length;
-		for(; lastDead<particles.length; lastDead++)
-			if (particleIsDead(particles[lastDead]))
-				return particles[lastDead];
-		for(lastDead = 0; lastDead<start; lastDead++)
-			if (particleIsDead(particles[lastDead]))
-				return particles[lastDead];
+		int start = LastDead % Particles.length;
+		for(; LastDead < Particles.length;LastDead++)
+			if (particleIsDead(Particles[LastDead]))
+				return Particles[LastDead++];
+		for(LastDead = 0; LastDead <start; LastDead++)
+			if (particleIsDead(Particles[LastDead]))
+				return Particles[LastDead++];
 
 		return null;
 	}
@@ -56,4 +56,5 @@ public class DynamicParticleSystem extends ParticleSystem {
 	}
 
 	public void setParticleLifeTime(int frames) { LifeTime = frames; }
+	public int getParticleLifeTime() { return LifeTime; }
 }
