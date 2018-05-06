@@ -8,7 +8,7 @@ import engine.graphics.shading.posteffects.PostEffectShader;
 
 import java.io.IOException;
 
-public class ShaderToyShader extends ShaderProgram {
+public class ShaderToyShader extends PostEffectShader {
 	private Uniform2f
 			resolution,
 			mouse;
