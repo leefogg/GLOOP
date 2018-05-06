@@ -2,6 +2,7 @@ package engine.graphics.shading.materials;
 
 import engine.graphics.models.VertexArray;
 import engine.graphics.shading.GLSL.Uniform16f;
+import engine.graphics.shading.GLSL.Uniform1f;
 import engine.graphics.shading.GLSL.Uniform1i;
 import engine.graphics.shading.ShaderCompilationException;
 import engine.graphics.shading.ShaderProgram;
@@ -11,11 +12,10 @@ import org.lwjgl.util.vector.Matrix4f;
 import java.io.IOException;
 
 public class ParticleShader extends ShaderProgram {
-
-
-	private Uniform1i texture;
+	private Uniform1i Texture;
 	private Uniform16f ProjectionMatrix;
 	private Uniform16f ViewMatrix;
+	private Uniform1f Radius;
 
 	public ParticleShader() throws ShaderCompilationException, IOException {
 		super(
@@ -28,7 +28,6 @@ public class ParticleShader extends ShaderProgram {
 	protected void bindAttributes() {
 		bindAttribute("Position", VertexArray.VertciesIndex);
 		bindAttribute("TextureCoords", VertexArray.TextureCoordinatesIndex);
-		//bindAttribute("color", 2);
 	}
 
 
@@ -36,12 +35,13 @@ public class ParticleShader extends ShaderProgram {
 	protected void getCustomUniformLocations() {
 		ProjectionMatrix = new Uniform16f(this, "ProjectionMatrix");
 		ViewMatrix = new Uniform16f(this, "ViewMatrix");
-		texture = new Uniform1i(this, "Texture");
+		Texture = new Uniform1i(this, "Texture");
+		Radius = new Uniform1f(this, "Radius");
 	}
 
 	@Override
 	protected void setDefaultCustomUniformValues() {
-		texture.set(TextureUnit.AlbedoMap);
+		Texture.set(TextureUnit.AlbedoMap);
 	}
 
 	@Override
@@ -50,4 +50,6 @@ public class ParticleShader extends ShaderProgram {
 	public void setProjectionMatrix(Matrix4f projectionmatrix) { ProjectionMatrix.set(projectionmatrix); }
 
 	public void setViewMatrix(Matrix4f viewmatrix) { ViewMatrix.set(viewmatrix); }
+
+	public void setRadius(float radius) { Radius.set(radius); }
 }

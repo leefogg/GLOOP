@@ -6,6 +6,7 @@ layout (location = 2) in vec3 ParticlePosition;
 
 uniform mat4 ProjectionMatrix;
 uniform mat4 ViewMatrix;
+uniform float Radius = 1.0;
 
 out vec2 textureCoord;
 
@@ -25,6 +26,6 @@ void main(void) {
 	modelviewmatrix[2] = vec4(0,0,1,0);
 	modelviewmatrix[3][3] = 1;
 	
-	gl_Position = ProjectionMatrix * modelviewmatrix * vec4(Position , 1.0);
+	gl_Position = ProjectionMatrix * modelviewmatrix * vec4(Position * Radius, 1.0);
 	textureCoord = TextureCoords;
 }

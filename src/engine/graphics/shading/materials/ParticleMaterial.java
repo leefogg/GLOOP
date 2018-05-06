@@ -10,6 +10,7 @@ public class ParticleMaterial extends Material<ParticleShader> {
 
 	private Texture texture;
 	private Matrix4f ProjectionMatrix, ViewMatrix;
+	private static float Radius = 1;
 
 	public ParticleMaterial(Texture texture) throws IOException {
 		shader = getShaderSingleton();
@@ -30,6 +31,7 @@ public class ParticleMaterial extends Material<ParticleShader> {
 	public void commit() {
 		shader.setProjectionMatrix(ProjectionMatrix);
 		shader.setViewMatrix(ViewMatrix);
+		shader.setRadius(Radius);
 	}
 
 	public void setProjectionMatrix(Matrix4f projectionmatrix) { ProjectionMatrix = projectionmatrix; }
@@ -40,4 +42,6 @@ public class ParticleMaterial extends Material<ParticleShader> {
 	protected boolean hasTransparency() {
 		return texture.isTransparent() && shader.supportsTransparency();
 	}
+
+	public static void setRadius(float radius) { Radius = radius; }
 }
