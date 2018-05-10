@@ -2,10 +2,9 @@ package tests;
 
 import engine.graphics.cameras.DebugCamera;
 import engine.graphics.models.Model3D;
+import engine.graphics.models.ModelFactory;
 import engine.graphics.rendering.*;
 import engine.graphics.shading.ShaderCompilationException;
-import engine.graphics.shading.lighting.PointLight;
-import engine.graphics.shading.materials.LambartMaterial;
 import engine.graphics.textures.*;
 import engine.math.Quaternion;
 import org.lwjgl.LWJGLException;
@@ -45,7 +44,7 @@ public class Feedback {
 			DeferredMaterial floormaterial = deferredrenderer.getNewMaterial();
 			Texture albedo = TextureManager.newTexture("res\\textures\\default.png", PixelComponents.RGB, PixelFormat.SRGB8);
 			floormaterial.setAlbedoTexture(albedo);
-			Model3D floor = new Model3D("res/models/plane.obj", floormaterial);
+			Model3D floor = ModelFactory.getModel("res/models/plane.obj", floormaterial);
 			scene.add(floor);
 
 			Texture lastframe = deferredrenderer.getTexture();
@@ -53,14 +52,14 @@ public class Feedback {
 			DeferredMaterial cubematerial = deferredrenderer.getNewMaterial();
 			albedo = TextureManager.newTexture("res\\textures\\glados_head.png", PixelComponents.RGB, PixelFormat.SRGB8);
 			cubematerial.setAlbedoTexture(albedo);
-			glados = new Model3D("res/models/glados.obj", cubematerial);
+			glados = ModelFactory.getModel("res/models/glados.obj", cubematerial);
 			glados.setPosition(-20,10,0);
 			glados.setScale(20,20,20);
 			scene.add(glados);
 
 			cubematerial = deferredrenderer.getNewMaterial();
 			cubematerial.setAlbedoTexture(lastframe);
-			Model3D plane = new Model3D("res/models/plane.obj", cubematerial);
+			Model3D plane = ModelFactory.getModel("res/models/plane.obj", cubematerial);
 			plane.setPosition(20,5,0);
 			Quaternion rotation = new Quaternion();
 			rotation.rotate(-90,0,0);

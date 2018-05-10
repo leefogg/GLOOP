@@ -2,7 +2,11 @@ package tests;
 
 import engine.graphics.cameras.DebugCamera;
 import engine.graphics.models.Model3D;
-import engine.graphics.particlesystem.*;
+import engine.graphics.models.ModelFactory;
+import engine.graphics.particlesystem.DynamicParticleSystem;
+import engine.graphics.particlesystem.OmniEmitter;
+import engine.graphics.particlesystem.Particle;
+import engine.graphics.particlesystem.StaticParticleSystem;
 import engine.graphics.rendering.ForwardRenderer;
 import engine.graphics.rendering.Renderer;
 import engine.graphics.rendering.Scene;
@@ -46,7 +50,7 @@ public final class ParticleTest {
 		try {
 			Texture albedo = TextureManager.newTexture("res\\textures\\brick.png", PixelComponents.RGB, PixelFormat.SRGB8);
 			albedo.generateAnisotropicMipMaps(100);
-			Model3D floor = new Model3D("res/models/plane.obj", new LambartMaterial(albedo));
+			Model3D floor = ModelFactory.getModel("res/models/plane.obj", new LambartMaterial(albedo));
 			floor.setPosition(0,-2,0);
 			scene.add(floor);
 
@@ -68,10 +72,13 @@ public final class ParticleTest {
 			StaticParticleSystem sps = new StaticParticleSystem(particles, albedo);
 			scene.add(sps);
 
-			DynamicParticleSystem dps = new DynamicParticleSystem(10000, albedo);
+			DynamicParticleSystem dps = new DynamicParticleSystem(100000, albedo);
 			scene.add(dps);
-			RectangleEmitter emitter = new RectangleEmitter(dps,  new Vector3f(-25, 10,0), new Vector3f(10,10,10));
-			scene.add(emitter);
+			OmniEmitter omniemitter = new OmniEmitter(dps, new Vector3f(-25, 10,0), new Vector3f(0,.1f, 0));
+			omniemitter.setEmitVelocityError(new Vector3f(.1f, .1f, .1f));
+			dps.setParticleLifeTime(1);
+			omniemitter.setEmmisionSpeed(25);
+			scene.add(omniemitter);
 		} catch (IOException | ShaderCompilationException e) {
 			System.err.println(e.getMessage());
 			exitCleanly(1);
@@ -80,6 +87,7 @@ public final class ParticleTest {
 		System.gc();
 
 		boolean isrunning = true;
+		Viewport.update();
 		while(isrunning) {
 			Viewport.update();
 			float delta = Renderer.getTimeDelta();

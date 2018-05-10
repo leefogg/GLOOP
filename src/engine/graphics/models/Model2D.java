@@ -31,7 +31,7 @@ public class Model2D extends Model {
 					0,0,0,	0,1, // Bottom left
 					1,0,0,	1,1  // Bottom right
 			};
-			VertexArray quadgeometry = VertexArrayManager.newVAO("Quad", strippedVAOdata, true, false, false);
+			VertexArray quadgeometry = VertexArrayManager.getVAO("Quad", strippedVAOdata, true, false, false);
 			quadgeometry.renderMode = RenderMode.TriangleStrip;
 			return quadgeometry;
 		}

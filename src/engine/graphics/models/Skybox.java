@@ -2,12 +2,9 @@ package engine.graphics.models;
 
 import engine.graphics.rendering.DepthFunction;
 import engine.graphics.rendering.Renderer;
-import engine.graphics.rendering.Viewport;
 import engine.graphics.shading.materials.CubeMapMaterial;
-import engine.graphics.shading.materials.CubeMapShader;
 import engine.graphics.textures.CubeMap;
 import org.lwjgl.util.vector.Matrix4f;
-import org.lwjgl.util.vector.Vector4f;
 
 import java.io.IOException;
 
@@ -58,7 +55,7 @@ public class Skybox extends Model {
 			    -1, -1,  1,
 			     1, -1,  1
 			};
-			vertexGeometry = VertexArrayManager.newVAO("SkyboxVertcies", cubeverts, false, false, false);
+			vertexGeometry = VertexArrayManager.getVAO("SkyboxVertcies", cubeverts, false, false, false);
 	}
 
 	public Skybox(CubeMap texture) throws IOException {

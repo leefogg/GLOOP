@@ -1,6 +1,7 @@
 package tests;
 
 import engine.graphics.Settings;
+import engine.graphics.models.ModelFactory;
 import engine.graphics.models.Skybox;
 import engine.graphics.rendering.*;
 import engine.graphics.cameras.DebugCamera;
@@ -81,7 +82,7 @@ public class HDRTest {
 			material.setReflectivity(0.1f);
 			material.setEnvironmentMap(cubemap);
 
-			Model3D model = new Model3D("res\\models\\SOMA\\ark\\model.obj", material);
+			Model3D model = ModelFactory.getModel("res\\models\\SOMA\\ark\\model.obj", material);
 			//model.setScale(20,20,20);
 			model.setPosition(10,10,10);
 			scene.add(model);
@@ -89,7 +90,7 @@ public class HDRTest {
 			material = deferredrenderer.getNewMaterial();
 			albedo = TextureManager.newTexture("res\\textures\\wood.png", PixelComponents.RGB, PixelFormat.SRGB8);
 			material.setAlbedoTexture(albedo);
-			Model3D tunnel = new Model3D("res\\models\\masking\\box.obj", material);
+			Model3D tunnel = ModelFactory.getModel("res\\models\\masking\\box.obj", material);
 			tunnel.setScale(1, 1, 10);
 			tunnel.setPosition(0, -2.5f,0);
 			scene.add(tunnel);

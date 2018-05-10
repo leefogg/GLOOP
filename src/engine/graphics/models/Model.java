@@ -27,12 +27,12 @@ public abstract class Model implements Renderable {
 	@Override
  	public void update(int delta, float timescaler) {}
 
-	public final boolean isHidden() {
-		return hidden;
-	}
+	public final boolean isHidden() { return hidden; }
 	public final void setHidden(boolean hidden) {
 		this.hidden = hidden;
 	}
+
+	protected boolean isOccuded() { return false; }
 
 	public VertexArray getMeshBuffer() {return modelData;}
 
@@ -40,7 +40,7 @@ public abstract class Model implements Renderable {
 	public void render() {
 		if (modelData.isDisposed())
 			return;
-		if (isHidden())
+		if (isHidden() || isOccuded())
 			return;
 
 		//TODO: Render using error shader if shader is disposed

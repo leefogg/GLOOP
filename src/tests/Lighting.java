@@ -1,11 +1,15 @@
 package tests;
 
+import engine.graphics.Settings;
 import engine.graphics.cameras.DebugCamera;
 import engine.graphics.models.Model3D;
+import engine.graphics.models.ModelFactory;
 import engine.graphics.rendering.*;
 import engine.graphics.rendering.DeferredMaterial;
 import engine.graphics.rendering.DeferredRenderer;
 import engine.graphics.shading.lighting.PointLight;
+import engine.graphics.shading.materials.SingleColorMaterial;
+import engine.graphics.shading.posteffects.BloomPostEffect;
 import engine.graphics.textures.PixelComponents;
 import engine.graphics.textures.PixelFormat;
 import engine.graphics.textures.Texture;
@@ -33,9 +37,12 @@ public final class Lighting {
 			vecolcity.scale(0.3f);
 			light.quadraticAttenuation = 0.32f;
 			color.set(r.nextFloat(), r.nextFloat(), r.nextFloat());
+			color.normalise();
+			color.scale(2f);
 			light.setColor(color);
 			light.setPosition(position.x, position.y, position.z);
 
+			((SingleColorMaterial)model.getMaterial()).setColor(color);
 			this.model = model;
 
 			scene.add(light);
@@ -67,22 +74,25 @@ public final class Lighting {
 		try {
 			Viewport.create(1280, 720, "Engine Testing");
 			Viewport.show();
+			Settings.EnableHDR = true;
 		} catch (LWJGLException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
 
 		DeferredRenderer deferredrenderer = null;
+		ForwardRenderer forwardrenderer = null;
 		try {
 			deferredrenderer = Renderer.getDeferedRenderer();
+			forwardrenderer = Renderer.getForwardRenderer();
 		} catch (Exception e) {
 			e.printStackTrace();
 			exitCleanly(1);
 		}
 		Scene scene = deferredrenderer.getScene();
+		forwardrenderer.setScene(scene);
 
 		LightBall[] balls = new LightBall[64];
-		Model3D	ballmodel = null;
 		try {
 			DeferredMaterial wallsmaterial = deferredrenderer.getNewMaterial();
 			wallsmaterial.setAlbedoColor(1,1,1,1);
@@ -96,30 +106,31 @@ public final class Lighting {
 			wallsmaterial.setTextureRepeat(2,2);
 			wallsmaterial.setSpecularity(1);
 			wallsmaterial.setRoughness(0.5f);
-			Model3D outerbox = new Model3D("res\\models\\insideout box.obj", wallsmaterial);
+			Model3D outerbox = ModelFactory.getModel("res\\models\\insideout box.obj", wallsmaterial);
 			outerbox.setScale(50,50,50);
 			outerbox.setPosition(0,25,0);
 			scene.add(outerbox);
 
 			DeferredMaterial material = deferredrenderer.getNewMaterial();
 			material.setAlbedoColor(1,1,1,1);
-			Model3D box = new Model3D("res\\models\\bunny.obj", material);
+			Model3D box = ModelFactory.getModel("res\\models\\bunny.obj", material);
 			box.setPosition(0, 25, 0);
 			box.setScale(10,10,10);
 			scene.add(box);
 
-			material = deferredrenderer.getNewMaterial();
-			material.setAlbedoColor(1,1,1, 1);
-			ballmodel = new Model3D("res\\models\\sphere.obj", material);
-
 			for (int i=0; i<balls.length; i++)
-				balls[i] = new LightBall(scene, ballmodel.clone());
+				balls[i] = new LightBall(scene, ModelFactory.getModel("res\\models\\sphere.obj",  new SingleColorMaterial()));
+
+
+			BloomPostEffect bloompost = new BloomPostEffect();
+			bloompost.setNumberOfPasses(3);
+			Renderer.addPostEffect(bloompost);
+			Renderer.enablePostEffects();
 		} catch (IOException e) {
 			System.err.println("Couldn't load Model!");
 			e.printStackTrace(System.err);
 			exitCleanly(1);
 		}
-
 
 
 		DebugCamera camera = new DebugCamera();
@@ -139,6 +150,8 @@ public final class Lighting {
 				ball.update(timescaler);
 
 			Renderer.setRenderer(deferredrenderer);
+			Renderer.render();
+			Renderer.setRenderer(forwardrenderer);
 			Renderer.render();
 			Renderer.swapBuffers();
 			deferredrenderer.renderAttachments();

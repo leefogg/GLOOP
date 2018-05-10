@@ -9,20 +9,19 @@ import engine.graphics.rendering.Scene;
 import engine.graphics.rendering.Viewport;
 import engine.graphics.shading.ShaderCompilationException;
 import engine.graphics.shading.lighting.PointLight;
-import engine.graphics.shading.materials.DecalMaterial;
 import engine.graphics.shading.materials.LambartMaterial;
-import engine.graphics.shading.posteffects.FXAAPostEffect;
+import engine.graphics.shading.materials.SingleColorMaterial;
 import engine.graphics.textures.*;
 import engine.math.Quaternion;
+import engine.physics.data.AABB;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.util.vector.Vector3f;
 
 import java.io.IOException;
 
-public final class Basic {
+public final class BoundingBoxTest {
 	public static void main(String[] args) {
 		try {
 			Viewport.create(1280, 720, "Engine Testing");
@@ -42,17 +41,22 @@ public final class Basic {
 		light1.quadraticAttenuation = 0.01f;
 		scene.add(light1);
 
-
+		Model3D box = null, charizard = null;
+		AABB charboundingbox = null;
 		try {
 			Texture albedo = TextureManager.newTexture("res\\textures\\brick.png", PixelComponents.RGB, PixelFormat.SRGB8);
 			albedo.generateAnisotropicMipMaps(100);
-			Model3D model1 = ModelFactory.getModel("res/models/plane.obj", new LambartMaterial(albedo));
-			scene.add(model1);
+			Model3D floor = ModelFactory.getModel("res/models/plane.obj", new LambartMaterial(albedo));
+			scene.add(floor);
 
 			albedo = TextureManager.newTexture("res/textures/charizard.png", PixelComponents.RGB, PixelFormat.SRGB8);
 			albedo.setFilteringMode(TextureFilter.Linear);
-			Model3D model2 = ModelFactory.getModel("res/models/charizard.obj", new LambartMaterial(albedo));
-			scene.add(model2);
+			charizard = ModelFactory.getModel("res/models/charizard.obj", new LambartMaterial(albedo));
+			charboundingbox = charizard.getBoundingBox();
+			scene.add(charizard);
+
+			box = ModelFactory.getModel("res/models/frame.obj", new SingleColorMaterial());
+			scene.add(box);
 		} catch (IOException | ShaderCompilationException e) {
 			System.err.println("Couldn't load Model!");
 			System.err.println(e.getMessage());
@@ -67,21 +71,29 @@ public final class Basic {
 		System.gc();
 
 		boolean isrunning = true;
-		double sincos = (float)Math.PI, step = (float)Math.PI/300f;
+		float sincos = 0, step = (float)Math.PI/300f;
+		Quaternion rotation = new Quaternion();
 		while(isrunning) {
 			Viewport.update();
 			float delta = Renderer.getTimeDelta();
 			float timescaler = Renderer.getTimeScaler();
 			camera.update(delta, timescaler);
 
-			//sincos += step * timescaler;
-			light1.setPosition((float)Math.sin(sincos)*20, 0, (float)Math.cos(sincos)*20);
-
 			Renderer.setRenderer(renderer);
 			Renderer.render();
+
+			sincos += step;
+
+			rotation.toIdentity();
+			rotation.rotate(0, sincos*20, 0);
+			charizard.setRotation(rotation);
+			charizard.setPosition((float)Math.cos(sincos)*20, 0,0);
+			box.setScale(charboundingbox.width, charboundingbox.height, charboundingbox.depth);
+			box.setPosition(charboundingbox.getCentre().x+(float)Math.cos(sincos)*20, charboundingbox.getCentre().y, charboundingbox.getCentre().z);
+			box.setRotation(rotation);
 			Renderer.swapBuffers();
 
-			Viewport.setTitle("Development Engine " + Viewport.getCurrentFrameRate() + "Hz");
+			Viewport.setTitle("Bounding Box Tests @ " + Viewport.getCurrentFrameRate() + "Hz");
 
 			if (Display.isCloseRequested())
 				isrunning = false;
@@ -97,4 +109,3 @@ public final class Basic {
 		System.exit(errorcode);
 	}
 }
-

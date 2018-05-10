@@ -288,6 +288,7 @@ public class VertexArray implements Disposable {
 			GL11.glDrawElements(renderMode.getGLType(), NumberOfIndices, DataType.UInteger.getGLEnum(), 0);
 		else
 			GL11.glDrawArrays(renderMode.getGLType(), 0, NumberofVertcies);
+		//TODO: Add call count for profiler
 	}
 
 	public void renderInstanced(int instances) {

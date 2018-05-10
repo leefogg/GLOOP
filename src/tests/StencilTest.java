@@ -1,8 +1,8 @@
 package tests;
 
-import engine.graphics.cameras.DebugCamera;
 import engine.graphics.cameras.PerspectiveCamera;
 import engine.graphics.models.Model3D;
+import engine.graphics.models.ModelFactory;
 import engine.graphics.rendering.*;
 import engine.graphics.shading.ShaderCompilationException;
 import engine.graphics.shading.lighting.PointLight;
@@ -46,29 +46,29 @@ public final class StencilTest {
 		try {
 			Texture albedo = TextureManager.newTexture("res\\textures\\brick.png", PixelComponents.RGB, PixelFormat.SRGB8);
 			albedo.generateAnisotropicMipMaps(100);
-			Model3D floor = new Model3D("res/models/plane.obj", new LambartMaterial(albedo));
+			Model3D floor = ModelFactory.getModel("res/models/plane.obj", new LambartMaterial(albedo));
 			scene.add(floor);
 
 			SingleColorMaterial whitematerial = new SingleColorMaterial();
 			whitematerial.setColor(1,1,1);
-			Model3D frame = new Model3D("res/models/masking/frame.obj", whitematerial);
+			Model3D frame = ModelFactory.getModel("res/models/masking/frame.obj", whitematerial);
 			frame.setScale(3,3,3);
 			scene.add(frame);
 
 			albedo = TextureManager.newTexture("res\\textures\\180.jpg", PixelComponents.RGB, PixelFormat.SRGB8);
 			LambartMaterial lambartmaterial = new LambartMaterial(albedo);
-			box = new Model3D("res/models/masking/box.obj", lambartmaterial);
+			box = ModelFactory.getModel("res/models/masking/box.obj", lambartmaterial);
 			box.setScale(3,3,3);
 			box.setPosition(0,0.1f,0);
 
-			mask = new Model3D("res/models/masking/face.obj", whitematerial);
+			mask = ModelFactory.getModel("res/models/masking/face.obj", whitematerial);
 			mask.setScale(3,3,3);
 
 			albedo = TextureManager.newTexture("res/textures/charizard.png", PixelComponents.RGB, PixelFormat.SRGB8);
 			albedo.setFilteringMode(TextureFilter.Linear);
-			charizard = new Model3D("res/models/charizard.obj", new LambartMaterial(albedo));
+			charizard = ModelFactory.getModel("res/models/charizard.obj", new LambartMaterial(albedo));
 
-			teapot = new Model3D("res/models/teapot.obj", whitematerial);
+			teapot = ModelFactory.getModel("res/models/teapot.obj", whitematerial);
 			teapot.setScale(10,10,10);
 		} catch (IOException | ShaderCompilationException e) {
 			System.err.println("Couldn't load Model!");

@@ -1,5 +1,6 @@
 package tests;
 
+import engine.graphics.models.ModelFactory;
 import engine.graphics.rendering.*;
 import engine.graphics.cameras.DebugCamera;
 import engine.graphics.models.Model3D;
@@ -64,7 +65,7 @@ public final class Specular {
 					material.setAlbedoColor(1, 1, 1, 1f);
 					material.setSpecularity(specular);
 					material.setRoughness(roughness);
-					Model3D model = new Model3D("res\\models\\sphere.obj", material);
+					Model3D model = ModelFactory.getModel("res\\models\\sphere.obj", material);
 					model.setPosition(x-5, 0.5f , z-5);
 					scene.add(model);
 				}
@@ -72,7 +73,7 @@ public final class Specular {
 
 			DeferredMaterial material = deferredrenderer.getNewMaterial();
 			Texture albedomap = TextureManager.newTexture("res\\textures\\wood.png", PixelComponents.RGB, PixelFormat.SRGB8);
-			Model3D model = new Model3D("res\\models\\plane.obj", material);
+			Model3D model = ModelFactory.getModel("res\\models\\plane.obj", material);
 			material.setTextureRepeat(5,5);
 			material.setAlbedoTexture(albedomap);
 			material.setRoughness(0.1f);

@@ -3,6 +3,7 @@ package tests;
 import engine.graphics.cameras.DebugCamera;
 import engine.graphics.models.Decal;
 import engine.graphics.models.Model3D;
+import engine.graphics.models.ModelFactory;
 import engine.graphics.rendering.*;
 import engine.graphics.shading.ShaderCompilationException;
 import engine.graphics.shading.lighting.PointLight;
@@ -46,11 +47,11 @@ public class DecalTest {
 			DeferredMaterial roommaterial = deferredrenderer.getNewMaterial();
 			roommaterial.setAlbedoTexture(albedo);
 			roommaterial.setTextureRepeat(4,4);
-			Model3D room = new Model3D("res/models/decalsroom.obj", roommaterial);
+			Model3D room = ModelFactory.getModel("res/models/decalsroom.obj", roommaterial);
 			scene.add(room);
 
 			DeferredMaterial bunnymaerial = deferredrenderer.getNewMaterial();
-			Model3D bunny = new Model3D("res/models/bunny.obj", bunnymaerial);
+			Model3D bunny = ModelFactory.getModel("res/models/bunny.obj", bunnymaerial);
 			bunnymaerial.setAlbedoColor(1,1,1,1);
 			bunny.setPosition(-6.794f, 0f, -8.714f);
 			bunny.setScale(5,5,5);

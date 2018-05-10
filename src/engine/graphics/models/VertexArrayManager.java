@@ -11,9 +11,10 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 
 public final class VertexArrayManager {
+
 	private static final HashSet<VertexArray> VAOs = new HashSet<>();
 
-	public static VertexArray newVAO(String path) throws IOException {
+	public static VertexArray getVAO(String path) throws IOException {
 		// Check exists on disk
 		File texturepath = Paths.get(path).toFile();
 		if (!texturepath.exists())
@@ -26,15 +27,9 @@ public final class VertexArrayManager {
 			return existingVAO;
 		}
 
-		// None found
-		System.out.println("First load. Returning new.");
-		// Load
-		VertexArray newvao = new VertexArray(path); // Saved automatically
-		newvao.storeMesh(new Geometry(path));
-
-		return newvao;
+		return null;
 	}
-	public static VertexArray newVAO(String name, float[] data, boolean textureprovided, boolean normalprovided, boolean tangentprovided) { //TODO: Replace with geometry
+	public static VertexArray getVAO(String name, float[] data, boolean textureprovided, boolean normalprovided, boolean tangentprovided) { //TODO: Replace with geometry
 		System.out.print("Loading new VAO for file \""+name+"\"... ");
 		VertexArray existingVAO = findExisting(name);
 		if (existingVAO != null) {

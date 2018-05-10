@@ -1,6 +1,7 @@
 package tests;
 
 import engine.graphics.Settings;
+import engine.graphics.models.ModelFactory;
 import engine.graphics.rendering.*;
 import engine.graphics.rendering.DeferredRenderer;
 import engine.graphics.textures.*;
@@ -68,7 +69,7 @@ public final class ReflectionRefraction {
 			material.setRefractivity(0);
 			material.setReflectivity(1);
 			material.setAlbedoColor(0,0,0,1);
-			model1 = new Model3D("res\\models\\teapot.obj", material);
+			model1 = ModelFactory.getModel("res\\models\\teapot.obj", material);
 			model1.setScale(5,5,5);
 			model1.setPosition(-4f, 0, -5f);
 
@@ -77,11 +78,11 @@ public final class ReflectionRefraction {
 			refractiveballmaterial.setRefractivity(1);
 			refractiveballmaterial.setEnvironmentMap(cubemaptexture);
 			refractiveballmaterial.setReflectivity(1f);
-			Model3D sphere = new Model3D("res\\models\\sphere.obj", refractiveballmaterial);
+			Model3D sphere = ModelFactory.getModel("res\\models\\sphere.obj", refractiveballmaterial);
 			sphere.setPosition(0, 1, 5);
 			scene.add(sphere);
 
-			model2 = new Model3D("res\\models\\bunny.obj", refractiveballmaterial);
+			model2 = ModelFactory.getModel("res\\models\\bunny.obj", refractiveballmaterial);
 			model2.setScale(5,5,5);
 			model2.setPosition(4f, 0f, -5f);
 
@@ -96,7 +97,7 @@ public final class ReflectionRefraction {
 			material.setEnvironmentMap(cubemaptexture);
 			material.setReflectivity(0.4f);
 			material.setRefractivity(0);
-			floor = new Model3D("res\\models\\plane.obj", material);
+			floor = ModelFactory.getModel("res\\models\\plane.obj", material);
 			floor.setPosition(0, 0, 0);
 
 
@@ -108,7 +109,7 @@ public final class ReflectionRefraction {
 					material.setRefractivity((float)x/10f);
 					material.setEnvironmentMap(cubemaptexture);
 					material.setRefractionIndex(1.5f);
-					sphere = new Model3D("res\\models\\sphere.obj", material);
+					sphere = ModelFactory.getModel("res\\models\\sphere.obj", material);
 					sphere.setPosition(-7, y+1f, x-5);
 					scene.add(sphere);
 				}
@@ -122,7 +123,7 @@ public final class ReflectionRefraction {
 			material.setNormalMap(normalmap);
 			material.setNormalMapScale(1f);
 			material.setEnvironmentMap(cubemaptexture);
-			sphere = new Model3D("res\\models\\sphere.obj", material);
+			sphere = ModelFactory.getModel("res\\models\\sphere.obj", material);
 			sphere.setPosition(-5, 2, 0);
 			sphere.setScale(4,4,4);
 			scene.add(sphere);

@@ -3,6 +3,7 @@ package tests;
 import engine.graphics.Settings;
 import engine.graphics.cameras.DebugCamera;
 import engine.graphics.models.Model3D;
+import engine.graphics.models.ModelFactory;
 import engine.graphics.rendering.ForwardRenderer;
 import engine.graphics.rendering.Renderer;
 import engine.graphics.rendering.Scene;
@@ -49,7 +50,7 @@ public final class BloomTest {
 		try {
 			Texture albedo = TextureManager.newTexture("res\\textures\\brick.png", PixelComponents.RGB, PixelFormat.SRGB8);
 			albedo.generateAnisotropicMipMaps(100);
-			Model3D model1 = new Model3D("res/models/plane.obj", new LambartMaterial(albedo));
+			Model3D model1 = ModelFactory.getModel("res/models/plane.obj", new LambartMaterial(albedo));
 			scene.add(model1);
 
 			Random r = new Random();
@@ -59,7 +60,7 @@ public final class BloomTest {
 				color.normalise();
 				mat.setColor(1.2f,1.2f,1.2f);
 
-				Model3D sphere = new Model3D("res\\models\\sphere.obj", mat);
+				Model3D sphere = ModelFactory.getModel("res\\models\\sphere.obj", mat);
 				sphere.setScale(2,2,2);
 				sphere.setPosition(x, 1,0);
 				scene.add(sphere);

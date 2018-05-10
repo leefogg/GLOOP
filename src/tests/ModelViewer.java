@@ -1,6 +1,7 @@
 package tests;
 
 import engine.graphics.Settings;
+import engine.graphics.models.ModelFactory;
 import engine.graphics.models.Skybox;
 import engine.graphics.rendering.*;
 import engine.graphics.cameras.DebugCamera;
@@ -73,12 +74,12 @@ public class ModelViewer {
 			material.setRoughness(0.2f);
 			material.setEnvironmentMap(cubemap);
 			material.setReflectivity(0.1f);
-			Model3D model = new Model3D("res\\models\\SOMA\\ark\\model.obj", material);
+			Model3D model = ModelFactory.getModel("res\\models\\SOMA\\ark\\model.obj", material);
 			model.setScale(20,20,20);
 			scene.add(model);
 
 			SingleColorMaterial fullbright = new SingleColorMaterial();
-			lightmodel = new Model3D("res\\models\\sphere.obj", fullbright);
+			lightmodel = ModelFactory.getModel("res\\models\\sphere.obj", fullbright);
 			scene.add(lightmodel);
 		} catch (IOException | ShaderCompilationException e) {
 			System.err.println("Couldn't load Model!");
