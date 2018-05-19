@@ -69,7 +69,7 @@ public class Model3D extends Model {
 	public Model3D clone() {
 		//TODO: Doesn't clone transforms
 		//TODO: Doesn't clone material
-		return new Model3D(modelData, material);
+		return new Model3D(modelData, material, BoundingBox);
 	}
 
 	//TODO: ToModel2D method
