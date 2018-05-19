@@ -59,6 +59,9 @@ public class Model3D extends Model {
 
 	@Override
 	protected boolean isOccuded() {
+		if (BoundingBox == null)
+			return false;
+
 		getModelMatrix(ModelMatrix);
 		boolean isoutside = !Renderer.getRenderer().getScene().currentCamera.isInsideFrustum(BoundingBox, ModelMatrix);
 		return isoutside;
