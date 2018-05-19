@@ -40,11 +40,13 @@ public class ForwardRenderer extends Renderer {
 			model.render();
 		}
 
-		Renderer.enableFaceCulling(false);
-		for (ParticleSystem ps : scene.getParticleSystems()) {
-			ps.render();
+		if (!scene.getParticleSystems().isEmpty()) {
+			Renderer.enableFaceCulling(false);
+			for (ParticleSystem ps : scene.getParticleSystems()) {
+				ps.render();
+			}
+			Renderer.popFaceCullingEnabledState();
 		}
-		Renderer.popFaceCullingEnabledState();
 	}
 
 	@Override
