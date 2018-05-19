@@ -25,6 +25,7 @@ public final class ReflectionRefraction {
 			Settings.EnableFresnel = true;
 			Viewport.create(1280, 720, "Reflection and Refraction");
 			Viewport.show();
+			Settings.EnableParallaxMapping = true;
 		} catch (LWJGLException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -91,8 +92,10 @@ public final class ReflectionRefraction {
 			material.setAlbedoColor(0,0,0,1);
 			Texture albedomap = TextureManager.newTexture("res\\textures\\Metal_Weave_002_SD\\Metal_Weave_002_COLOR.jpg", PixelComponents.RGB, PixelFormat.SRGB8);
 			Texture normalmap = TextureManager.newTexture("res\\textures\\Metal_Weave_002_SD\\Metal_Weave_002_NORM.jpg", PixelComponents.RGB, PixelFormat.RGB8);
+			Texture heightmap = TextureManager.newTexture("res\\textures\\Metal_Weave_002_SD\\Metal_Weave_002_DISP.png", PixelComponents.RGB, PixelFormat.RGB8);
 			material.setAlbedoTexture(albedomap);
 			material.setNormalMap(normalmap);
+			material.setDepthMap(heightmap);
 			material.setTextureRepeat(10,10);
 			material.setEnvironmentMap(cubemaptexture);
 			material.setReflectivity(0.4f);
@@ -137,8 +140,9 @@ public final class ReflectionRefraction {
 		scene.add(skybox);
 
 		DebugCamera camera = new DebugCamera();
+		scene.setDebugCamera(camera);
+		scene.setGameCamera(camera);
 		camera.setPosition(0,2,0);
-		scene.currentCamera = camera;
 
 		System.gc();
 

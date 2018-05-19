@@ -111,8 +111,9 @@ public class HDRTest {
 		}
 
 		DebugCamera camera = new DebugCamera();
+		scene.setDebugCamera(camera);
+		scene.setGameCamera(camera);
 		camera.setPosition(0,0,20);
-		scene.currentCamera = camera;
 
 		System.gc();
 

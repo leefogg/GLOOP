@@ -27,7 +27,7 @@ public final class ShaderToyShaders {
 		ForwardRenderer forwardrenderer = Renderer.getForwardRenderer();
 
 		DebugCamera camera = new DebugCamera();
-		forwardrenderer.getScene().currentCamera = camera;
+		forwardrenderer.getScene().setGameCamera(camera);
 
 		Scene scene = forwardrenderer.getScene();
 		try {

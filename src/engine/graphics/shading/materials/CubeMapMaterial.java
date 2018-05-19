@@ -31,7 +31,7 @@ public final class CubeMapMaterial extends Material<CubeMapShader> {
 	public void commit() {
 		TextureManager.bindReflectionMap(cubeMap);
 
-		engine.graphics.cameras.Camera camera = Renderer.getForwardRenderer().getScene().currentCamera;
+		engine.graphics.cameras.Camera camera = Renderer.getCurrentCamera();
 		shader.setProjectionMatrix(camera.getProjectionMatrix());
 		shader.setViewMatrix(camera.getViewMatrix());
 	}

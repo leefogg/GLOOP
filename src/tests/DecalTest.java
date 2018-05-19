@@ -115,8 +115,9 @@ public class DecalTest {
 		}
 
 		DebugCamera camera = new DebugCamera();
+		scene.setDebugCamera(camera);
+		scene.setGameCamera(camera);
 		camera.setPosition(-1,7,19);
-		scene.currentCamera = camera;
 
 		System.gc();
 

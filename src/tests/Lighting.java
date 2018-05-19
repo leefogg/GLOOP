@@ -134,8 +134,9 @@ public final class Lighting {
 
 
 		DebugCamera camera = new DebugCamera();
+		scene.setDebugCamera(camera);
+		scene.setGameCamera(camera);
 		camera.setPosition(0, 25, 40);
-		scene.currentCamera = camera;
 
 		System.gc();
 

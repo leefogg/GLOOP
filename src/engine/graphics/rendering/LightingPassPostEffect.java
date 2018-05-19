@@ -48,7 +48,7 @@ final class LightingPassPostEffect extends PostEffect<LightingPassShader> {
 		TextureManager.bindTextureToUnit(normalTexture, TextureUnit.GBuffer_Normal);
 		TextureManager.bindTextureToUnit(positionTexture, TextureUnit.GBuffer_Position);
 		TextureManager.bindTextureToUnit(specularTexture, TextureUnit.GBuffer_Specular);
-		shader.setCameraAttributes(Renderer.getRenderer().getScene().currentCamera);
+		shader.setCameraAttributes(Renderer.getCurrentCamera());
 		shader.updateLights();
 		shader.setTime(Viewport.getElapsedSeconds());
 	}

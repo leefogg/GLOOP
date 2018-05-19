@@ -6,6 +6,7 @@ import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER_SRGB;
 import engine.Disposable;
 import engine.general.GenericStackable;
 import engine.general.Stack;
+import engine.graphics.cameras.Camera;
 import engine.graphics.shading.ShaderCompilationException;
 import engine.graphics.shading.posteffects.PostEffect;
 import engine.graphics.shading.posteffects.PostProcessor;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 
 public abstract class Renderer implements Disposable {
 	protected Scene scene = new Scene();
+	protected static boolean useDebugCamera = false;
 
 	public abstract void bind(Renderer previoustechnique);
 	protected abstract void renderScene();
@@ -214,6 +216,15 @@ public abstract class Renderer implements Disposable {
 		return forwardRenderer;
 	}
 
+	public static void useDebugCamera(boolean usedebugcamera) {
+		useDebugCamera = usedebugcamera;
+	}
+
+	public static Camera getCurrentCamera() {
+		Scene scene = getRenderer().getScene();
+		return (useDebugCamera) ? scene.getDebugCamera() : scene.getGameCamera();
+	}
+
 	public static void setRenderer(Renderer newtechnique) {
 		newtechnique.bind(currentRenderer);
 		currentRenderer = newtechnique;
@@ -361,6 +372,7 @@ public abstract class Renderer implements Disposable {
 	}
 
 	public static void setDepthFunction(DepthFunction function) { glDepthFunc(function.getGLEnum()); }
+	//TODO: PopDepthFunction
 
 	/** Allows the graphics of specified color components. */
 	public static void setColorMask(boolean red, boolean green, boolean blue, boolean alpha) {

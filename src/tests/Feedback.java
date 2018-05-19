@@ -73,9 +73,10 @@ public class Feedback {
 		}
 
 		DebugCamera camera = new DebugCamera();
+		scene.setDebugCamera(camera);
+		scene.setGameCamera(camera);
 		camera.setzfar(1000);
 		camera.setPosition(-1,7,19);
-		scene.currentCamera = camera;
 
 		Renderer.setVoidColor(0,0,0.25f);
 

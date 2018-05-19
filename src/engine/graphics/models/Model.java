@@ -47,7 +47,7 @@ public abstract class Model implements Renderable {
 		material.bind();
 		material.commit();
 		getModelMatrix(modelMatrix);
-		material.setCameraAttributes(Renderer.getRenderer().getScene().currentCamera, modelMatrix);
+		material.setCameraAttributes(Renderer.getCurrentCamera(), modelMatrix);
 
 		modelData.render();
 	}

@@ -55,8 +55,9 @@ public class RenderModes {
 
 		ForwardRenderer forwardrenderer = Renderer.getForwardRenderer();
 		DebugCamera camera = new DebugCamera();
+		forwardrenderer.getScene().setGameCamera(camera);
+		forwardrenderer.getScene().setDebugCamera(camera);
 		camera.setPosition(2.066602f, 1.0899944f, 115.840645f);
-		forwardrenderer.getScene().currentCamera = camera;
 
 		System.gc();
 

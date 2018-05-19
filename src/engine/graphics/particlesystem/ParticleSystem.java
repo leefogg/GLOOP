@@ -106,7 +106,7 @@ public abstract class ParticleSystem implements Disposable {
 		if (particlecount == 0)
 			return;
 
-		Camera camera = Renderer.getRenderer().getScene().currentCamera;
+		Camera camera = Renderer.getCurrentCamera();
 		material.bind();
 		material.setProjectionMatrix(camera.getProjectionMatrix());
 		material.setViewMatrix(camera.getViewMatrix());

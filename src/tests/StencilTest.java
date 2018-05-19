@@ -79,7 +79,8 @@ public final class StencilTest {
 		Renderer.checkErrors();
 
 		PerspectiveCamera camera = new PerspectiveCamera();
-		scene.currentCamera = camera;
+		scene.setDebugCamera(camera);
+		scene.setGameCamera(camera);
 
 		System.gc();
 

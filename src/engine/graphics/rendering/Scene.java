@@ -27,9 +27,10 @@ public class Scene {
 	private final ArrayList<ParticleEmitter> ParticleEmitters = new ArrayList<>(5);
 
 	private final AmbientLight ambientLight = new AmbientLight();
-	public Camera currentCamera = new PerspectiveCamera();
 	private Vector3f fogColor = new Vector3f(0,0,0);
 	private float fogDensity = 0.02f;
+	private Camera gameCamera = new PerspectiveCamera();
+	private Camera debugCamera = gameCamera;
 
 	public final int getNumberOfDirectionalLights() { return directionalLights.size(); }
 	public final DirectionalLight getDirectionallight(int index) {
@@ -50,6 +51,11 @@ public class Scene {
 
 	public void  getFogColor(Vector3f passthrough) { passthrough.set(fogColor); }
 	public float getFogDensity() { return fogDensity; }
+
+	public Camera getGameCamera() {	return gameCamera; }
+	public void setGameCamera(Camera gameCamera) { this.gameCamera = gameCamera; }
+	public Camera getDebugCamera() { return debugCamera; }
+	public void setDebugCamera(Camera debugCamera) { this.debugCamera = debugCamera; }
 
 	public void add(Model model) { models.add(model); }
 	public void add(Decal decal) { decals.add(decal); }

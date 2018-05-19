@@ -63,7 +63,7 @@ public class Model3D extends Model {
 			return false;
 
 		getModelMatrix(ModelMatrix);
-		boolean isoutside = !Renderer.getRenderer().getScene().currentCamera.isInsideFrustum(BoundingBox, ModelMatrix);
+		boolean isoutside = !Renderer.getRenderer().getScene().getGameCamera().isInsideFrustum(BoundingBox, ModelMatrix);
 		return isoutside;
 	}
 

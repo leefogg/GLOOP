@@ -43,9 +43,10 @@ public final class ParticleTest {
 		scene.add(light1);
 
 		DebugCamera camera = new DebugCamera();
+		scene.setDebugCamera(camera);
+		scene.setGameCamera(camera);
 		camera.setzfar(200);
 		camera.setPosition(-1,53,148);
-		scene.currentCamera = camera;
 
 		try {
 			Texture albedo = TextureManager.newTexture("res\\textures\\brick.png", PixelComponents.RGB, PixelFormat.SRGB8);

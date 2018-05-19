@@ -82,9 +82,10 @@ public final class BloomTest {
 		}
 
 		DebugCamera camera = new DebugCamera();
+		scene.setDebugCamera(camera);
+		scene.setGameCamera(camera);
 		camera.setzfar(100);
 		camera.setPosition(-1,7,19);
-		scene.currentCamera = camera;
 
 		System.gc();
 
