@@ -1,7 +1,6 @@
 package engine.graphics.models;
 
 import engine.animation.Transform3D;
-import engine.graphics.cameras.Camera;
 import engine.graphics.rendering.Renderer;
 import engine.math.Quaternion;
 import engine.graphics.shading.materials.Material;
@@ -10,7 +9,7 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 public class Model3D extends Model {
-	private static final Matrix4f ModalMatrix = new Matrix4f();
+	private static final Matrix4f ModelMatrix = new Matrix4f();
 
 	protected Transform3D transform = new Transform3D();
 	private AABB BoundingBox;
@@ -60,8 +59,8 @@ public class Model3D extends Model {
 
 	@Override
 	protected boolean isOccuded() {
-		getModelMatrix(ModalMatrix);
-		boolean isoutside = !Renderer.getRenderer().getScene().currentCamera.isInsideFrustum(BoundingBox, ModalMatrix);
+		getModelMatrix(ModelMatrix);
+		boolean isoutside = !Renderer.getRenderer().getScene().currentCamera.isInsideFrustum(BoundingBox, ModelMatrix);
 		return isoutside;
 	}
 
