@@ -44,7 +44,7 @@ public class ForwardRenderer extends Renderer {
 		for (ParticleSystem ps : scene.getParticleSystems()) {
 			ps.render();
 		}
-		Renderer.popFaceCullingState();
+		Renderer.popFaceCullingEnabledState();
 	}
 
 	@Override
