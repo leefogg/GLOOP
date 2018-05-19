@@ -23,7 +23,6 @@ Lighting:
 	Ambient light
 		Color
 		strength
-	(in development) Unlimited lights
 
 Cameras:
 	Perspective
@@ -36,9 +35,14 @@ Shaders:
 	Compiler defines before compilation
 	Strongly typed uniforms
 
-Backend:
+Rendering:
+	Custom rendering pipeline
+		High Dynamic Range
+	Skyboxes
+	Overlays/Filters
 	Forward rendering pipeline
 		Custom shaders
+	Frustum Culling
 	Deferred rendering pipeline
 		Environment Reflections
 			Reflectivity
@@ -49,17 +53,19 @@ Backend:
 			Color
 		Normal mapping
 		Parallax mapping
-		High Dynamic Range (in development)
-	Custom rendering pipeline
+		Fresnel
+		Fog
+			Density
+			Color
 	Editable Geometry (before hardware upload)
 	Blending
 	Stencils
 	Scene class
+	Static and Dynamic optimized particle systems
+Other:
 	Custom GPU data structures
 	Supports all basic render modes (tri, lines, points..)
 	Lightweight to hardware
-	Skybox
-	Overlays
 	Basic profiler
 	Completely OOP & strongly typed with GL enums
 	GPU resources automatically managed
