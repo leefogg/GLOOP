@@ -48,25 +48,18 @@ public class ForwardRenderer extends Renderer {
 			model.render();
 		}
 
+		int ObjectsRendered = 0;
 		// Render last frame's objects if they passed test
 		for (Model model : scene.getModels()) {
+			if (model instanceof Model3D && ((Model3D)model).isOccuder())
+				continue;
+
 			GPUQuery queryresult = RenderQueries.get(model);
-			if (queryresult == null)
-				continue;
-
-			if (queryresult.isResultReady())
+			if (queryresult != null && queryresult.isResultReady()) {
 				RenderQueries.remove(model);
-			else
-				continue;
+				model.cansee = queryresult.getResult() == GL11.GL_TRUE;
+			}
 			//TODO: Clear RenderQueries periodically so list no longer contains models removed from the scene
-
-			model.cansee = queryresult.getResult() == GL11.GL_TRUE;
-		}
-
-		int ObjectsRendered = 0;
-		for (Model model : scene.getModels()) {
-			if (cannotRenderModel(model))
-				continue;
 
 			if (model.cansee) {
 				model.render();
@@ -83,6 +76,10 @@ public class ForwardRenderer extends Renderer {
 				continue;
 
 			if (model instanceof Model3D && ((Model3D)model).isOccuder())
+				continue;
+
+			GPUQuery queryresult = RenderQueries.get(model);
+			if (queryresult != null) // Query already running
 				continue;
 
 			GPUQuery query = new GPUQuery(GPUQuery.Type.AnySamplesPassed);
