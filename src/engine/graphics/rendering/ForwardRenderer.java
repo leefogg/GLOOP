@@ -2,14 +2,12 @@ package engine.graphics.rendering;
 
 import engine.graphics.Settings;
 import engine.graphics.models.Model;
-import engine.graphics.models.Model3D;
 import engine.graphics.particlesystem.ParticleSystem;
 import engine.graphics.textures.FrameBuffer;
 import engine.graphics.textures.PixelFormat;
 import engine.graphics.textures.Texture;
 import org.lwjgl.opengl.GL11;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -45,7 +43,7 @@ public class ForwardRenderer extends Renderer {
 		for (Model model : models) {
 			if (cannotRenderModel(model))
 				continue;
-			if (!model.isOccuder())
+			if (!model.isOccluder())
 				continue;
 
 			model.render();
@@ -53,7 +51,7 @@ public class ForwardRenderer extends Renderer {
 
 		// Update models' visibility using previous frame(s) queries
 		for (Model model : models) {
-			if (model.isOccuder())
+			if (model.isOccluder())
 				continue;
 
 			GPUQuery queryresult = RenderQueries.get(model);
@@ -72,7 +70,7 @@ public class ForwardRenderer extends Renderer {
 			if (cannotRenderModel(model))
 				continue;
 
-			if (model.isOccuder())
+			if (model.isOccluder())
 				continue;
 
 			GPUQuery queryresult = RenderQueries.get(model);
@@ -90,7 +88,7 @@ public class ForwardRenderer extends Renderer {
 
 		int ObjectsRendered = 0;
 		for (Model model : models) {
-			if (model.isOccuder())
+			if (model.isOccluder())
 				continue;
 			if (model.cansee) {
 				model.render();

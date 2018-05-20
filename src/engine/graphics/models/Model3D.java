@@ -54,7 +54,7 @@ public class Model3D extends Model {
 	public AABB getBoundingBox() { return BoundingBox; }
 
 	@Override
-	public boolean isOccuder() { return IsOccuder; }
+	public boolean isOccluder() { return IsOccuder; }
 
 	public void setIsOccuder(boolean isoccuder) { IsOccuder = isoccuder; }
 
