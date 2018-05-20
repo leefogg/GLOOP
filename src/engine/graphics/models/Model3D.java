@@ -13,6 +13,7 @@ public class Model3D extends Model {
 
 	protected Transform3D transform = new Transform3D();
 	private AABB BoundingBox;
+	private boolean IsOccuder;
 
 	public Model3D(VertexArray mesh, Material material) {
 		this(mesh, material, null);
@@ -52,6 +53,10 @@ public class Model3D extends Model {
 
 	public AABB getBoundingBox() { return BoundingBox; }
 
+	public boolean isOccuder() { return IsOccuder; }
+
+	public void setIsOccuder(boolean isoccuder) { IsOccuder = isoccuder; }
+
 	@Override
 	public void getModelMatrix(Matrix4f out) {
 		transform.getModelMatrix(out);
@@ -59,12 +64,7 @@ public class Model3D extends Model {
 
 	@Override
 	protected boolean isOccuded() {
-		if (BoundingBox == null)
-			return false;
-
-		getModelMatrix(ModelMatrix);
-		boolean isoutside = !Renderer.getRenderer().getScene().getGameCamera().isInsideFrustum(BoundingBox, ModelMatrix);
-		return isoutside;
+		return false;
 	}
 
 

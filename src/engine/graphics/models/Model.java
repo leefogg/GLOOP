@@ -9,6 +9,7 @@ public abstract class Model implements Renderable {
 	protected final VertexArray modelData;
 	protected Material material;
 	private Matrix4f modelMatrix = new Matrix4f();
+	public boolean cansee = true;
 
 	private boolean hidden = false;
 
