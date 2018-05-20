@@ -33,6 +33,7 @@ public abstract class Model implements Renderable {
 		this.hidden = hidden;
 	}
 
+	public boolean isOccuder() { return false; }
 	protected boolean isOccuded() { return false; }
 
 	public VertexArray getMeshBuffer() {return modelData;}
