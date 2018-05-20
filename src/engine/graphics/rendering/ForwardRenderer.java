@@ -48,7 +48,7 @@ public class ForwardRenderer extends Renderer {
 			model.render();
 		}
 
-		int ObjectsRendered = 0;
+
 		// Render last frame's objects if they passed test
 		for (Model model : scene.getModels()) {
 			if (model instanceof Model3D && ((Model3D)model).isOccuder())
@@ -61,12 +61,9 @@ public class ForwardRenderer extends Renderer {
 			}
 			//TODO: Clear RenderQueries periodically so list no longer contains models removed from the scene
 
-			if (model.cansee) {
-				model.render();
-				ObjectsRendered++;
-			}
+
 		}
-		System.out.println(ObjectsRendered);
+
 
 		// Render new occusion queries
 		Renderer.enableColorBufferWriting(false, false, false, false);
@@ -90,6 +87,17 @@ public class ForwardRenderer extends Renderer {
 		}
 		Renderer.popDepthBufferWritingState();
 		Renderer.popColorBufferWritingState();
+
+		int ObjectsRendered = 0;
+		for (Model model : scene.getModels()) {
+			if (model instanceof Model3D && ((Model3D) model).isOccuder())
+				continue;
+			if (model.cansee) {
+				model.render();
+				ObjectsRendered++;
+			}
+		}
+		System.out.println(ObjectsRendered);
 
 		if (!scene.getParticleSystems().isEmpty()) {
 			Renderer.enableFaceCulling(false);
