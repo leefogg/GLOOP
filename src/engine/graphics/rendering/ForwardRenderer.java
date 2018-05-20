@@ -11,6 +11,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class ForwardRenderer extends Renderer {
 	private boolean isDisposed;
@@ -38,8 +39,10 @@ public class ForwardRenderer extends Renderer {
 
 	@Override
 	protected void renderScene() {
+		HashSet<Model> models = scene.getModels();
+
 		// Rendere occuders
-		for (Model model : scene.getModels()) {
+		for (Model model : models) {
 			if (cannotRenderModel(model))
 				continue;
 			if (!(model instanceof Model3D && ((Model3D)model).isOccuder()))
@@ -50,7 +53,7 @@ public class ForwardRenderer extends Renderer {
 
 
 		// Render last frame's objects if they passed test
-		for (Model model : scene.getModels()) {
+		for (Model model : models) {
 			if (model instanceof Model3D && ((Model3D)model).isOccuder())
 				continue;
 
@@ -68,7 +71,7 @@ public class ForwardRenderer extends Renderer {
 		// Render new occusion queries
 		Renderer.enableColorBufferWriting(false, false, false, false);
 		Renderer.enableDepthBufferWriting(false);
-		for (Model model : scene.getModels()) {
+		for (Model model : models) {
 			if (cannotRenderModel(model))
 				continue;
 
@@ -89,7 +92,7 @@ public class ForwardRenderer extends Renderer {
 		Renderer.popColorBufferWritingState();
 
 		int ObjectsRendered = 0;
-		for (Model model : scene.getModels()) {
+		for (Model model : models) {
 			if (model instanceof Model3D && ((Model3D) model).isOccuder())
 				continue;
 			if (model.cansee) {
