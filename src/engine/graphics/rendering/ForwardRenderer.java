@@ -77,7 +77,7 @@ public class ForwardRenderer extends Renderer {
 			if (queryresult != null) // Query already running
 				continue;
 
-			GPUQuery query = new GPUQuery(GPUQuery.Type.AnySamplesPassed);
+			GPUQuery query = RenderQueryPool.getQuery(GPUQuery.Type.AnySamplesPassed);
 			query.start();
 			model.render(); // TODO: Render object's bounding box
 			query.end();
@@ -95,7 +95,7 @@ public class ForwardRenderer extends Renderer {
 				ObjectsRendered++;
 			}
 		}
-		System.out.println(ObjectsRendered);
+		//System.out.println(ObjectsRendered);
 
 		if (!scene.getParticleSystems().isEmpty()) {
 			Renderer.enableFaceCulling(false);
