@@ -15,6 +15,7 @@ public class RenderQueryPool {
 	}
 
 	public static GPUQuery getQuery(GPUQuery.Type type) {
+		//TODO: Optimization: Seek from last query index around the array
 		for (GPUQuery query : Pool)
 			if (query.getType() == type)
 				if (!query.isInUse())

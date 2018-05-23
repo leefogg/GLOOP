@@ -34,7 +34,7 @@ public abstract class Model implements Renderable {
 	}
 
 	public boolean isOccluder() { return false; }
-	protected boolean isOccuded() { return false; }
+	public boolean isOccuded() { return false; }
 
 	public VertexArray getMeshBuffer() {return modelData;}
 
@@ -42,7 +42,7 @@ public abstract class Model implements Renderable {
 	public void render() {
 		if (modelData.isDisposed())
 			return;
-		if (isHidden() || isOccuded())
+		if (isHidden())
 			return;
 
 		//TODO: Render using error shader if shader is disposed

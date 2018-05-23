@@ -73,6 +73,12 @@ public class ForwardRenderer extends Renderer {
 			if (model.isOccluder())
 				continue;
 
+			// Want check if its still visible
+			model.cansee = !model.isOccuded();
+			if (!model.cansee)
+				continue;
+
+			// Passed frustum test, do occlusion test if ready
 			GPUQuery queryresult = RenderQueries.get(model);
 			if (queryresult != null) // Query already running
 				continue;

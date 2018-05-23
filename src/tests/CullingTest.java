@@ -56,10 +56,10 @@ public final class CullingTest {
 
 			Model3D cube = ModelFactory.getModel("res/models/cube.obj", new LambartMaterial(albedo));
 			Random r = new Random();
-			for (int i=0; i<400; i++) {
+			for (int i=0; i<2000; i++) {
 				Model3D newcube = cube.clone();
-				newcube.setPosition(r.nextFloat() * 200-100, 1.5f, r.nextFloat()*200-100);
-				newcube.setScale(3,3,3);
+				newcube.setPosition(r.nextFloat() * 200-100, 0.5f, r.nextFloat()*200-100);
+				newcube.setScale(1,1,1);
 				scene.add(newcube);
 			}
 		} catch (IOException | ShaderCompilationException e) {
