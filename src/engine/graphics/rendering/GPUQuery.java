@@ -34,7 +34,7 @@ public class GPUQuery implements Disposable {
 	private boolean inUse = false;
 
 	{
-		RenderQueryPool.register(this);
+		GPUQueryManager.register(this);
 	}
 
 	GPUQuery(Type type){
@@ -100,7 +100,7 @@ public class GPUQuery implements Disposable {
 	@Override
 	public void dispose(){
 		glDeleteQueries(ID);
-		RenderQueryPool.unregister(this);
+		GPUQueryManager.unregister(this);
 		isDisposed = true;
 	}
 }

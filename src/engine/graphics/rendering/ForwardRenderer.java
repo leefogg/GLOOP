@@ -8,13 +8,14 @@ import engine.graphics.textures.PixelFormat;
 import engine.graphics.textures.Texture;
 import org.lwjgl.opengl.GL11;
 
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 public class ForwardRenderer extends Renderer {
 	private boolean isDisposed;
 	private FrameBuffer buffer;
-	private HashMap<Model, GPUQuery> RenderQueries = new HashMap<>();
+
+	private static final RenderQueryPool QUERY_POOL = new RenderQueryPool(10);
 
 	ForwardRenderer() {
 		PixelFormat pixelformat = Settings.EnableHDR ? PixelFormat.RGB16F : PixelFormat.RGB16;
@@ -49,16 +50,12 @@ public class ForwardRenderer extends Renderer {
 			model.render();
 		}
 
-		// Update models' visibility using previous frame(s) queries
-		for (Model model : models) {
-			if (model.isOccluder())
-				continue;
+		List<RenderQuery> pendingqueries = QUERY_POOL.getPendingQueries();
 
-			GPUQuery queryresult = RenderQueries.get(model);
-			if (queryresult != null && queryresult.isResultReady()) {
-				RenderQueries.remove(model);
-				model.cansee = queryresult.getResult() == GL11.GL_TRUE;
-			}
+		// Update models' visibility using previous frame(s) queries
+		for (RenderQuery renderquery : pendingqueries) {
+			if (renderquery.Query.isResultReady())
+				renderquery.Model.cansee = renderquery.Query.getResult() == GL11.GL_TRUE;
 			//TODO: Clear RenderQueries periodically so list no longer contains models removed from the scene
 		}
 
@@ -71,24 +68,22 @@ public class ForwardRenderer extends Renderer {
 				continue;
 			if (model.isOccluder())
 				continue;
-			// If model outside frustum, dont both with render query
+			// If model outside frustum, dont both with render Query
 			if (model.isOccuded()) {
-				// As render query has delay,
+				// As render Query has delay,
 				// we can throw the result away as object is definately outside frustum this frame
 				model.cansee = false;
 				continue;
 			}
 
 			// Passed frustum test, do occlusion test if ready
-			GPUQuery queryresult = RenderQueries.get(model);
-			if (queryresult != null) // Query already running
-				continue;
+			for (RenderQuery renderquery : pendingqueries)
+				if (renderquery.Model == model)
+					continue;
 
-			GPUQuery query = RenderQueryPool.getQuery(GPUQuery.Type.AnySamplesPassed);
-			query.start();
+			RenderQuery query = QUERY_POOL.startQuery(model);
 			model.render(); // TODO: Render object's bounding box
-			query.end();
-			RenderQueries.put(model, query);
+			query.Query.end();
 		}
 		Renderer.popDepthBufferWritingState();
 		Renderer.popColorBufferWritingState();
