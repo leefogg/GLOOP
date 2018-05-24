@@ -53,7 +53,8 @@ public class ForwardRenderer extends Renderer {
 		List<RenderQuery> pendingqueries = QUERY_POOL.getPendingQueries();
 
 		// Update models' visibility using previous frame(s) queries
-		for (RenderQuery renderquery : pendingqueries) {
+		for (int i=0; i<pendingqueries.size(); i++) {
+			RenderQuery renderquery = pendingqueries.get(i);
 			if (renderquery.Query.isResultReady())
 				renderquery.Model.cansee = renderquery.Query.getResult() == GL11.GL_TRUE;
 			//TODO: Clear RenderQueries periodically so list no longer contains models removed from the scene
@@ -77,8 +78,8 @@ public class ForwardRenderer extends Renderer {
 			}
 
 			// Passed frustum test, do occlusion test if ready
-			for (RenderQuery renderquery : pendingqueries)
-				if (renderquery.Model == model)
+			for (int i=0; i<pendingqueries.size(); i++)
+				if (pendingqueries.get(i).Model == model)
 					continue;
 
 			RenderQuery query = QUERY_POOL.startQuery(model);
