@@ -69,14 +69,15 @@ public class ForwardRenderer extends Renderer {
 		for (Model model : models) {
 			if (cannotRenderModel(model))
 				continue;
-
 			if (model.isOccluder())
 				continue;
-
-			// Want check if its still visible
-			model.cansee = !model.isOccuded();
-			if (!model.cansee)
+			// If model outside frustum, dont both with render query
+			if (model.isOccuded()) {
+				// As render query has delay,
+				// we can throw the result away as object is definately outside frustum this frame
+				model.cansee = false;
 				continue;
+			}
 
 			// Passed frustum test, do occlusion test if ready
 			GPUQuery queryresult = RenderQueries.get(model);
@@ -101,7 +102,7 @@ public class ForwardRenderer extends Renderer {
 				ObjectsRendered++;
 			}
 		}
-		//System.out.println(ObjectsRendered);
+		System.out.println(ObjectsRendered);
 
 		if (!scene.getParticleSystems().isEmpty()) {
 			Renderer.enableFaceCulling(false);
