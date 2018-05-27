@@ -53,5 +53,14 @@ public class RenderQueryPool {
 		return null;
 	}
 
+	public boolean isModelPending(Model model) {
+		for (int i=0; i<Pool.size(); i++) {
+			RenderQuery renderquery = Pool.get(i);
+			if (renderquery.isRunning())
+				if (renderquery.Model == model)
+					return true;
+		}
 
+		return false;
+	}
 }

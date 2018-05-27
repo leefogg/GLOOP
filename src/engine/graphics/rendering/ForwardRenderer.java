@@ -78,12 +78,8 @@ public class ForwardRenderer extends Renderer {
 
 			// Passed frustum test, do occlusion test if ready
 			// Skip if query is still pending
-			for (int i=0; i<pendingqueries.size(); i++) {
-				RenderQuery renderquery = pendingqueries.get(i);
-				if (renderquery.isRunning())
-					if (renderquery.Model == model)
-						continue;
-			}
+			if (QUERY_POOL.isModelPending(model))
+				continue;
 
 			RenderQuery query = QUERY_POOL.startQuery(model);
 			model.render(); // TODO: Render object's bounding box
