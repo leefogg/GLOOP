@@ -8,7 +8,7 @@ import org.lwjgl.util.vector.Matrix4f;
 
 import java.io.IOException;
 
-public class Skybox extends Model {
+public class Skybox extends Model3D {
 	private static final VertexArray vertexGeometry;
 	private static final Matrix4f modelMatrix = new Matrix4f();
 	static {

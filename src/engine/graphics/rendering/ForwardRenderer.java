@@ -2,6 +2,7 @@ package engine.graphics.rendering;
 
 import engine.graphics.Settings;
 import engine.graphics.models.Model;
+import engine.graphics.models.Model3D;
 import engine.graphics.particlesystem.ParticleSystem;
 import engine.graphics.textures.FrameBuffer;
 import engine.graphics.textures.PixelFormat;
@@ -37,7 +38,7 @@ public class ForwardRenderer extends Renderer {
 
 	@Override
 	protected void renderScene() {
-		HashSet<Model> models = scene.getModels();
+		HashSet<Model3D> models = scene.getModels();
 
 		// Rendere occuders
 		for (Model model : models) {
@@ -90,6 +91,8 @@ public class ForwardRenderer extends Renderer {
 
 		int ObjectsRendered = 0;
 		for (Model model : models) {
+			if (cannotRenderModel(model))
+				continue;
 			if (model.isOccluder())
 				continue;
 			if (model.cansee) {
