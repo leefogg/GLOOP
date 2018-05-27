@@ -308,9 +308,10 @@ public class VertexArray implements Disposable {
 		GL30.glBindVertexArray(0);
 	}
 
-	private final boolean isIndexed() {
-		return NumberOfIndices != 0;
-	}
+	public final boolean isIndexed() { return NumberOfIndices != 0; }
+
+	public final int getNumberOfIndices() { return NumberOfIndices; }
+	public final int getNumberofVertcies() { return NumberofVertcies; }
 
 	// Doesn't delete VBOs as they may be being used. Will get custom GC do that.
 	@Override

@@ -65,6 +65,9 @@ public class ForwardRenderer extends Renderer {
 		Renderer.enableColorBufferWriting(false, false, false, false);
 		Renderer.enableDepthBufferWriting(false);
 		for (Model model : models) {
+			//TODO: Move constant to Settings class
+			if (model.getNumberOfVertcies() < Settings.OcclusionQueryMinVertcies) // Is worth a render query?
+				continue;
 			if (cannotRenderModel(model))
 				continue;
 			if (model.isOccluder())
@@ -100,7 +103,7 @@ public class ForwardRenderer extends Renderer {
 				ObjectsRendered++;
 			}
 		}
-		System.out.println(ObjectsRendered);
+		//System.out.println(ObjectsRendered);
 
 		if (!scene.getParticleSystems().isEmpty()) {
 			Renderer.enableFaceCulling(false);

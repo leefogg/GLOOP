@@ -73,8 +73,6 @@ public class Model3D extends Model {
 		return isoutside;
 	}
 
-
-
 	public Model3D clone() {
 		//TODO: Doesn't clone transforms
 		//TODO: Doesn't clone material

@@ -11,7 +11,9 @@ import engine.graphics.rendering.Viewport;
 import engine.graphics.shading.ShaderCompilationException;
 import engine.graphics.shading.lighting.PointLight;
 import engine.graphics.shading.materials.LambartMaterial;
+import engine.graphics.shading.materials.Material;
 import engine.graphics.textures.*;
+import engine.math.Quaternion;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -54,13 +56,25 @@ public final class CullingTest {
 			walls.setIsOccuder(true);
 			scene.add(walls);
 
-			Model3D cube = ModelFactory.getModel("res/models/cube.obj", new LambartMaterial(albedo));
+			Material material = new LambartMaterial(albedo);
+			Model3D[] models = new Model3D[] {
+					ModelFactory.getModel("res/models/primitives/cube.obj", material),
+					ModelFactory.getModel("res/models/primitives/cone.obj", material),
+					ModelFactory.getModel("res/models/primitives/cylinder.obj", material),
+					ModelFactory.getModel("res/models/primitives/pyramid.obj", material),
+					ModelFactory.getModel("res/models/primitives/soccer ball.obj", material),
+					ModelFactory.getModel("res/models/primitives/torus.obj", material)
+			};
+			Quaternion rotation = new Quaternion();
 			Random r = new Random();
 			for (int i=0; i<2000; i++) {
-				Model3D newcube = cube.clone();
-				newcube.setPosition(r.nextFloat() * 200-100, 0.5f, r.nextFloat()*200-100);
-				newcube.setScale(1,1,1);
-				scene.add(newcube);
+				Model3D newmodel = models[r.nextInt(models.length)].clone();
+				newmodel.getRotation(rotation);
+				rotation.rotate(r.nextFloat()*360, r.nextFloat()*360, r.nextFloat()*360);
+				newmodel.setRotation(rotation);
+				newmodel.setPosition(r.nextFloat() * 200-100, 0.5f, r.nextFloat()*200-100);
+				newmodel.setScale(0.5f+r.nextFloat(),0.5f+r.nextFloat(),0.5f+r.nextFloat());
+				scene.add(newmodel);
 			}
 		} catch (IOException | ShaderCompilationException e) {
 			System.err.println("Couldn't load Model!");

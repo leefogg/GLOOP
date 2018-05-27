@@ -36,7 +36,11 @@ public abstract class Model implements Renderable {
 	public boolean isOccluder() { return false; }
 	public boolean isOccuded() { return false; }
 
-	public VertexArray getMeshBuffer() {return modelData;}
+	public VertexArray getMeshBuffer() { return modelData; }
+
+	public int getNumberOfVertcies() {
+		return (modelData.isIndexed()) ? modelData.getNumberOfIndices() : modelData.getNumberofVertcies();
+	}
 
 	@Override
 	public void render() {

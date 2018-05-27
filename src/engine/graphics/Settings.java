@@ -15,8 +15,9 @@ public class Settings {
 			EnableShadows = false,
 			EnableFog = false,
 			EnableHDR = false;
-	public int
+	public static int
 			MaxPointLights = 64,
 			MaxSpotLights = 32,
-			MaxDirectionalLights = 8;
+			MaxDirectionalLights = 8,
+			OcclusionQueryMinVertcies = 500;
 }
