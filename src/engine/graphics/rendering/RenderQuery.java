@@ -1,13 +1,33 @@
 package engine.graphics.rendering;
 
 import engine.graphics.models.Model;
+import org.lwjgl.opengl.GL11;
 
 class RenderQuery {
 	Model Model;
-	GPUQuery Query;
+	private GPUQuery Query = new GPUQuery(GPUQuery.Type.AnySamplesPassed);
 
-	public RenderQuery(Model model, GPUQuery query) {
+	public RenderQuery(Model model) {
 		Model = model;
-		Query = query;
+	}
+
+	public void start() {
+		Query.start();
+	}
+
+	public void end() {
+		Query.end();
+	}
+
+	public boolean isRunning() {
+		return Query.isInUse();
+	}
+
+	public boolean isResultAvailable() {
+		return Query.isResultReady();
+	}
+
+	public boolean isModelVisible() {
+		return Query.getResult() == GL11.GL_TRUE;
 	}
 }

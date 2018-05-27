@@ -11,46 +11,45 @@ public class RenderQueryPool {
 
 	RenderQueryPool(int initialsize) {
 		for (int i=0; i<initialsize; i++)
-			Pool.add(new RenderQuery(null, new GPUQuery(GPUQuery.Type.AnySamplesPassed)));
+			Pool.add(new RenderQuery(null));
 	}
 
 	public RenderQuery startQuery(Model model) {
-		RenderQuery renderquery = getQuery(GPUQuery.Type.AnySamplesPassed, model);
+		RenderQuery renderquery = getQuery(model);
 		renderquery.Model = model;
-		renderquery.Query.start();
+		renderquery.start();
 		return renderquery;
 	}
 
-	private RenderQuery getQuery(GPUQuery.Type type, Model model) {
+	private RenderQuery getQuery(Model model) {
 		int start = NextQuery;
 		NextQuery++;
 		NextQuery = NextQuery % Pool.size();
 
 		int i = start;
 		for (; i<Pool.size(); i++) {
-			RenderQuery query = isPoolIndexAvailable(i, type);
+			RenderQuery query = isPoolIndexAvailable(i);
 			if (query != null)
 				return query;
 		}
 		for (i = 0; i<start; i++) {
-			RenderQuery query = isPoolIndexAvailable(i, type);
+			RenderQuery query = isPoolIndexAvailable(i);
 			if (query != null)
 				return query;
 		}
 
 		System.out.println("new RenderQuery");
-		RenderQuery newquery =  new RenderQuery(model, new GPUQuery(type));
+		RenderQuery newquery =  new RenderQuery(model);
 		Pool.add(newquery);
 		return newquery;
 	}
 
 	public List<RenderQuery> getPendingQueries() { return Pool; }
 
-	private RenderQuery isPoolIndexAvailable(int i, GPUQuery.Type type) {
+	private RenderQuery isPoolIndexAvailable(int i) {
 		RenderQuery query = Pool.get(i);
-		if (query.Query.getType() == type)
-			if (!query.Query.isInUse())
-				return query;
+		if (!query.isRunning())
+			return query;
 		return null;
 	}
 
