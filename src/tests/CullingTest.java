@@ -42,7 +42,7 @@ public final class CullingTest {
 		light1.quadraticAttenuation = 0.001f;
 		scene.add(light1);
 
-
+		Model3D spinner = null;
 		try {
 			Texture albedo = TextureManager.newTexture("res\\textures\\brick.png", PixelComponents.RGB, PixelFormat.SRGB8);
 			Model3D floor = ModelFactory.getModel("res/models/plane.obj", new LambartMaterial(albedo));
@@ -57,8 +57,9 @@ public final class CullingTest {
 			scene.add(walls);
 
 			Material material = new LambartMaterial(albedo);
+			Model3D cube = ModelFactory.getModel("res/models/primitives/cube.obj", material);
 			Model3D[] models = new Model3D[] {
-					ModelFactory.getModel("res/models/primitives/cube.obj", material),
+					cube,
 					ModelFactory.getModel("res/models/primitives/cone.obj", material),
 					ModelFactory.getModel("res/models/primitives/cylinder.obj", material),
 					ModelFactory.getModel("res/models/primitives/pyramid.obj", material),
@@ -76,6 +77,11 @@ public final class CullingTest {
 				newmodel.setScale(0.5f+r.nextFloat(),0.5f+r.nextFloat(),0.5f+r.nextFloat());
 				scene.add(newmodel);
 			}
+
+			spinner = cube;
+			spinner.setScale(40,4,4);
+			spinner.setPosition(0,2,-60);
+			scene.add(spinner);
 		} catch (IOException | ShaderCompilationException e) {
 			System.err.println("Couldn't load Model!");
 			System.err.println(e.getMessage());
@@ -95,6 +101,9 @@ public final class CullingTest {
 		boolean isrunning = true;
 		double sincos = (float)Math.PI, step = (float)Math.PI/300f;
 		boolean usedebugcamera = false;
+
+		light1.setPosition((float)Math.sin(sincos)*20, 0, (float)Math.cos(sincos)*20);
+		Quaternion rotation = new Quaternion();
 		while(isrunning) {
 			Viewport.update();
 			float delta = Renderer.getTimeDelta();
@@ -109,8 +118,10 @@ public final class CullingTest {
 				Renderer.useDebugCamera(usedebugcamera);
 			}
 
-			//sincos += step * timescaler;
-			light1.setPosition((float)Math.sin(sincos)*20, 0, (float)Math.cos(sincos)*20);
+			sincos += step * timescaler;
+			spinner.getRotation(rotation);
+			rotation.rotate(0,0.5f * timescaler, 0);
+			spinner.setRotation(rotation);
 
 			Renderer.setRenderer(renderer);
 			Renderer.render();
