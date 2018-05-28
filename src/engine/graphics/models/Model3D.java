@@ -9,6 +9,7 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 public class Model3D extends Model {
+	private static final Vector3f TempVector = new Vector3f();
 	private static final Matrix4f ModelMatrix = new Matrix4f();
 
 	protected Transform3D transform = new Transform3D();
@@ -51,7 +52,16 @@ public class Model3D extends Model {
 		transform.setRotation(rotation);
 	}
 
-	public AABB getBoundingBox() { return BoundingBox; }
+	public void getBoundingBox(AABB out) {
+		transform.getScale(TempVector);
+		Vector3f scale = TempVector;
+		out.x = BoundingBox.x * scale.x;
+		out.y = BoundingBox.y * scale.y;
+		out.z = BoundingBox.z * scale.z;
+		out.width = BoundingBox.width * scale.x;
+		out.height = BoundingBox.height * scale.y;
+		out.depth = BoundingBox.depth* scale.z;
+	}
 
 	@Override
 	public boolean isOccluder() { return IsOccuder; }
