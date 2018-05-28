@@ -74,7 +74,7 @@ public class Model3D extends Model {
 	}
 
 	@Override
-	public boolean isOccuded() {
+	public boolean isOccluded() {
 		if (BoundingBox == null)
 			return false;
 

@@ -34,7 +34,7 @@ public abstract class Model implements Renderable {
 	}
 
 	public boolean isOccluder() { return false; }
-	public boolean isOccuded() { return false; }
+	public boolean isOccluded() { return false; }
 
 	public VertexArray getMeshBuffer() { return modelData; }
 

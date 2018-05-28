@@ -94,7 +94,7 @@ public class ForwardRenderer extends Renderer {
 			// If model outside frustum, dont bother with occlusion query
 			// As render query has delay,
 			// we can throw the result away if object is definately outside frustum this frame
-			boolean failedfrustumtest = model.isOccuded();
+			boolean failedfrustumtest = model.isOccluded();
 			if (model.getNumberOfVertcies() < Settings.OcclusionQueryMinVertcies) {// Is not worth a render query?
 				// Never going to perform occlusion query for this object so have to set it to result of frustum test
 				model.cansee = !failedfrustumtest;
