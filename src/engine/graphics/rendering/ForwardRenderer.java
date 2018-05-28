@@ -87,20 +87,24 @@ public class ForwardRenderer extends Renderer {
 		Renderer.enableColorBufferWriting(false, false, false, false);
 		Renderer.enableDepthBufferWriting(false);
 		for (Model3D model : models) {
-			//TODO: Move constant to Settings class
-			if (model.getNumberOfVertcies() < Settings.OcclusionQueryMinVertcies) // Is worth a render query?
-				continue;
 			if (cannotRenderModel(model))
 				continue;
 			if (model.isOccluder())
 				continue;
-			// If model outside frustum, dont bother with render Query
-			if (model.isOccuded()) {
-				// As render Query has delay,
-				// we can throw the result away as object is definately outside frustum this frame
-				model.cansee = false;
+			// If model outside frustum, dont bother with occlusion query
+			// As render query has delay,
+			// we can throw the result away if object is definately outside frustum this frame
+			boolean failedfrustumtest = model.isOccuded();
+			if (model.getNumberOfVertcies() < Settings.OcclusionQueryMinVertcies) {// Is not worth a render query?
+				// Never going to perform occlusion query for this object so have to set it to result of frustum test
+				model.cansee = !failedfrustumtest;
 				continue;
+			} else {
+				// Going to be performing occlusion query so can only set to occluded if we're sure
+				if (failedfrustumtest)
+					model.cansee = false;
 			}
+
 
 			// Passed frustum test, do occlusion test if ready
 			// Skip if query is still pending
