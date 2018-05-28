@@ -2,8 +2,8 @@ package engine.graphics.rendering;
 
 import engine.graphics.Settings;
 import engine.graphics.models.Decal;
-import engine.graphics.models.Model;
 import engine.graphics.models.Model2D;
+import engine.graphics.models.Model3D;
 import engine.graphics.shading.ShaderCompilationException;
 import engine.graphics.shading.materials.FullBrightMaterial;
 import engine.graphics.shading.posteffects.PostProcessor;
@@ -139,8 +139,10 @@ public class DeferredRenderer extends Renderer {
 
 		clear(true, true, false);
 
-		for (Model model : scene.getModels()) {
+		for (Model3D model : scene.getModels()) {
 			if (!model.getMaterial().usesDeferredPipeline())
+				continue;
+			if (!model.isVisible())
 				continue;
 
 			model.render();
