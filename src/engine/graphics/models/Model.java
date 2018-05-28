@@ -9,7 +9,7 @@ public abstract class Model implements Renderable {
 	protected final VertexArray modelData;
 	protected Material material;
 	private Matrix4f modelMatrix = new Matrix4f();
-	public boolean cansee = true;
+	private boolean isVisible = true;
 
 	private boolean hidden = false;
 
@@ -41,6 +41,9 @@ public abstract class Model implements Renderable {
 	public int getNumberOfVertcies() {
 		return (modelData.isIndexed()) ? modelData.getNumberOfIndices() : modelData.getNumberofVertcies();
 	}
+
+	public void setVisibility(boolean isvisible) { isVisible = isvisible; }
+	public boolean isVisible() { return isVisible; }
 
 	@Override
 	public void render() {

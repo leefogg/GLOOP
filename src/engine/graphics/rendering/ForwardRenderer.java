@@ -41,10 +41,11 @@ public class ForwardRenderer extends Renderer {
 		for (Model3D model : models) {
 			if (cannotRenderModel(model))
 				continue;
-			if (model.cansee) {
-				model.render();
-				ObjectsRendered++;
-			}
+			if (!model.isVisible())
+				continue;
+
+			model.render();
+			ObjectsRendered++;
 		}
 		System.out.println(ObjectsRendered);
 

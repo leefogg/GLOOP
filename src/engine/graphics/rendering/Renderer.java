@@ -67,6 +67,7 @@ public abstract class Renderer implements Disposable {
 	private static final Stack<ColorBufferWriteMaskState> ColorBufferWriteMaskStack = new Stack();
 	private static final Stack<StencilTestingEnabledState> StencilTestingEnabledStack = new Stack();
 	private static final Stack<StencilBufferState> StencilBufferStateStack = new Stack();
+	//TODO: Framebuffer stack
 
 	// Occlusion query stuff
 	private static final FrameBuffer OCCLUSION_BUFFER = new FrameBuffer(Viewport.getWidth()/2, Viewport.getHeight()/2, PixelFormat.R8);
@@ -226,10 +227,10 @@ public abstract class Renderer implements Disposable {
 		enableColorBufferWriting(true, true, true, true);
 		enableStencilTesting(false);
 		setStencilBufferState(Condition.Always, 1, 0xFF);
-		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE); // TODO: Pull this out to public methods
 		Renderer.setDepthFunction(DepthFunction.Less);
 
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  // TODO: Pull this out to public methods
 		glEnable(GL_FRAMEBUFFER_SRGB); // TODO: Pull this out to public methods
 
 		setRenderer(getForwardRenderer());
@@ -306,7 +307,7 @@ public abstract class Renderer implements Disposable {
 		for (int i=0; i<pendingqueries.size(); i++) {
 			RenderQuery renderquery = pendingqueries.get(i);
 			if (renderquery.isResultAvailable())
-				renderquery.Model.cansee = renderquery.isModelVisible();
+				renderquery.Model.setVisibility(renderquery.isModelVisible());
 			//TODO: Clear RenderQueries periodically so list no longer contains models removed from the scene
 		}
 
@@ -323,12 +324,12 @@ public abstract class Renderer implements Disposable {
 			boolean failedfrustumtest = model.isOccluded();
 			if (model.getNumberOfVertcies() < Settings.OcclusionQueryMinVertcies) {// Is not worth a render query?
 				// Never going to perform occlusion query for this object so have to set it to result of frustum test
-				model.cansee = !failedfrustumtest;
+				model.setVisibility(!failedfrustumtest);
 				continue;
 			} else {
 				// Going to be performing occlusion query so can only set to occluded if we're sure
 				if (failedfrustumtest)
-					model.cansee = false;
+					model.setVisibility(false);
 			}
 
 
