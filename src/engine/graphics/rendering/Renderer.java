@@ -322,14 +322,14 @@ public abstract class Renderer implements Disposable {
 			// As render query has delay,
 			// we can throw the result away if object is definately outside frustum this frame
 			boolean failedfrustumtest = model.isOccluded();
-			if (model.getNumberOfVertcies() < Settings.OcclusionQueryMinVertcies) {// Is not worth a render query?
-				// Never going to perform occlusion query for this object so have to set it to result of frustum test
-				model.setVisibility(!failedfrustumtest);
-				continue;
-			} else {
+			if (model.getNumberOfVertcies() >= Settings.OcclusionQueryMinVertcies && model.hasBoundingBox()) { // Is worth a render query and possible?
 				// Going to be performing occlusion query so can only set to occluded if we're sure
 				if (failedfrustumtest)
 					model.setVisibility(false);
+			} else {
+				// Never going to perform occlusion query for this object so have to set it to result of frustum test
+				model.setVisibility(!failedfrustumtest);
+				continue;
 			}
 
 

@@ -45,13 +45,12 @@ public class Model3D extends Model {
 		transform.getScale(scale);
 	}
 
-	public void getRotation(Quaternion rotation) {
-		transform.getRotation(rotation);
-	}
+	public void getRotation(Quaternion rotation) { transform.getRotation(rotation); }
 	public void setRotation(Quaternion rotation) {
 		transform.setRotation(rotation);
 	}
 
+	public boolean hasBoundingBox() { return BoundingBox != null; }
 	public void getBoundingBox(AABB out) {
 		transform.getScale(TempVector);
 		Vector3f scale = TempVector;
