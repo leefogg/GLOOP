@@ -123,6 +123,7 @@ public final class CullingTest {
 			rotation.rotate(0,0.5f * timescaler, 0);
 			spinner.setRotation(rotation);
 
+			Renderer.calculateSceneOcclusion();
 			Renderer.setRenderer(renderer);
 			Renderer.render();
 			Renderer.swapBuffers();
