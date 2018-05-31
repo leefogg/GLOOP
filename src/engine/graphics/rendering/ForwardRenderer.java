@@ -2,10 +2,13 @@ package engine.graphics.rendering;
 
 import engine.graphics.Settings;
 import engine.graphics.models.Model;
+import engine.graphics.models.Model3D;
 import engine.graphics.particlesystem.ParticleSystem;
 import engine.graphics.textures.FrameBuffer;
 import engine.graphics.textures.PixelFormat;
 import engine.graphics.textures.Texture;
+
+import java.util.HashSet;
 
 public class ForwardRenderer extends Renderer {
 	private boolean isDisposed;
@@ -32,21 +35,28 @@ public class ForwardRenderer extends Renderer {
 
 	@Override
 	protected void renderScene() {
-		for (Model model : scene.getModels()) {
-			if (model.getMaterial().usesDeferredPipeline())
+		HashSet<Model3D> models = getRenderer().getScene().getModels();
+
+		for (Model3D model : models) {
+			if (cannotRenderModel(model))
 				continue;
-			//TODO: Add PBR material filter when added
+			if (!model.isVisible())
+				continue;
 
 			model.render();
 		}
 
 		if (!scene.getParticleSystems().isEmpty()) {
 			Renderer.enableFaceCulling(false);
-			for (ParticleSystem ps : scene.getParticleSystems()) {
+			for (ParticleSystem ps : scene.getParticleSystems())
 				ps.render();
-			}
 			Renderer.popFaceCullingEnabledState();
 		}
+	}
+
+	private boolean cannotRenderModel(Model model) {
+		return model.getMaterial().usesDeferredPipeline();
+		//TODO: Add PBR material filter when added
 	}
 
 	@Override

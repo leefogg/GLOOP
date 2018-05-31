@@ -97,7 +97,7 @@ public class FrameBuffer { // TODO: implements Disposable
 			if (hasstencil) {
 				createDepthStencilAttachment();
 			} else {
-				createDepthAttachment();
+				createDepthAttachment(); // TODO: Test
 			}
 		}
 	}

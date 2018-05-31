@@ -4,6 +4,8 @@ import engine.graphics.cameras.Camera;
 import engine.graphics.cameras.PerspectiveCamera;
 import engine.graphics.models.Decal;
 import engine.graphics.models.Model;
+import engine.graphics.models.Model2D;
+import engine.graphics.models.Model3D;
 import engine.graphics.particlesystem.ParticleEmitter;
 import engine.graphics.particlesystem.ParticleSystem;
 import engine.graphics.shading.lighting.AmbientLight;
@@ -18,7 +20,8 @@ import java.util.List;
 import java.util.function.Predicate;
 
 public class Scene {
-	private final HashSet<Model> models = new HashSet<>();
+	private final HashSet<Model3D> models = new HashSet<>();
+	private final HashSet<Model2D> overlays = new HashSet<>();
 	private final HashSet<Decal> decals = new HashSet<>();
 	private final ArrayList<PointLight> pointLights = new ArrayList<>();
 	private final ArrayList<DirectionalLight> directionalLights = new ArrayList<>();
@@ -57,7 +60,8 @@ public class Scene {
 	public Camera getDebugCamera() { return debugCamera; }
 	public void setDebugCamera(Camera debugCamera) { this.debugCamera = debugCamera; }
 
-	public void add(Model model) { models.add(model); }
+	public void add(Model3D model) { models.add(model); }
+	public void add(Model2D model) { overlays.add(model); }
 	public void add(Decal decal) { decals.add(decal); }
 	public void add(PointLight light) {	pointLights.add(light); }
 	public void add(DirectionalLight directionallight) { directionalLights.add(directionallight); }
@@ -66,7 +70,8 @@ public class Scene {
 	public void add(ParticleEmitter emitter) { ParticleEmitters.add(emitter); }
 
 	// TODO: These should return readonly
-	public HashSet<Model> getModels() { return models; }
+	public HashSet<Model3D> getModels() { return models; }
+	public HashSet<Model2D> getOverlays() { return overlays; }
 	public HashSet<Decal> getDecals() { return decals; }
 	public List<ParticleSystem> getParticleSystems() { return ParticleSystems; }
 

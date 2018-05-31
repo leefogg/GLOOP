@@ -10,7 +10,14 @@ public final class SingleColorMaterial extends Material<SingleColorShader> {
 	private static SingleColorShader shader;
 
 	public SingleColorMaterial() throws IOException {
+		this(new Vector4f(1,1,1,1));
+	}
+	public SingleColorMaterial(java.awt.Color color) throws IOException {
+		this(new Vector4f(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()));
+	}
+	public SingleColorMaterial(Vector4f color) throws IOException {
 		shader = getShaderSingleton();
+		this.color.set(color);
 	}
 
 	public static final SingleColorShader getShaderSingleton() throws IOException {

@@ -6,11 +6,17 @@ import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER_SRGB;
 import engine.Disposable;
 import engine.general.GenericStackable;
 import engine.general.Stack;
+import engine.graphics.Settings;
 import engine.graphics.cameras.Camera;
+import engine.graphics.models.Model3D;
+import engine.graphics.models.ModelFactory;
 import engine.graphics.shading.ShaderCompilationException;
+import engine.graphics.shading.materials.SingleColorMaterial;
 import engine.graphics.shading.posteffects.PostEffect;
 import engine.graphics.shading.posteffects.PostProcessor;
 import engine.graphics.textures.*;
+import engine.math.Quaternion;
+import engine.physics.data.AABB;
 import org.lwjgl.opengl.Display;
 
 import engine.graphics.models.VertexArrayManager;
@@ -18,9 +24,13 @@ import engine.graphics.models.VertexBufferManager;
 import engine.graphics.shading.ShaderManager;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.util.vector.Vector3f;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 public abstract class Renderer implements Disposable {
 	protected Scene scene = new Scene();
@@ -57,6 +67,26 @@ public abstract class Renderer implements Disposable {
 	private static final Stack<ColorBufferWriteMaskState> ColorBufferWriteMaskStack = new Stack();
 	private static final Stack<StencilTestingEnabledState> StencilTestingEnabledStack = new Stack();
 	private static final Stack<StencilBufferState> StencilBufferStateStack = new Stack();
+	//TODO: Framebuffer stack
+
+	// Occlusion query stuff
+	private static final FrameBuffer OCCLUSION_BUFFER = new FrameBuffer(Viewport.getWidth()/2, Viewport.getHeight()/2, PixelFormat.R8);
+	private static final RenderQueryPool QUERY_POOL = new RenderQueryPool(10);
+	// Used to render bouding boxes
+	private static Model3D CUBE;
+	private static final AABB BOUNDING_BOX = new AABB(0,0,0,0,0,0);
+	private static final Vector3f POSITION = new Vector3f();
+	private static final Quaternion ROTATION = new Quaternion();
+
+	static {
+		try {
+			CUBE = ModelFactory.getModel("res/models/primitives/cube.obj", new SingleColorMaterial(Color.red));
+		} catch (IOException e) {
+			e.printStackTrace();
+			Viewport.close();
+			System.exit(1);
+		}
+	}
 
 	private static class GLEnabledState extends GenericStackable {
 		protected int glEnum;
@@ -197,9 +227,10 @@ public abstract class Renderer implements Disposable {
 		enableColorBufferWriting(true, true, true, true);
 		enableStencilTesting(false);
 		setStencilBufferState(Condition.Always, 1, 0xFF);
-		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE); // TODO: Pull this out to public methods
+		Renderer.setDepthFunction(DepthFunction.Less);
 
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  // TODO: Pull this out to public methods
 		glEnable(GL_FRAMEBUFFER_SRGB); // TODO: Pull this out to public methods
 
 		setRenderer(getForwardRenderer());
@@ -254,6 +285,71 @@ public abstract class Renderer implements Disposable {
 			return;
 
 		currentRenderer.renderScene();
+	}
+
+	public static final void calculateSceneOcclusion() {
+		OCCLUSION_BUFFER.bind();
+		Renderer.clear(true, true, false);
+
+		HashSet<Model3D> models = getRenderer().getScene().getModels();
+
+		// Render occuders
+		for (Model3D model : models) {
+			if (!model.isOccluder())
+				continue;
+
+			model.render();
+		}
+
+		List<RenderQuery> pendingqueries = QUERY_POOL.getPendingQueries();
+
+		// Update models' visibility using previous frame(s) queries
+		for (int i=0; i<pendingqueries.size(); i++) {
+			RenderQuery renderquery = pendingqueries.get(i);
+			if (renderquery.isResultAvailable())
+				renderquery.Model.setVisibility(renderquery.isModelVisible());
+			//TODO: Clear RenderQueries periodically so list no longer contains models removed from the scene
+		}
+
+
+		// Render new occusion queries
+		Renderer.enableColorBufferWriting(false, false, false, false);
+		Renderer.enableDepthBufferWriting(false);
+		for (Model3D model : models) {
+			if (model.isOccluder())
+				continue;
+			// If model outside frustum, dont bother with occlusion query
+			// As render query has delay,
+			// we can throw the result away if object is definately outside frustum this frame
+			boolean failedfrustumtest = model.isOccluded();
+			if (model.getNumberOfVertcies() >= Settings.OcclusionQueryMinVertcies && model.hasBoundingBox()) { // Is worth a render query and possible?
+				// Going to be performing occlusion query so can only set to occluded if we're sure
+				if (failedfrustumtest)
+					model.setVisibility(false);
+			} else {
+				// Never going to perform occlusion query for this object so have to set it to result of frustum test
+				model.setVisibility(!failedfrustumtest);
+				continue;
+			}
+
+
+			// Passed frustum test, do occlusion test if ready
+			// Skip if query is still pending
+			if (QUERY_POOL.isModelPending(model))
+				continue;
+
+			model.getBoundingBox(BOUNDING_BOX);
+			model.getPostition(POSITION);
+			model.getRotation(ROTATION);
+			CUBE.setScale(BOUNDING_BOX.width, BOUNDING_BOX.height, BOUNDING_BOX.depth);
+			CUBE.setPosition(POSITION.x, POSITION.y, POSITION.z);
+			CUBE.setRotation(ROTATION);
+			RenderQuery query = QUERY_POOL.startQuery(model);
+			CUBE.render();
+			query.end();
+		}
+		Renderer.popDepthBufferWritingState();
+		Renderer.popColorBufferWritingState();
 	}
 
 	public static void enablePostEffects() {

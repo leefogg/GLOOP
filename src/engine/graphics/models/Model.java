@@ -9,6 +9,7 @@ public abstract class Model implements Renderable {
 	protected final VertexArray modelData;
 	protected Material material;
 	private Matrix4f modelMatrix = new Matrix4f();
+	private boolean isVisible = true;
 
 	private boolean hidden = false;
 
@@ -32,15 +33,23 @@ public abstract class Model implements Renderable {
 		this.hidden = hidden;
 	}
 
-	protected boolean isOccuded() { return false; }
+	public boolean isOccluder() { return false; }
+	public boolean isOccluded() { return false; }
 
-	public VertexArray getMeshBuffer() {return modelData;}
+	public VertexArray getMeshBuffer() { return modelData; }
+
+	public int getNumberOfVertcies() {
+		return (modelData.isIndexed()) ? modelData.getNumberOfIndices() : modelData.getNumberofVertcies();
+	}
+
+	public void setVisibility(boolean isvisible) { isVisible = isvisible; }
+	public boolean isVisible() { return isVisible; }
 
 	@Override
 	public void render() {
 		if (modelData.isDisposed())
 			return;
-		if (isHidden() || isOccuded())
+		if (isHidden())
 			return;
 
 		//TODO: Render using error shader if shader is disposed

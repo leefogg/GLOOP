@@ -9,10 +9,12 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 public class Model3D extends Model {
+	private static final Vector3f TempVector = new Vector3f();
 	private static final Matrix4f ModelMatrix = new Matrix4f();
 
 	protected Transform3D transform = new Transform3D();
 	private AABB BoundingBox;
+	private boolean IsOccuder;
 
 	public Model3D(VertexArray mesh, Material material) {
 		this(mesh, material, null);
@@ -43,14 +45,27 @@ public class Model3D extends Model {
 		transform.getScale(scale);
 	}
 
-	public void getRotation(Quaternion rotation) {
-		transform.getRotation(rotation);
-	}
+	public void getRotation(Quaternion rotation) { transform.getRotation(rotation); }
 	public void setRotation(Quaternion rotation) {
 		transform.setRotation(rotation);
 	}
 
-	public AABB getBoundingBox() { return BoundingBox; }
+	public boolean hasBoundingBox() { return BoundingBox != null; }
+	public void getBoundingBox(AABB out) {
+		transform.getScale(TempVector);
+		Vector3f scale = TempVector;
+		out.x = BoundingBox.x * scale.x;
+		out.y = BoundingBox.y * scale.y;
+		out.z = BoundingBox.z * scale.z;
+		out.width = BoundingBox.width * scale.x;
+		out.height = BoundingBox.height * scale.y;
+		out.depth = BoundingBox.depth* scale.z;
+	}
+
+	@Override
+	public boolean isOccluder() { return IsOccuder; }
+
+	public void setIsOccuder(boolean isoccuder) { IsOccuder = isoccuder; }
 
 	@Override
 	public void getModelMatrix(Matrix4f out) {
@@ -58,7 +73,7 @@ public class Model3D extends Model {
 	}
 
 	@Override
-	protected boolean isOccuded() {
+	public boolean isOccluded() {
 		if (BoundingBox == null)
 			return false;
 
@@ -66,8 +81,6 @@ public class Model3D extends Model {
 		boolean isoutside = !Renderer.getRenderer().getScene().getGameCamera().isInsideFrustum(BoundingBox, ModelMatrix);
 		return isoutside;
 	}
-
-
 
 	public Model3D clone() {
 		//TODO: Doesn't clone transforms
