@@ -37,7 +37,6 @@ public class ForwardRenderer extends Renderer {
 	protected void renderScene() {
 		HashSet<Model3D> models = getRenderer().getScene().getModels();
 
-		int ObjectsRendered = 0;
 		for (Model3D model : models) {
 			if (cannotRenderModel(model))
 				continue;
@@ -45,9 +44,7 @@ public class ForwardRenderer extends Renderer {
 				continue;
 
 			model.render();
-			ObjectsRendered++;
 		}
-		System.out.println(ObjectsRendered);
 
 		if (!scene.getParticleSystems().isEmpty()) {
 			Renderer.enableFaceCulling(false);
