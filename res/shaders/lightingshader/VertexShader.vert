@@ -13,12 +13,12 @@ uniform mat4
 	ModelMatrix;
 
 void main(void) {
+	vec4 vertexworldposition = ModelMatrix * vec4(Position, 1.0);
+	
+	gl_Position = VPMatrix * vertexworldposition;
+	
+	// Will be averaged by the shader pipeline
+	fragLocation = vertexworldposition.xyz; 
 	textureCoord = TextureCoords;
-	
-	gl_Position = VPMatrix * ModelMatrix * vec4(Position, 1);
-	
-	vec3 vertexworldposition = (ModelMatrix * vec4(Position, 1)).xyz;
-	fragLocation = vertexworldposition; // Will be averaged by the shader pipeline
-	
-	FaceNormal = normalize((ModelMatrix * vec4(VertexNormal, 0)).xyz);
+	FaceNormal = normalize((ModelMatrix * vec4(VertexNormal, 0.0)).xyz);
 }
