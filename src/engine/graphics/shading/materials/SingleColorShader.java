@@ -35,7 +35,7 @@ public final class SingleColorShader extends ShaderProgram {
 
 	@Override
 	public boolean supportsTransparency() {
-		return true;
+		return false;
 	}
 
 	public void setColor(Vector4f color) { setColor(color.x, color.y, color.z, color.z); }
