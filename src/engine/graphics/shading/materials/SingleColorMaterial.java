@@ -23,6 +23,7 @@ public final class SingleColorMaterial extends Material<SingleColorShader> {
 	public static final SingleColorShader getShaderSingleton() throws IOException {
 		if (shader == null)
 			shader = new SingleColorShader();
+
 		return shader;
 	}
 
@@ -33,7 +34,6 @@ public final class SingleColorMaterial extends Material<SingleColorShader> {
 
 	@Override
 	public void commit() {
-		bind();
 		shader.setColor(color);
 	}
 
