@@ -7,12 +7,12 @@ import engine.graphics.textures.TextureManager;
 import java.io.IOException;
 
 public final class FullBrightMaterial extends Material<ShaderProgram> {
-	private static ShaderProgram shader;
 	private static FullBrightShader defaultshader;
 
 	private Texture albedo = Texture.blank;
+	private ShaderProgram shader;
 
-	public FullBrightMaterial(FullBrightShader shader, Texture albedo) throws IOException {
+	public FullBrightMaterial(Texture albedo) throws IOException {
 		this(getDefultShaderSingleton());
 		setAlbedoTexture(albedo);
 	}
@@ -53,5 +53,5 @@ public final class FullBrightMaterial extends Material<ShaderProgram> {
 	}
 
 	@Override
-	protected boolean hasTransparency() { return false; }
+	protected boolean hasTransparency() { return getShader().supportsTransparency(); }
 }

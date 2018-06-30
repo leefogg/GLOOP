@@ -9,7 +9,7 @@ import engine.graphics.textures.TextureUnit;
 import java.io.IOException;
 
 public class FullBrightShader extends ShaderProgram {
-	private Uniform1i texture;
+	private Uniform1i Texture;
 
 	public FullBrightShader() throws ShaderCompilationException, IOException {
 		super(
@@ -19,9 +19,9 @@ public class FullBrightShader extends ShaderProgram {
 	}
 	FullBrightShader(String vertexfilepath, String fragmentfilepath) throws ShaderCompilationException, IOException {
 		super(
-				vertexfilepath,
-				fragmentfilepath
-			);
+			vertexfilepath,
+			fragmentfilepath
+		);
 	}
 
 	@Override
@@ -32,12 +32,12 @@ public class FullBrightShader extends ShaderProgram {
 
 	@Override
 	protected void getCustomUniformLocations() {
-		texture = new Uniform1i(this, "Texture");
+		Texture = new Uniform1i(this, "Texture");
 	}
 
 	@Override
 	protected void setDefaultCustomUniformValues() {
-		texture.set(TextureUnit.AlbedoMap);
+		Texture.set(TextureUnit.AlbedoMap);
 	}
 
 	@Override
