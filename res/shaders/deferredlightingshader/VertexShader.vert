@@ -23,7 +23,7 @@ void main(void) {
 	gl_Position = VPMatrix * ModelMatrix * vec4(Position, 1);
 	
 	// PS1 style vertex inaccuracy
-	//gl_Position = gl_Position - mod(gl_Position, 0.01);
+	//gl_Position.xyz = gl_Position.xyz - mod(gl_Position.xyz, 0.01);
 	
 	vertPosition = gl_Position;
 	
