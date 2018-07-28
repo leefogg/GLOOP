@@ -67,7 +67,7 @@ public final class DeferredMaterial extends Material<DeferredGBuffersShader> {
 		return reflectionMap;
 	}
 
-	public void setSpecularity(float specularity) { this.specularity = Math.min(Math.max(specularity,0),1); }
+	public void setSpecularity(float specularity) { this.specularity = Math.min(Math.max(specularity / 100f,0),1); }
 
 	public void setRoughness(float roughness) { this.roughness = Math.min(Math.max(roughness,0),1);}
 
