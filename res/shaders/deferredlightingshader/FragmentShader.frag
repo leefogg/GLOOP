@@ -194,20 +194,15 @@ void main(void) {
 	albedobuffer.rgb = mix(albedobuffer.rgb, reflectionrefractioncolor, min(1.0, reflectivity + refractivity));
 	
 	
-	float specularity, roughness;
+	float specularity = 1.0, roughness = 1.0;
 	#if defined SPECULARMAPPING
 	if (HasSpecularMap) {
 		vec3 spectexture = texture(specularMap, texcoords).rgb;
 		specularity = spectexture.r;
-		roughness = spectexture.g;
-	} else {
-		specularity = Specularity;
-		roughness = Roughness;
 	}
-	#else
-	specularity = Specularity;
-	roughness = Roughness;
 	#endif
+	specularity *= Specularity;
+	roughness *= Roughness;
 	specularbuffer = vec3(specularity, roughness, 1.0);
 	
 	
