@@ -97,6 +97,8 @@ public class DeferredRenderer extends Renderer {
 				defines.add("DITHER");
 			if (Settings.EnableFog)
 				defines.add("FOG");
+			if (Settings.EnableVolumetricLights)
+				defines.add("VOLUMETRICLIGHTING");
 
 			lightingshader = new LightingPassShader(defines.toArray(new String[0]));
 			lightingPosteffect = new LightingPassPostEffect(lightingshader, normalsTexture, specularTexture, positionTexture);
@@ -204,6 +206,8 @@ public class DeferredRenderer extends Renderer {
 	}
 
 	public DeferredMaterial getNewMaterial() { return new DeferredMaterial(); }
+
+	public void setVolumetricLightsStrength(float volumetriclightsstrength) { lightingPosteffect.setVolumetricLightsStrength(volumetriclightsstrength);}
 
 	public void renderAttachments() {
 		renderAttachments(8);

@@ -1,8 +1,6 @@
 package engine.graphics.rendering;
 
 import engine.graphics.cameras.Camera;
-import engine.graphics.rendering.Renderer;
-import engine.graphics.rendering.Scene;
 import engine.graphics.shading.*;
 import engine.graphics.shading.GLSL.Uniform16f;
 import engine.graphics.shading.GLSL.Uniform1f;
@@ -27,7 +25,9 @@ final class LightingPassShader extends PostEffectShader {
 	private Uniform1f
 		znear,
 		zfar,
-		time;
+		time,
+
+		VolumetricLightsStrength;
 	private Uniform16f ViewMatrix;
 
 	private Uniform3f
@@ -115,7 +115,7 @@ final class LightingPassShader extends PostEffectShader {
 			color.set(passthrough);
 			innerCone.set(spotlight.getInnerCone());
 			outerCone.set(spotlight.getOuterCone());
-			quadraticAttenuation.set(spotlight.quadraticAttenuation);
+			quadraticAttenuation.set(spotlight.getQuadraticAttenuation());
 		}
 	}
 	private class Fog {
@@ -184,6 +184,8 @@ final class LightingPassShader extends PostEffectShader {
 		fog = new Fog(this);
 
 		time = new Uniform1f(this, "time");
+
+		VolumetricLightsStrength = new Uniform1f(this, "VolumetricLightStrength");
 	}
 
 	@Override
@@ -246,6 +248,7 @@ final class LightingPassShader extends PostEffectShader {
 
 	public void setTime(float timeinseconds) { time.set(timeinseconds); }
 
+	public void setVolumetricLightsStrength(float volumetricLightsStrength) { VolumetricLightsStrength.set(volumetricLightsStrength); }
 
 	public void setCameraAttributes(Camera camera) {
 		setzfar(camera.getzfar());

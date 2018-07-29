@@ -7,9 +7,10 @@ import engine.graphics.textures.TextureUnit;
 
 final class LightingPassPostEffect extends PostEffect<LightingPassShader> {
 	private Texture
-	positionTexture,
-	normalTexture,
-	specularTexture;
+		positionTexture,
+		normalTexture,
+		specularTexture;
+	private float volumetricLightsStrength = 2;
 
 	private static LightingPassShader shader;
 
@@ -50,8 +51,11 @@ final class LightingPassPostEffect extends PostEffect<LightingPassShader> {
 		TextureManager.bindTextureToUnit(specularTexture, TextureUnit.GBuffer_Specular);
 		shader.setCameraAttributes(Renderer.getCurrentCamera());
 		shader.updateLights();
+		shader.setVolumetricLightsStrength(volumetricLightsStrength);
 		shader.setTime(Viewport.getElapsedSeconds());
 	}
+
+	public void setVolumetricLightsStrength(float volumetriclightsstrength) { volumetricLightsStrength = volumetriclightsstrength; }
 
 	@Override
 	public void setTexture(Texture texture) {

@@ -6,6 +6,7 @@ import engine.graphics.models.ModelFactory;
 import engine.graphics.rendering.*;
 import engine.graphics.shading.ShaderCompilationException;
 import engine.graphics.shading.lighting.PointLight;
+import engine.graphics.shading.lighting.SpotLight;
 import engine.graphics.shading.materials.DecalMaterial;
 import engine.graphics.shading.materials.LambartMaterial;
 import engine.graphics.shading.posteffects.FXAAPostEffect;
@@ -19,7 +20,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 import java.io.IOException;
 
-public final class SOMA {
+public final class SpotLights {
 	public static void main(String[] args) {
 		try {
 			Viewport.create(1920, 1080, "Engine Testing");
@@ -38,47 +39,28 @@ public final class SOMA {
 		}
 		Scene scene = renderer.getScene();
 
-		PointLight whitelight = new PointLight();
-		whitelight.setPosition(0, 4,0);
-		whitelight.quadraticAttenuation = 0.01f;
-		scene.add(whitelight);
-		PointLight greenlight = new PointLight();
-		greenlight.setColor(0,1,0);
-		greenlight.setPosition(10,4,10);
-		greenlight.quadraticAttenuation = 0.01f;
-		scene.add(greenlight);
-		PointLight bluelight = new PointLight();
-		bluelight.setColor(0,0,1);
-		bluelight.setPosition(-10,4,10);
-		bluelight.quadraticAttenuation = 0.01f;
-		scene.add(bluelight);
-		PointLight redlight = new PointLight();
-		redlight.setColor(1,0,0);
-		redlight.setPosition(0,4,-10);
-		redlight.quadraticAttenuation = 0.01f;
-		scene.add(redlight);
+		SpotLight light = new SpotLight();
+		light.setPosition(0,25,0);
+		light.setQuadraticAttenuation(0.01f);
+		light.setInnerCone(20);
+		light.setOuterCone(50);
+		light.setColor(1,0,0);
+		scene.getAmbientlight().setColor(0.05f,0.05f,0.05f);
+		scene.add(light);
 
 
 		try {
-			Texture albedomap = TextureManager.newTexture("res\\textures\\SOMA\\scanningroom_tiles.bmp", PixelComponents.RGB, PixelFormat.SRGB8);
-			albedomap.generateAnisotropicMipMaps(100);
-			Texture specularmap = TextureManager.newTexture("res\\textures\\SOMA\\scanningroom_tiles_spec.png", PixelComponents.RGB, PixelFormat.R8);
-			albedomap.generateAnisotropicMipMaps(100);
-			Texture normalmap = TextureManager.newTexture("res\\textures\\SOMA\\scanningroom_tiles_nrm.bmp", PixelComponents.RGB, PixelFormat.RGB8);
-			albedomap.generateAnisotropicMipMaps(100);
+			DeferredMaterial boxmaterial = renderer.getNewMaterial();
+			Texture albedo = TextureManager.newTexture("res\\textures\\default.png", PixelComponents.RGB, PixelFormat.SRGB8);
+			boxmaterial.setAlbedoTexture(albedo);
+			boxmaterial.setTextureRepeat(5,5);
+			Model3D outerbox = ModelFactory.getModel("res\\models\\insideout box.obj", boxmaterial);
+			outerbox.setScale(50,50,50);
+			outerbox.setPosition(0,25,0);
+			scene.add(outerbox);
 
 			DeferredMaterial material = renderer.getNewMaterial();
-			material.setAlbedoTexture(albedomap);
-			material.setSpecularMap(specularmap);
-			material.setNormalMap(normalmap);
-			material.setTextureRepeat(10,10);
-			material.setSpecularity(40f);
-			material.setRoughness(0.975f);
-			Model3D model1 = ModelFactory.getModel("res/models/plane.obj", material);
-			scene.add(model1);
-
-			material = renderer.getNewMaterial();
-			Texture albedo = TextureManager.newTexture("res\\models\\SOMA\\ark\\albedo.bmp", PixelComponents.RGB, PixelFormat.SRGB8);
+			albedo = TextureManager.newTexture("res\\models\\SOMA\\ark\\albedo.bmp", PixelComponents.RGB, PixelFormat.SRGB8);
 			material.setAlbedoTexture(albedo);
 			Texture normals = TextureManager.newTexture("res\\models\\SOMA\\ark\\normals.bmp", PixelComponents.RGB, PixelFormat.RGB8);
 			material.setNormalMap(normals);
@@ -86,7 +68,7 @@ public final class SOMA {
 			material.setSpecularMap(specular);
 			material.setRoughness(0.2f);
 			material.setReflectivity(0.1f);
-			Model3D model = ModelFactory.getModel("res\\models\\SOMA\\ark\\model.obj", material);
+			Model3D model = ModelFactory.getModel("res\\models\\lagsphere.obj", material);
 			model.setScale(10,10,10);
 			scene.add(model);
 		} catch (IOException | ShaderCompilationException e) {
@@ -99,7 +81,7 @@ public final class SOMA {
 		scene.setDebugCamera(camera);
 		scene.setGameCamera(camera);
 		camera.setzfar(100);
-		camera.setPosition(-1,7,19);
+		camera.setPosition(-1,25,60);
 
 		System.gc();
 
@@ -111,12 +93,13 @@ public final class SOMA {
 			float timescaler = Renderer.getTimeScaler();
 			camera.update(delta, timescaler);
 
-			//sincos += step * timescaler;
+			sincos += step * timescaler;
+			light.setDirection((float)Math.cos(sincos), (float)Math.sin(sincos), 0);
 
 			Renderer.setRenderer(renderer);
 			Renderer.render();
 			Renderer.swapBuffers();
-			renderer.renderAttachments(4);
+			renderer.renderAttachments(6);
 			Viewport.setTitle("Development Engine " + Viewport.getCurrentFrameRate() + "Hz");
 
 			if (Display.isCloseRequested())

@@ -4,10 +4,10 @@ import org.lwjgl.util.vector.Vector3f;
 
 public final class SpotLight {
 	private final Vector3f position = new Vector3f(0,0,0);
-	private final Vector3f direction = new Vector3f(0,-1,0);
+	private final Vector3f direction = new Vector3f(0,-1,0); // TODO: Make Quaternion
 	private final Vector3f color = new Vector3f(1,1,1);
 	private float innerCone, outerCone;
-	public float quadraticAttenuation = Integer.MAX_VALUE;
+	private float QuadraticAttenuation = Integer.MAX_VALUE;
 
 	public SpotLight() {
 		setInnerCone(45);
@@ -24,6 +24,9 @@ public final class SpotLight {
 
 	public void setDirection(Vector3f direction) { setDirection(direction.x, direction.y, direction.z); }
 	public void setDirection(float x, float y, float z) {this.direction.set(x, y, z); }
+
+	public float getQuadraticAttenuation() { return QuadraticAttenuation; }
+	public void  setQuadraticAttenuation(float quadraticattenuation) { QuadraticAttenuation = quadraticattenuation; }
 
 	public void pointAt(Vector3f point) { pointAt(point.x, point.y, point.z); }
 	public void pointAt(float x, float y, float z) {

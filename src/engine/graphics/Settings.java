@@ -14,7 +14,8 @@ public class Settings {
 			EnableChromaticAberration = false,
 			EnableShadows = false,
 			EnableFog = false,
-			EnableHDR = false;
+			EnableHDR = false,
+			EnableVolumetricLights = false;
 	public static int
 			MaxPointLights = 64,
 			MaxSpotLights = 32,

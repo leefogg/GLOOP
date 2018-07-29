@@ -34,6 +34,7 @@ uniform int numberOfSpotLights;
 uniform SpotLight spotLights[32];
 uniform vec3 fogColor = vec3(0,0,0);
 uniform float fogDensity = 0.02;
+uniform float VolumetricLightStrength = 2.0;
 
 uniform float znear, zfar;
 uniform vec3 campos;
@@ -113,16 +114,17 @@ vec3 calculateDiffuse(vec3 worldspaceposition, vec3 facenormal, SpotLight spotli
 
 // Used for dithering
 #define MOD3 vec3(443.8975,397.2973, 491.1871)
-float hash12(vec2 p) {
+float rand(vec2 p) {
 	vec3 p3  = fract(vec3(p.xyx) * MOD3);
     p3 += dot(p3, p3.yzx + 19.19);
     return fract((p3.x + p3.y) * p3.z);
 }
+
 vec3 dither(vec3 color, vec2 texcoord) {
 	vec2 seed = texcoord;
 	seed += fract(time);
 
-	vec3 rnd = vec3(hash12( seed ) + hash12(seed + 0.59374) - 0.5 );
+	vec3 rnd = vec3(rand(seed) + rand(seed + 0.59374) - 0.5);
 
 	return color + rnd/255.0;
 }
@@ -192,6 +194,7 @@ void main(void) {
 		vec3 diffusecolor = calculateDiffuse(worldspaceposition, facenormal, light);
 		
 		// Specular
+		// TODO: Bug: Spot lights show specular when light isn't amimed at point
 		vec3 specularcolor = calculateSpecular(
 			worldspaceposition, 
 			facenormal, 
@@ -205,9 +208,25 @@ void main(void) {
 		// Attenuation
 		float luminosity = calulateLuminosity(worldspaceposition, light);
 		
+		vec3 halo;
+		#if defined VOLUMETRICLIGHTING
+		// Volumetric Lighting
+		int steps = 16;
+		vec3 stepsize = vec3(worldspaceposition - campos) / steps;
+		vec3 point = campos + stepsize * rand(textureCoord * time);
+		for (int step=0; step<steps-2; step++){
+			halo += calculateDiffuse(point, facenormal, light);
+			
+			point += stepsize;
+		}
+		halo /= steps;
+		halo *= VolumetricLightStrength;
+		#endif
+		
+		
 		diffusecolor *= luminosity;
 		// Specular has luminosity built in
-		pixelColor += diffusecolor + specularcolor;
+		pixelColor += diffusecolor + specularcolor + halo;
 	}
 	
 	//TODO: Change to Blue Noise
