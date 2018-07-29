@@ -24,7 +24,6 @@ public final class Specular {
 			Viewport.create(1280, 720, "Engine Testing");
 			Viewport.show();
 			//Viewport.setFullScreen(true);
-			Viewport.unbindMouseOnBlur(true);
 		} catch (LWJGLException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -33,16 +32,13 @@ public final class Specular {
 		//engine.logging.Logger.enableMemoryLog(100);
 
 		DeferredRenderer deferredrenderer = null;
-		ForwardRenderer forwardrenderer = null;
 		try {
 			deferredrenderer = Renderer.getDeferedRenderer();
-			forwardrenderer = Renderer.getForwardRenderer();
 		} catch (Exception e) {
 			e.printStackTrace(System.err);
 			exitCleanly(1);
 		}
 		Scene scene = deferredrenderer.getScene();
-		forwardrenderer.setScene(scene);
 
 
 		PointLight light1 = new PointLight();
@@ -71,14 +67,21 @@ public final class Specular {
 				}
 			}
 
+			Texture albedomap = TextureManager.newTexture("res\\textures\\SOMA\\scanningroom_tiles.bmp", PixelComponents.RGB, PixelFormat.SRGB8);
+			albedomap.generateAnisotropicMipMaps(100);
+			Texture specularmap = TextureManager.newTexture("res\\textures\\SOMA\\scanningroom_tiles_spec.png", PixelComponents.RGB, PixelFormat.R8);
+			albedomap.generateAnisotropicMipMaps(100);
+			Texture normalmap = TextureManager.newTexture("res\\textures\\SOMA\\scanningroom_tiles_nrm.bmp", PixelComponents.RGB, PixelFormat.RGB8);
+			albedomap.generateAnisotropicMipMaps(100);
 			DeferredMaterial material = deferredrenderer.getNewMaterial();
-			Texture albedomap = TextureManager.newTexture("res\\textures\\wood.png", PixelComponents.RGB, PixelFormat.SRGB8);
-			Model3D model = ModelFactory.getModel("res\\models\\plane.obj", material);
-			material.setTextureRepeat(5,5);
 			material.setAlbedoTexture(albedomap);
-			material.setRoughness(0.1f);
-			material.setSpecularity(1);
-			scene.add(model);
+			material.setSpecularMap(specularmap);
+			material.setNormalMap(normalmap);
+			material.setTextureRepeat(10,10);
+			material.setSpecularity(40f);
+			material.setRoughness(0.975f);
+			Model3D model1 = ModelFactory.getModel("res/models/plane.obj", material);
+			scene.add(model1);
 		} catch (IOException e) {
 			e.printStackTrace(System.err);
 			exitCleanly(1);
@@ -104,7 +107,6 @@ public final class Specular {
 
 			Renderer.setRenderer(deferredrenderer);
 			Renderer.render();
-			Renderer.setRenderer(forwardrenderer);
 			Renderer.render();
 			Renderer.swapBuffers();
 			deferredrenderer.renderAttachments();
