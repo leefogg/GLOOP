@@ -14,8 +14,11 @@ public class ShaderToyShader extends PostEffectShader {
 			mouse;
 	private Uniform1f time;
 
-	public ShaderToyShader(String vertexshaderpath, String fragmentshaderpath) throws IOException {
-		super(vertexshaderpath, fragmentshaderpath);
+	public ShaderToyShader(String fragmentshaderpath) throws IOException {
+		super(
+				"res/shaders/Post Effects/shadertoy/vertexShader.vert",
+				fragmentshaderpath
+		);
 	}
 
 	protected void bindAttributes() { }

@@ -8,10 +8,7 @@ public class ShaderToyMaterial extends Material<ShaderToyShader> {
 	private ShaderToyShader shader;
 
 	public ShaderToyMaterial(String fragmentshaderpath) throws IOException {
-		shader = new ShaderToyShader(
-				"res/shaders/Post Effects/shadertoy/vertexShader.vert",
-				fragmentshaderpath
-		);
+		shader = new ShaderToyShader(fragmentshaderpath);
 	}
 
 	@Override

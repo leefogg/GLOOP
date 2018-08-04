@@ -9,7 +9,10 @@ import java.io.IOException;
 
 public class VignettePostEffect extends PostEffect<VignetteShader> {
 	private static VignetteShader shader;
-	private float Strength = 5;
+
+	private float
+			Start = 0,
+			End = 0.75f;
 
 	public VignettePostEffect() throws IOException {
 		shader = getShaderSingelton();
@@ -22,11 +25,13 @@ public class VignettePostEffect extends PostEffect<VignetteShader> {
 		return shader;
 	}
 
+	public void setStart(float start) { Start = Math.max(0f, start); }
+	public void setEnd(float end) { End = Math.max(Start+0.01f, end); }
+
 	@Override
 	public void setTexture(Texture texture) {
 		TextureManager.bindTextureToUnit(texture, TextureUnit.AlbedoMap);
 	}
-
 
 	@Override
 	public VignetteShader getShader() {	return shader; }
@@ -35,8 +40,7 @@ public class VignettePostEffect extends PostEffect<VignetteShader> {
 	public void commit() {
 		shader.setResolution(Viewport.getWidth(), Viewport.getHeight());
 
-		shader.setStrength(Strength);
+		shader.setStart(Start);
+		shader.setEnd(End);
 	}
-
-	public void setStrength(float strength) { Strength = strength; }
 }
