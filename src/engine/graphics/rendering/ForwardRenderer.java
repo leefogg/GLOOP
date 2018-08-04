@@ -2,6 +2,7 @@ package engine.graphics.rendering;
 
 import engine.graphics.Settings;
 import engine.graphics.models.Model;
+import engine.graphics.models.Model2D;
 import engine.graphics.models.Model3D;
 import engine.graphics.particlesystem.ParticleSystem;
 import engine.graphics.textures.FrameBuffer;
@@ -35,7 +36,8 @@ public class ForwardRenderer extends Renderer {
 
 	@Override
 	protected void renderScene() {
-		HashSet<Model3D> models = getRenderer().getScene().getModels();
+
+		HashSet<Model3D> models = scene.getModels();
 
 		for (Model3D model : models) {
 			if (cannotRenderModel(model))
@@ -52,6 +54,10 @@ public class ForwardRenderer extends Renderer {
 				ps.render();
 			Renderer.popFaceCullingEnabledState();
 		}
+
+		for (Model2D overlay : scene.getOverlays())
+			if (!cannotRenderModel(overlay))
+				overlay.render();
 	}
 
 	private boolean cannotRenderModel(Model model) {

@@ -154,6 +154,10 @@ public class DeferredRenderer extends Renderer {
 
 			GBuffers.bindRenderAttachments(boundrenderattachments);
 		}
+
+		for (Model2D overlay : scene.getOverlays())
+			if (overlay.getMaterial().usesDeferredPipeline())
+				overlay.render();
 	}
 
 	@Override
