@@ -67,6 +67,7 @@ public abstract class Renderer implements Disposable {
 	private static final Stack<ColorBufferWriteMaskState> ColorBufferWriteMaskStack = new Stack();
 	private static final Stack<StencilTestingEnabledState> StencilTestingEnabledStack = new Stack();
 	private static final Stack<StencilBufferState> StencilBufferStateStack = new Stack();
+	private static final Stack<BlendFunctionsState> BlendFunctionsStateStack = new Stack();
 	//TODO: Framebuffer stack
 
 	// Occlusion query stuff
@@ -200,6 +201,20 @@ public abstract class Renderer implements Disposable {
 		@Override
 		public void disable() {}
 	}
+	private static class BlendFunctionsState extends GenericStackable {
+		private BlendFunction SourceFunciton, DestinationFunciton;
+
+		public BlendFunctionsState(BlendFunction sourcefunction, BlendFunction destinationfunciton) {
+			SourceFunciton = sourcefunction;
+			DestinationFunciton = destinationfunciton;
+		}
+
+		@Override
+		public void enable() { glBlendFunc(SourceFunciton.GetGLEnum(), DestinationFunciton.GetGLEnum()); }
+
+		@Override
+		public void disable() { }
+	}
 	// TODO: Add glStencilOp
 
 	private static final CullFaceEnabledState EnabledCullFaceState = new CullFaceEnabledState(true);
@@ -230,7 +245,7 @@ public abstract class Renderer implements Disposable {
 		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE); // TODO: Pull this out to public methods
 		Renderer.setDepthFunction(DepthFunction.Less);
 
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  // TODO: Pull this out to public methods
+		setBlendFunctionsState(BlendFunction.SourceAlpha, BlendFunction.OneMinusSourceAlpha); // TODO: Sure this is the default?
 		glEnable(GL_FRAMEBUFFER_SRGB); // TODO: Pull this out to public methods
 
 		setRenderer(getForwardRenderer());
@@ -362,7 +377,10 @@ public abstract class Renderer implements Disposable {
 	public static void setStencilBufferState(Condition passcondition, int writevalue, int functionmask) {
 		StencilBufferStateStack.push(new StencilBufferState(passcondition, writevalue, functionmask));
 	}
-	public static void popStencilBufferState() { StencilBufferStateStack.pop(); }
+	public static void popStencilBufferState() { StencilBufferStateStack.pop(); } //TODO: What if it underflows?
+
+	public static void setBlendFunctionsState(BlendFunction sourcefunction, BlendFunction destinationfunction) { BlendFunctionsStateStack.push(new BlendFunctionsState(sourcefunction, destinationfunction)); }
+	public static void popBlendFunctionsState() { BlendFunctionsStateStack.pop(); } //TODO: What if it underflows?
 
 	public static void enableStencilTesting(boolean enabled) {
 		StencilTestingEnabledStack.push(enabled ? EnableStencilTestingState : DisabledStencilTestingState);

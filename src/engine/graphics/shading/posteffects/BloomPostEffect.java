@@ -1,5 +1,6 @@
 package engine.graphics.shading.posteffects;
 
+import engine.graphics.rendering.BlendFunction;
 import engine.graphics.rendering.Renderer;
 import engine.graphics.rendering.Viewport;
 import engine.graphics.shading.materials.Material;
@@ -71,13 +72,14 @@ public class BloomPostEffect extends PostEffect<ExtractBrightShader> implements 
 		target.bind();
 		PostProcessor.render(lastframe);
 		Renderer.enableBlending(true);
-		glBlendFunc(GL_ONE, GL_ONE);
+		Renderer.setBlendFunctionsState(BlendFunction.One, BlendFunction.One);
 		PostProcessor.render(hblurbuffer.getColorTexture(0));
+		Renderer.popBlendFunctionsState();
 		Renderer.popBlendingEnabledState();
 	}
 
 	@Override
-	public void setTexture(Texture texture) { TextureManager.bindTextureToUnit(texture, TextureUnit.AlbedoMap);	}
+	public void setTexture(Texture texture) { TextureManager.bindTextureToUnit(texture, TextureUnit.AlbedoMap); }
 
 	public void setNumberOfPasses(int passes) { PassesCount = passes; }
 }

@@ -184,9 +184,9 @@ public class DeferredRenderer extends Renderer {
 		targetFBO.bind();
 		GBuffers.blitTo(targetFBO, true, true, false); //TODO: Check stencil is making its way from the GBuffer to forward renderer
 		Renderer.enableBlending(true); // Multiply not add
-		glBlendFunc(GL_DST_COLOR, GL_ZERO);
+		Renderer.setBlendFunctionsState(BlendFunction.DestinationColor, BlendFunction.Zero);
 		PostProcessor.render(lightTexture);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		Renderer.popBlendFunctionsState();
 		Renderer.popBlendingEnabledState();
 	}
 
