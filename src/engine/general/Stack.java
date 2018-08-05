@@ -9,6 +9,9 @@ public class Stack<E extends Stackable>  {
 			lastelement.disable();
 		}
 
+		if (backingStack.size() == 100)
+			System.err.println("Potential state stack overflow detected. Please ensure each state push is joined with a corresponding pop*state function call.");
+
 		backingStack.push(element);
 		element.pushed();
 	}
