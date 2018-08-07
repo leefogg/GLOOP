@@ -2,9 +2,13 @@ package engine.graphics.fonts;
 
 import engine.general.exceptions.FormatException;
 import engine.graphics.models.Model2D;
+import engine.graphics.rendering.BlendFunction;
+import engine.graphics.rendering.Renderer;
 import engine.graphics.shading.materials.FontMaterial;
 import engine.graphics.shading.materials.Material;
 import engine.graphics.textures.Texture;
+import engine.graphics.textures.TextureFilter;
+import org.lwjgl.util.vector.Vector3f;
 
 import java.io.*;
 import java.nio.file.Paths;
@@ -25,6 +29,7 @@ public class Font {
 		}
 	}
 
+	private static Vector3f DefaultFontColor = new Vector3f(1,1,1);
 	private static Model2D Quad = new Model2D(0,0,0,0);
 	private static Texture FontAtlas;
 	private float FontSize, LineHeight;
@@ -35,6 +40,7 @@ public class Font {
 		SetMaterialSingleton();
 
 		FontAtlas = textureatlas;
+		FontAtlas.setFilteringMode(TextureFilter.Linear);
 
 		File fontfile = Paths.get(fontfilepath).toFile();
 		if (!fontfile.exists())
@@ -117,11 +123,30 @@ public class Font {
 		return null;
 	}
 
-	public void render(char[] string, int x, int y, float fontsize) {
-		FontMaterial material = ((FontMaterial)Quad.getMaterial());
-		material.setFontTextureAtlas(FontAtlas);
 
-		float scaler = fontsize / FontSize;
+	public void render(char[] string, int x, int y, float size) {
+		render(string, x, y, size, DefaultFontColor);
+	}
+	public void render(char[] string, int x, int y, float size, Vector3f color) {
+		render(string, x, y, size, color, 0.2f);
+	}
+	public void render(char[] string, int x, int y, float size, Vector3f color, float thickness) {
+		render(string, x, y, size, color, thickness, 0.05f - 0.05f * (size / 1000f));
+	}
+	public void render(char[] string, int x, int y, float size, Vector3f color, float thickness, float edgewidth) {
+		FontMaterial material = (FontMaterial)Quad.getMaterial();
+		material.setFontTextureAtlas(FontAtlas);
+		material.setThickness(thickness);
+		material.setEdgeWidth(edgewidth);
+		material.setColor(color);
+
+		float scaler = size / FontSize;
+
+		Renderer.enableBlending(true);
+		Renderer.setBlendFunctionsState(BlendFunction.One, BlendFunction.One);
+		Renderer.enableStencilTesting(false);
+		Renderer.enableDepthTesting(false);
+		Renderer.enableDepthBufferWriting(false);
 
 		for (char character : string) {
 			TextureAtlasCharacterInfo characterinfo = CharacterInformation.get((int)character);
@@ -135,5 +160,11 @@ public class Font {
 
 			x += characterinfo.xadvance * scaler;
 		}
+
+		Renderer.popDepthBufferWritingState();
+		Renderer.popDepthTestingEnabledState();
+		Renderer.popStencilTestingState();
+		Renderer.popBlendFunctionsState();
+		Renderer.popBlendingEnabledState();
 	}
 }
