@@ -184,5 +184,5 @@ public final class DeferredMaterial extends Material<DeferredGBuffersShader> {
 	public boolean usesDeferredPipeline() { return true; }
 
 	@Override
-	protected boolean hasTransparency() { return albedoMap.isTransparent(); }
+	protected boolean hasTransparency() { return albedoMap != null && albedoMap.isTransparent(); }
 }

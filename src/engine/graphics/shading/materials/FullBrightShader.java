@@ -42,6 +42,6 @@ public class FullBrightShader extends ShaderProgram {
 
 	@Override
 	public boolean supportsTransparency() {
-		return false;
+		return true;
 	}
 }

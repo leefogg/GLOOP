@@ -36,7 +36,7 @@ in vec3 FaceNormal, fragWorldPos, fragLocalPos;
 in mat3 TBNMatrix;
 in vec4 vertPosition;
 
-layout(location=0) out vec3 albedobuffer;
+layout(location=0) out vec4 albedobuffer;
 layout(location=1) out vec3 specularbuffer;
 layout(location=2) out vec3 normalbuffer;
 layout(location=3) out vec4 positionbuffer;
@@ -114,9 +114,7 @@ void main(void) {
 	} else {
 		albedocolor = AlbedoColor;
 	}
-	if (rand(texcoords + vec2(Time)) + (1-albedocolor.a) > 1.0)
-		discard;
-	albedobuffer = albedocolor.rgb;
+	albedobuffer.rgb = albedocolor.rgb;
 
 	
 	// Calculate normal
@@ -192,6 +190,7 @@ void main(void) {
 	vec3 reflectionrefractioncolor = reflectioncolor * reflectivity + refractioncolor * refractivity;
 	#endif
 	albedobuffer.rgb = mix(albedobuffer.rgb, reflectionrefractioncolor, min(1.0, reflectivity + refractivity));
+	albedobuffer.a = albedocolor.a;
 	
 	
 	float specularity = 1.0, roughness = 1.0;

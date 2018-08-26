@@ -34,19 +34,27 @@ public class ForwardRenderer extends Renderer {
 				previoustechnique.getBuffer().blitTo(buffer, true, true, false);
 	}
 
-	@Override
-	protected void renderScene() {
-
-		HashSet<Model3D> models = scene.getModels();
-
-		for (Model3D model : models) {
+	private void renderModels(boolean transparrent) {
+		for (Model3D model : scene.getModels()) {
 			if (cannotRenderModel(model))
 				continue;
 			if (!model.isVisible())
 				continue;
+			if (model.getMaterial().isTransparent() != transparrent)
+				continue;
 
 			model.render();
 		}
+	}
+
+	@Override
+	protected void renderScene() {
+		renderModels(false);
+		enableBlending(true);
+		setBlendFunctionsState(BlendFunction.SourceAlpha, BlendFunction.OneMinusSourceAlpha);
+		renderModels(true);
+		popBlendFunctionsState();
+		popBlendingEnabledState();
 
 		if (!scene.getParticleSystems().isEmpty()) {
 			Renderer.enableFaceCulling(false);
@@ -55,6 +63,7 @@ public class ForwardRenderer extends Renderer {
 			Renderer.popFaceCullingEnabledState();
 		}
 
+		//TODO: Move to first thing for efficiency
 		for (Model2D overlay : scene.getOverlays())
 			if (!cannotRenderModel(overlay))
 				overlay.render();

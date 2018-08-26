@@ -12,11 +12,11 @@ uniform float
 	LightQuadraticAttenuation = 0.032,
 	LightBrightness = 1.0;
 
-out vec3 outColor;
+out vec4 outColor;
 
 void main(void) {
 	vec4 texcolor = texture(Texture, textureCoord);
-	if (texcolor.a < 0.1)
+	if (texcolor.a == 0.0)
 		discard;
 	
 	// Diffuse
@@ -34,5 +34,6 @@ void main(void) {
 	vec3 ambientcolor = texcolor.rgb * ambientLight;
 	ambientcolor *= luminosity;
 	
-	outColor = ambientcolor + diffusecolor;
+	
+	outColor = vec4(ambientcolor + diffusecolor, texcolor.a);
 }

@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 public class Scene {
-	private final HashSet<Model3D> models = new HashSet<>();
+	private final ArrayList<Model3D> models = new ArrayList<>();
 	private final HashSet<Model2D> overlays = new HashSet<>();
 	private final HashSet<Decal> decals = new HashSet<>();
 	private final ArrayList<PointLight> pointLights = new ArrayList<>();
@@ -70,7 +70,7 @@ public class Scene {
 	public void add(ParticleEmitter emitter) { ParticleEmitters.add(emitter); }
 
 	// TODO: These should return readonly
-	public HashSet<Model3D> getModels() { return models; }
+	public ArrayList<Model3D> getModels() { return models; }
 	public HashSet<Model2D> getOverlays() { return overlays; }
 	public HashSet<Decal> getDecals() { return decals; }
 	public List<ParticleSystem> getParticleSystems() { return ParticleSystems; }

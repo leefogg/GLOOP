@@ -19,6 +19,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL30.glDisablei;
+import static org.lwjgl.opengl.GL30.glEnablei;
 
 public class DeferredRenderer extends Renderer {
 	private boolean isDisposed;
@@ -135,26 +137,40 @@ public class DeferredRenderer extends Renderer {
 		GBuffers.bind();
 	}
 
+	private void renderModels(boolean transparrent) {
+		for (Model3D model : scene.getModels()) {
+			if (!model.getMaterial().usesDeferredPipeline())
+				continue;
+			if (!model.isVisible())
+				continue;
+			if (model.getMaterial().isTransparent() != transparrent)
+				continue;
+
+			model.render();
+		}
+	}
+
 	@Override
 	protected void renderScene() {
 		int[] boundrenderattachments = GBuffers.getBoundColorAttachments();
 
 		clear(true, true, false);
 
-		for (Model3D model : scene.getModels()) {
-			if (!model.getMaterial().usesDeferredPipeline())
-				continue;
-			if (!model.isVisible())
-				continue;
+		renderModels(false);
+		glEnablei(GL_BLEND, 0);
+		setBlendFunctionsState(BlendFunction.SourceAlpha, BlendFunction.OneMinusSourceAlpha);
+		renderModels(true);
+		popBlendFunctionsState();
+		glDisablei(GL_BLEND, 0);
 
-			model.render();
-		}
+
 		for (Decal decal : scene.getDecals()) {
 			decal.render();
 
 			GBuffers.bindRenderAttachments(boundrenderattachments);
 		}
 
+		//TODO: Move to first thing for efficiency
 		for (Model2D overlay : scene.getOverlays())
 			if (overlay.getMaterial().usesDeferredPipeline())
 				overlay.render();
@@ -178,8 +194,11 @@ public class DeferredRenderer extends Renderer {
 		if (isDisposed)
 			return;
 
+		// Calculate lighting
 		GBuffers.bind();
 		PostProcessor.render(lightingPosteffect);
+
+		// Blend lighting with albedo texture attachment
 
 		targetFBO.bind();
 		GBuffers.blitTo(targetFBO, true, true, false); //TODO: Check stencil is making its way from the GBuffer to forward renderer

@@ -295,6 +295,48 @@ public abstract class Renderer implements Disposable {
 		currentRenderer.bind(null);
 	}
 
+	public static void update() {
+		if (deferedRenderer != null)
+			sortModels(deferedRenderer.getScene().getModels(), deferedRenderer.getScene().getGameCamera());
+		if (forwardRenderer != null)
+			sortModels(forwardRenderer.getScene().getModels(), forwardRenderer.getScene().getGameCamera());
+	}
+
+	//TODO: Only really need to sort transparrent objects by z
+	private static void sortModels(List<Model3D> models, Camera cam) {
+		Vector3f camerapos = new Vector3f();
+		Vector3f objpos = new Vector3f();
+		Vector3f diff = new Vector3f();
+
+		cam.getPosition(camerapos);
+
+		// Bubble sort
+		for (int i=0; i<models.size()-1; i++) {
+			boolean swapped = false;
+			for (int j=i; j<models.size()-1; j++) {
+				Model3D leftmodel = models.get(j);
+				Model3D rightmodel = models.get(j+1);
+				leftmodel.getPostition(objpos);
+				Vector3f.sub(camerapos, objpos, diff);
+				float leftobjdistfromcam = diff.length();
+				rightmodel.getPostition(objpos);
+				Vector3f.sub(camerapos, objpos, diff);
+				float rightobjdistfromcam = diff.length();
+
+				if (rightobjdistfromcam < leftobjdistfromcam)
+					continue;
+
+				// Swap
+				models.set(j+1, leftmodel);
+				models.set(j, rightmodel);
+				swapped = true;
+			}
+
+			if (!swapped)
+				return;
+		}
+	}
+
 	public static void render() {
 		if (!Display.isVisible())
 			return;
@@ -306,7 +348,7 @@ public abstract class Renderer implements Disposable {
 		OCCLUSION_BUFFER.bind();
 		Renderer.clear(true, true, false);
 
-		HashSet<Model3D> models = getRenderer().getScene().getModels();
+		ArrayList<Model3D> models = getRenderer().getScene().getModels();
 
 		// Render occuders
 		for (Model3D model : models) {

@@ -53,5 +53,5 @@ public final class FullBrightMaterial extends Material<ShaderProgram> {
 	}
 
 	@Override
-	protected boolean hasTransparency() { return getShader().supportsTransparency(); }
+	protected boolean hasTransparency() { return albedo != null && albedo.isTransparent(); }
 }
