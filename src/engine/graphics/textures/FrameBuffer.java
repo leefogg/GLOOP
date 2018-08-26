@@ -49,7 +49,7 @@ public class FrameBuffer { // TODO: implements Disposable
 		setCurrent(this);
 
 		addColorAttachments(formats);
-		bindRenderAttachment(colorAttachments.size());
+		bindRenderAttachments(colorAttachments.size());
 		addDepthStencilAttachments(hasdepth, hasstencil);
 		checkErrors();
 	}
