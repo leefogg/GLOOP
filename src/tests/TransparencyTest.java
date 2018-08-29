@@ -37,9 +37,9 @@ public final class TransparencyTest {
 			e.printStackTrace();
 			exitCleanly(1);
 		}
-		Scene deferrredscene = deferredrenderer.getScene();
-		deferrredscene.getAmbientlight().setColor(1,1,1);
-		forwardrenderer.setScene(deferrredscene);
+		Scene scene = deferredrenderer.getScene();
+		scene.getAmbientlight().setColor(1,1,1);
+		forwardrenderer.setScene(scene);
 
 		Model3D
 				bunny = null,
@@ -90,7 +90,7 @@ public final class TransparencyTest {
 				bilboardmodel.setRotation(rotation);
 				bilboardmodel.setScale(0.05f, 0.05f, 0.05f);
 				bilboardmodel.setPosition(0, 2.5f, -4+r.nextFloat()*5);
-				deferrredscene.add(bilboardmodel);
+				scene.add(bilboardmodel);
 			}
 
 			FullBrightMaterial mat = new FullBrightMaterial(albedomap);
@@ -99,19 +99,19 @@ public final class TransparencyTest {
 				bilboardmodel.setRotation(rotation);
 				bilboardmodel.setScale(0.05f, 0.05f, 0.05f);
 				bilboardmodel.setPosition(-5, 2.5f, -4+r.nextFloat()*5);
-				deferrredscene.add(bilboardmodel);
+				scene.add(bilboardmodel);
 			}
 		} catch (IOException e) {
 			e.printStackTrace(System.err);
 			exitCleanly(1);
 		}
-		deferrredscene.add(bunny);
-		deferrredscene.add(floor);
-		deferrredscene.add(skybox);
+		scene.add(bunny);
+		scene.add(floor);
+		scene.add(skybox);
 
 		DebugCamera camera = new DebugCamera();
-		deferrredscene.setDebugCamera(camera);
-		deferrredscene.setGameCamera(camera);
+		scene.setDebugCamera(camera);
+		scene.setGameCamera(camera);
 		camera.setPosition(0,2,8);
 
 		System.gc();
