@@ -39,8 +39,8 @@ public abstract class Camera {
 	public void setRotation(Vector3f rotation) {
 		setRotation(rotation.x, rotation.y, rotation.z);
 	}
-	public void setRotation(float x, float y, float z) {
-		Rotation.set(x, y, z);
+	public void setRotation(float pitch, float yaw, float roll) {
+		Rotation.set(pitch, yaw, roll);
 
 		viewMatrixIsDirty = true;
 	}
