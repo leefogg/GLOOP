@@ -53,7 +53,7 @@ public class TextureManager {
 		bindTextureToUnit(specularmap, TextureUnit.SpecularMap);
 	}
 	public static void bindDepthMap(Texture depthmap) {	bindTextureToUnit(depthmap, TextureUnit.DepthMap);	}
-	public static void bindReflectionMap(Texture reflectionmap) { bindTextureToUnit(reflectionmap, TextureUnit.EnvironmentMap);	}
+	public static void bindReflectionMap(CubeMap reflectionmap) { bindTextureToUnit(reflectionmap, TextureUnit.EnvironmentMap);	}
 
 	public static void bindTextureToUnit(Texture tex, int unit) {
 		if (unit >= numberOfTextureUnits)
