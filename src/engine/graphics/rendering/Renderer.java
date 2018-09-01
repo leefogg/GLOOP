@@ -296,10 +296,22 @@ public abstract class Renderer implements Disposable {
 	}
 
 	public static void update() {
+		//TODO: Maybe move these to Scene class
+
+		// Sort for transparrency
 		if (deferedRenderer != null)
 			sortModels(deferedRenderer.getScene().getModels(), deferedRenderer.getScene().getGameCamera());
 		if (forwardRenderer != null)
 			sortModels(forwardRenderer.getScene().getModels(), forwardRenderer.getScene().getGameCamera());
+
+		// Update envrionment probes
+		if (forwardRenderer != null) {
+			int numprobes = forwardRenderer.getScene().GetNumberOfEnvironmentProbes();
+			for (int i=0; i<numprobes; i++) {
+				EnvironmentProbe probe = forwardRenderer.getScene().GetEnvironmentProbe(i);
+				probe.update();
+			}
+		}
 	}
 
 	//TODO: Only really need to sort transparrent objects by z
@@ -599,6 +611,7 @@ public abstract class Renderer implements Disposable {
 		} while (errorcode != GL11.GL_NO_ERROR);
 	}
 
+	//TODO: Call privately from Update()
 	public static void updateTimeDelta() {
 		long now = System.nanoTime();
 		Delta = (now - lastFrame) / 1000000f;

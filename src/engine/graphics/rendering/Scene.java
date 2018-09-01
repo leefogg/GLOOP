@@ -12,6 +12,7 @@ import engine.graphics.shading.lighting.AmbientLight;
 import engine.graphics.shading.lighting.DirectionalLight;
 import engine.graphics.shading.lighting.PointLight;
 import engine.graphics.shading.lighting.SpotLight;
+import engine.graphics.textures.EnvironmentProbe;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ public class Scene {
 	private final ArrayList<SpotLight> spotLights = new ArrayList<>();
 	private final ArrayList<ParticleSystem> ParticleSystems = new ArrayList<>(2);
 	private final ArrayList<ParticleEmitter> ParticleEmitters = new ArrayList<>(5);
+	private final ArrayList<EnvironmentProbe> EnvironmentProbes = new ArrayList<>(5);
 
 	private final AmbientLight ambientLight = new AmbientLight();
 	private Vector3f fogColor = new Vector3f(0,0,0);
@@ -60,6 +62,9 @@ public class Scene {
 	public Camera getDebugCamera() { return debugCamera; }
 	public void setDebugCamera(Camera debugCamera) { this.debugCamera = debugCamera; }
 
+	public int GetNumberOfEnvironmentProbes() { return EnvironmentProbes.size(); }
+	public EnvironmentProbe GetEnvironmentProbe(int index) { return EnvironmentProbes.get(index); }
+
 	public void add(Model3D model) { models.add(model); }
 	public void add(Model2D model) { overlays.add(model); }
 	public void add(Decal decal) { decals.add(decal); }
@@ -68,6 +73,7 @@ public class Scene {
 	public void add(SpotLight spotlight) { spotLights.add(spotlight); }
 	public void add(ParticleSystem particlesystem) { ParticleSystems.add(particlesystem); }
 	public void add(ParticleEmitter emitter) { ParticleEmitters.add(emitter); }
+	public void add(EnvironmentProbe probe) { EnvironmentProbes.add(probe); }
 
 	// TODO: These should return readonly
 	public ArrayList<Model3D> getModels() { return models; }
