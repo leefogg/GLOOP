@@ -76,9 +76,7 @@ public final class DeferredMaterial extends Material<DeferredGBuffersShader> {
 		diffuseColor.set(r, g, b, a);
 	}
 
-	public final void setReflectivity(float reflectivity) {
-		this.reflectivity = reflectivity;
-	}
+	public final void setReflectivity(float reflectivity) { this.reflectivity = reflectivity; }
 
 	public final void setRefractivity(float refractivity) {
 		this.refractivity = refractivity;

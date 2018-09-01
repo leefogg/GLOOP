@@ -179,10 +179,7 @@ final class DeferredGBuffersShader extends ShaderProgram {
 
 	public void setTime(float time) { this.time.set(time); }
 
-
-	public void setCameraPosition(Vector3f cameraposition) {
-		campos.set(cameraposition);
-	}
+	public void setCameraPosition(Vector3f cameraposition) { campos.set(cameraposition); }
 
 	@Override
 	public void setCameraUniforms(Camera camera, Matrix4f modelmatrix) {
