@@ -106,6 +106,7 @@ public class MathFunctions {
 
 		Matrix4f.rotate((float)Math.toRadians(rotation.x), right, out, out);
 		Matrix4f.rotate((float)Math.toRadians(rotation.y), up, out, out);
+		Matrix4f.rotate((float)Math.toRadians(rotation.z), in, out, out);
 		position.negate();
 		Matrix4f.translate(position, out, out);
 		position.negate();
