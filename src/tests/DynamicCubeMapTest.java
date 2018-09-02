@@ -43,7 +43,9 @@ public final class DynamicCubeMapTest {
 		Scene scene = forwardrenderer.getScene();
 		deferredrenderer.setScene(scene);
 
-		scene.getAmbientlight().setColor(1,1,1);
+		PointLight light1 = new PointLight();
+		light1.quadraticAttenuation = 0.03f;
+		scene.add(light1);
 
 		Vector3f probepos = new Vector3f();
 		EnvironmentProbe probe = null;
@@ -53,7 +55,7 @@ public final class DynamicCubeMapTest {
 
 			Texture albedo = TextureManager.newTexture("res\\models\\rungholt\\house-RGBA.png", PixelComponents.RGBA, PixelFormat.SRGBA8);
 			albedo.setFilteringMode(TextureFilter.Nearest);
-			Model3D house = ModelFactory.getModel("res\\models\\rungholt\\house.obj", new FullBrightMaterial(albedo));
+			Model3D house = ModelFactory.getModel("res\\models\\rungholt\\house.obj", new LambartMaterial(albedo));
 			house.setPosition(0,-15,0);
 			house.setScale(2,2,2);
 			scene.add(house);

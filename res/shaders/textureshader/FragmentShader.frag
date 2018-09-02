@@ -8,4 +8,6 @@ uniform sampler2D Texture;
 
 void main(void) {
 	out_Color = texture(Texture, FaceTextureCoord);
+	if (out_Color.a < 1.0/255.0)
+		discard;
 }

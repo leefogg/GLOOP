@@ -16,7 +16,7 @@ out vec4 outColor;
 
 void main(void) {
 	vec4 texcolor = texture(Texture, textureCoord);
-	if (texcolor.a == 0.0)
+	if (texcolor.a < 1.0/255.0)
 		discard;
 	
 	// Diffuse
