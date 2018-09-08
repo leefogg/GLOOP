@@ -33,7 +33,7 @@ Implement Uniform Blocks
 	http://www.geeks3d.com/20140704/gpu-buffers-introduction-to-opengl-3-1-uniform-buffers-objects/
 	https://www.khronos.org/opengl/wiki/Uniform_Buffer_Object
 Async Loading
-Make own Vector3f, 3f, 2i, 2f, 4i and 4f classes
+Make own Vector3f, 3i, 2f, 2i, 4f and 4i classes
 Uniform class
 	Templated and abstract
 	One final class for each type (float, int, vec3, matrix, list..)
