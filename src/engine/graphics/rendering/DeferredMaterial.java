@@ -10,12 +10,14 @@ import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
 public final class DeferredMaterial extends Material<DeferredGBuffersShader> {
+	private static final Vector3f Temp = new Vector3f();
+
 	private Texture
 		albedoMap,
 		normalMap,
 		specularMap,
 		depthMap;
-	private CubeMap reflectionMap;
+	private CubeMap environemtnMap;
 	private final Vector4f
 			diffuseColor = new Vector4f(1, 0, 1, 1),
 			refractionIndices = new Vector4f(1f/1.2f + 0.005f, 1f/1.2f + 0.010f, 1f/1.2f + 0.015f, 1f/1.2f);
@@ -62,9 +64,9 @@ public final class DeferredMaterial extends Material<DeferredGBuffersShader> {
 		this.depthMap = texture;
 	}
 	public Texture getDepthMap() { return depthMap; }
-	public void setEnvironmentMap(CubeMap texture) { this.reflectionMap = texture; }
+	public void setEnvironmentMap(CubeMap texture) { this.environemtnMap = texture; }
 	public CubeMap getEnvironmentMap() {
-		return reflectionMap;
+		return environemtnMap;
 	}
 
 	public void setSpecularity(float specularity) { this.specularity = Math.min(Math.max(specularity / 100f,0),1); }
@@ -154,14 +156,18 @@ public final class DeferredMaterial extends Material<DeferredGBuffersShader> {
 
 
 		if (Settings.EnableEnvironemntMapping) {
-			if (reflectionMap == null) {
+			if (environemtnMap == null) {
 				shader.hasEnvironmentMap(false);
 			} else {
 				shader.hasEnvironmentMap(true);
 				shader.setReflectivity(reflectivity);
 				shader.setRefractivity(refractivity);
 				shader.setRefractionIndices(refractionIndices);
-				TextureManager.bindReflectionMap(reflectionMap);
+				environemtnMap.getPosition(Temp);
+				shader.setEnvironmentMapPosition(Temp);
+				environemtnMap.getSize(Temp);
+				shader.setEnvironmentMapSize(Temp);
+				TextureManager.bindReflectionMap(environemtnMap);
 			}
 		}
 

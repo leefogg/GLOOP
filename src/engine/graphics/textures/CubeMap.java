@@ -2,6 +2,7 @@ package engine.graphics.textures;
 
 import engine.graphics.models.DataType;
 import engine.graphics.rendering.Renderer;
+import org.lwjgl.util.vector.Vector3f;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -9,7 +10,13 @@ import java.io.IOException;
 import java.nio.file.Paths;
 
 public class CubeMap extends Texture {
-	public CubeMap(String name, int size, PixelFormat internalformat) throws IOException {
+	public static final Vector3f DefaultPosition = new Vector3f(0,0,0);
+	public static final Vector3f DefaultSize = new Vector3f(100000,100000,100000);
+
+	private Vector3f position = new Vector3f();
+	private Vector3f size = new Vector3f();
+
+	public CubeMap(String name, int resolution, PixelFormat internalformat, Vector3f position, Vector3f size) {
 		super( // Setup and bind first side
 				name,
 				null,
@@ -18,8 +25,8 @@ public class CubeMap extends Texture {
 				internalformat,
 				TextureType.Cubemap,
 				DataType.UByte,
-				size,
-				size
+				resolution,
+				resolution
 		);
 		// bind rest of sides
 		writeData(TextureTarget.CubeMapLeft, internalformat, PixelComponents.RGB, dataType, null);
@@ -31,11 +38,23 @@ public class CubeMap extends Texture {
 
 		setWrapMode(TextureWrapMode.EdgeClamp);
 		setFilteringMode(Filter.Nearest);
+
+		type = TextureType.Cubemap;
+
+		Renderer.checkErrors();
+
+		setSize(size);
+		setPosition(position);
 	}
+
 	public CubeMap(String name, String[] imagespaths, PixelComponents externalformat, PixelFormat internalformat) throws IOException {
-		this(name, loadFaces(imagespaths), externalformat, internalformat);
+		this(name, loadFaces(imagespaths), externalformat, internalformat, DefaultPosition, DefaultSize);
 	}
-	public CubeMap(String name, BufferedImage[] images, PixelComponents externalformat, PixelFormat internalformat) {
+	public CubeMap(String name, String[] imagespaths, PixelComponents externalformat, PixelFormat internalformat, Vector3f position, Vector3f size) throws IOException {
+		this(name, loadFaces(imagespaths), externalformat, internalformat, position, size);
+	}
+	//TODO: Duplicate constructor, only difference is getPixelData in base constructor call
+	public CubeMap(String name, BufferedImage[] images, PixelComponents externalformat, PixelFormat internalformat, Vector3f position, Vector3f size) {
 		// TODO: Check images is 6 elements long
 		// TODO: Check faces are 1:1 ratio
 		super( // Setup and bind first side
@@ -62,6 +81,9 @@ public class CubeMap extends Texture {
 		type = TextureType.Cubemap;
 
 		Renderer.checkErrors();
+
+		setSize(size);
+		setPosition(position);
 	}
 
 	private static final BufferedImage[] loadFaces(String[] paths) throws IOException {
@@ -71,4 +93,10 @@ public class CubeMap extends Texture {
 
 		return textures;
 	}
+
+	public void setSize(Vector3f size) { this.size.set(size); }
+	public void getSize(Vector3f out) { out.set(size); }
+
+	public void setPosition(Vector3f position) { this.position.set(position); }
+	public void getPosition(Vector3f out){ out.set(position); }
 }

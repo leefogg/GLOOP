@@ -32,61 +32,50 @@ public final class DynamicCubeMapTest {
 		}
 
 		ForwardRenderer forwardrenderer = Renderer.getForwardRenderer();
-		DeferredRenderer deferredrenderer = null;
+		DeferredRenderer deferredRenderer;
 		try {
-			deferredrenderer = Renderer.getDeferedRenderer();
+			 deferredRenderer = Renderer.getDeferedRenderer();
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.exit(1);
+			return;
 		}
 
 		Scene scene = forwardrenderer.getScene();
-		deferredrenderer.setScene(scene);
+		deferredRenderer.setScene(scene);
 
-		PointLight light1 = new PointLight();
-		light1.quadraticAttenuation = 0.03f;
-		scene.add(light1);
+		scene.getAmbientlight().setColor(1,1,1);
 
-		Vector3f probepos = new Vector3f();
-		EnvironmentProbe probe = null;
-		Model3D sphere = null;
 		try {
-
-
-			Texture albedo = TextureManager.newTexture("res\\models\\rungholt\\house-RGBA.png", PixelComponents.RGBA, PixelFormat.SRGBA8);
+			Texture albedo = TextureManager.newTexture("res\\textures\\kitten.png", PixelComponents.RGBA, PixelFormat.SRGBA8);
 			albedo.setFilteringMode(TextureFilter.Nearest);
-			Model3D house = ModelFactory.getModel("res\\models\\rungholt\\house.obj", new LambartMaterial(albedo));
-			house.setPosition(0,-15,0);
-			house.setScale(2,2,2);
+			Model3D house = ModelFactory.getModel("res\\models\\insideout box.obj", new FullBrightMaterial(albedo));
+			Vector3f roomscale = new Vector3f(20,20,20);
+			house.setScale(roomscale);
 			scene.add(house);
 
-			albedo = TextureManager.newTexture("res/textures/154.JPG", PixelComponents.RGB, PixelFormat.SRGB8);
-			albedo.setFilteringMode(TextureFilter.Linear);
-			Model3D cube = ModelFactory.getModel("res/models/cube.obj", new FullBrightMaterial(albedo));
-			cube.setPosition(0,4,0);
-			cube.setScale(2,2,2);
-			scene.add(cube);
+			Vector3f probepos = new Vector3f(0,0,0);
+			CubeMap envmap = new CubeMap("environemntmap", 128, PixelFormat.SRGB8, probepos, roomscale);
+			EnvironmentProbe probe = new EnvironmentProbe(envmap);
+			scene.add(probe);
 
-			CubeMap envmap = new CubeMap("environemntmap", 128, PixelFormat.SRGB8);
-			probepos = new Vector3f(0,2,0);
-			sphere = ModelFactory.getModel("res/models/sphere.obj", new ChromeMaterial(envmap));
-			sphere.setPosition(probepos);
+			DeferredMaterial deferredmaterail = deferredRenderer.getNewMaterial();
+			deferredmaterail.setAlbedoColor(0,0,0,1);
+			deferredmaterail.setRefractivity(0);
+			deferredmaterail.setEnvironmentMap(envmap);
+			deferredmaterail.setReflectivity(1f);
+			Model3D plane = ModelFactory.getModel("res/models/plane.obj", deferredmaterail);
+			plane.setPosition(0,-9,0);
+			scene.add(plane);
+
+			deferredmaterail = deferredRenderer.getNewMaterial();
+			deferredmaterail.setAlbedoColor(0,0,0,1);
+			deferredmaterail.setRefractivity(0);
+			deferredmaterail.setEnvironmentMap(envmap);
+			deferredmaterail.setReflectivity(1f);
+			Model3D sphere = ModelFactory.getModel("res/models/sphere.obj", deferredmaterail);
 			sphere.setScale(4,4,4);
 			scene.add(sphere);
 
-			probe = new EnvironmentProbe(envmap, probepos);
-			scene.add(probe);
-
-
-			DeferredMaterial deferredmaterial = deferredrenderer.getNewMaterial();
-			deferredmaterial.setSpecularity(1);
-			deferredmaterial.setEnvironmentMap(envmap);
-			deferredmaterial.setReflectivity(1);
-			deferredmaterial.setRoughness(0);
-			Model3D othersphere = ModelFactory.getModel("res/models/sphere.obj", deferredmaterial);
-			othersphere.setScale(2,2,2);
-			othersphere.setPosition(0,1,0);
-			scene.add(othersphere);
 		} catch (IOException | ShaderCompilationException e) {
 			System.err.println("Couldn't load scene!");
 			System.err.println(e.getMessage());
@@ -97,7 +86,7 @@ public final class DynamicCubeMapTest {
 		scene.setDebugCamera(camera);
 		scene.setGameCamera(camera);
 		camera.setzfar(100);
-		camera.setPosition(0,5.5f, 11.5f);
+		camera.setPosition(6, 5, 8);
 
 		System.gc();
 
@@ -110,16 +99,15 @@ public final class DynamicCubeMapTest {
 			camera.update(delta, timescaler);
 
 			sincos += step * timescaler;
-			probepos.set((float)Math.cos(sincos) * 5, (float)Math.sin(sincos / 10) * 2.5f + 4.5f, (float)Math.sin(sincos) * 5);
-			probe.setPosition(probepos);
-			sphere.setPosition(probepos);
 
+			Renderer.setRenderer(forwardrenderer);
 			Renderer.update();
-			Renderer.setRenderer(deferredrenderer);
+			Renderer.setRenderer(deferredRenderer);
 			Renderer.render();
 			Renderer.setRenderer(forwardrenderer);
 			Renderer.render();
 			Renderer.swapBuffers();
+			deferredRenderer.renderAttachments();
 
 			Viewport.setTitle("Development Engine " + Viewport.getCurrentFrameRate() + "Hz");
 

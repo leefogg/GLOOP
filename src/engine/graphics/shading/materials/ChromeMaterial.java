@@ -9,14 +9,14 @@ import java.io.IOException;
 
 public class ChromeMaterial extends Material<ChromeShader> {
 	private static ChromeShader Shader;
-	private static Vector3f CameraPosition = new Vector3f();
+	private static Vector3f Temp = new Vector3f();
 
-	private CubeMap EnvironmentMap;
+	private CubeMap CubeMap;
 
-	public ChromeMaterial(CubeMap environmentMap) throws IOException {
+	public ChromeMaterial(CubeMap cubemap) throws IOException {
 		getShaderSingleton();
 
-		setEnvironmentMap(environmentMap);
+		setEnvironmentMap(cubemap);
 	}
 
 	private static ChromeShader getShaderSingleton() throws IOException {
@@ -26,9 +26,7 @@ public class ChromeMaterial extends Material<ChromeShader> {
 		return Shader;
 	}
 
-	public void setEnvironmentMap(CubeMap environmentMap) {
-		EnvironmentMap = environmentMap;
-	}
+	public void setEnvironmentMap(CubeMap probe) { CubeMap = probe; }
 
 	@Override
 	public ChromeShader getShader() {
@@ -37,10 +35,14 @@ public class ChromeMaterial extends Material<ChromeShader> {
 
 	@Override
 	public void commit() {
-		Renderer.getCurrentCamera().getPosition(CameraPosition);
-		Shader.setCameraPosition(CameraPosition);
+		Renderer.getCurrentCamera().getPosition(Temp);
+		Shader.setCameraPosition(Temp);
+		CubeMap.getPosition(Temp);
+		Shader.setEnvironmentMapPosition(Temp);
+		CubeMap.getSize(Temp);
+		Shader.setEnvironmentMapSize(Temp);
 
-		TextureManager.bindReflectionMap(EnvironmentMap);
+		TextureManager.bindReflectionMap(CubeMap);
 	}
 
 	@Override

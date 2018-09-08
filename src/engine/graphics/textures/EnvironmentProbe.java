@@ -5,47 +5,47 @@ import engine.graphics.cameras.PerspectiveCamera;
 import engine.graphics.rendering.Renderer;
 import engine.graphics.rendering.Viewport;
 import org.lwjgl.opengl.GL13;
-import static org.lwjgl.opengl.GL30.*;
 import org.lwjgl.util.vector.Vector3f;
 
-import java.io.IOException;
+import static org.lwjgl.opengl.GL30.*;
 
 public class EnvironmentProbe {
+	private static final Vector3f Temp = new Vector3f();
 	private static final PerspectiveCamera RENDERCAM = new PerspectiveCamera(Viewport.getWidth(), Viewport.getHeight(), 90, 0.01f, 1000);
 
-	private final CubeMap EnvironmentMap;
-	private final int FaceSizePixels;
-	private final FrameBuffer FrameBuffer;
-	private final Vector3f Position;
+	private final CubeMap environmentMap;
+	private final int faceSizePixels;
+	private final FrameBuffer frameBuffer;
 
-	public EnvironmentProbe(String name, int size, Vector3f position) throws IOException {
-		this(new CubeMap(name + "Cubemap", size, PixelFormat.SRGB8), position);
+	public EnvironmentProbe(String name, int resolution, Vector3f position, Vector3f size)  {
+		this(new CubeMap(name + "Cubemap", resolution, PixelFormat.SRGB8, position, size));
 	}
-	public EnvironmentProbe(CubeMap environmentmap, Vector3f position) {
-		EnvironmentMap = environmentmap;
-		FaceSizePixels = environmentmap.height;
-		FrameBuffer = new FrameBuffer(FaceSizePixels, FaceSizePixels, new PixelFormat[] {PixelFormat.RGB8}, true, false);
-		Position = position;
+	public EnvironmentProbe(CubeMap environmentmap) {
+		environmentMap = environmentmap;
+		faceSizePixels = environmentmap.height; // Could be width. Cube map faces are square.
+		// TODO: frameBuffer is available once we're done updating. Could reuse framebuffer for other env probes of same resolution
+		frameBuffer = new FrameBuffer(faceSizePixels, faceSizePixels, new PixelFormat[] {PixelFormat.RGB8}, true, false);
 	}
 
 	public void update() {
-		FrameBuffer previousframebuffer = FrameBuffer.getCurrent();
+		FrameBuffer previousframebuffer = frameBuffer.getCurrent();
 
 		// Use this camera
 		Camera backupcam = Renderer.getCurrentCamera();
 		Renderer.getRenderer().getScene().setGameCamera(RENDERCAM);
 
-		RENDERCAM.setDimensions(FaceSizePixels, FaceSizePixels);
-		RENDERCAM.setPosition(Position);
-		EnvironmentMap.bind();
-		FrameBuffer.bind();
+		RENDERCAM.setDimensions(faceSizePixels, faceSizePixels);
+		environmentMap.getPosition(Temp);
+		RENDERCAM.setPosition(Temp);
+		environmentMap.bind();
+		frameBuffer.bind();
 
 		for (int i=0; i<6; i++) {
 			glFramebufferTexture2D(
 					GL_FRAMEBUFFER,
 					GL_COLOR_ATTACHMENT0,
 					GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
-					EnvironmentMap.ID,
+					environmentMap.ID,
 					0
 			);
 
@@ -71,7 +71,5 @@ public class EnvironmentProbe {
 		}
 	}
 
-	public void setPosition(Vector3f position) { Position.set(position); }
-
-	public CubeMap getEnvironmentMap() { return EnvironmentMap; }
+	public CubeMap getEnvironmentMap() { return environmentMap; }
 }

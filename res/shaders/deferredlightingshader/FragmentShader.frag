@@ -1,6 +1,11 @@
 #version 330 core
 layout(early_fragment_tests) in;
 
+in vec2 uv;
+in vec3 FaceNormal, fragWorldPos, fragLocalPos;
+in mat3 TBNMatrix;
+in vec4 vertPosition;
+
 uniform bool 
 	HasAlbedoMap = false,
 	HasNormalMap = false,
@@ -13,6 +18,7 @@ uniform sampler2D
 	specularMap,
 	depthMap;
 uniform samplerCube environmentMap;
+uniform vec3 envMapPos, envMapSize;
 uniform float Specularity, Roughness;
 uniform vec4 AlbedoColor = vec4(1.0, 0.0, 0.0, 1.0);
 uniform float 
@@ -31,10 +37,8 @@ uniform float Time;
 	
 uniform vec4 refractionIndices = vec4(1.0/1.2);
 
-in vec2 uv;
-in vec3 FaceNormal, fragWorldPos, fragLocalPos;
-in mat3 TBNMatrix;
-in vec4 vertPosition;
+vec3 BoxMin = envMapPos - envMapSize/2.0;
+vec3 BoxMax = envMapPos + envMapSize/2.0;
 
 layout(location=0) out vec4 albedobuffer;
 layout(location=1) out vec3 specularbuffer;
@@ -98,6 +102,29 @@ float rand(vec2 p) {
     return fract((p3.x + p3.y) * p3.z);
 }
 
+vec3 parallaxCorrectedEnvMap(vec3 fragpos, vec3 camerapos, vec3 normal ,vec3 boxpos, vec3 boxmin, vec3 boxmax, samplerCube envmap) {
+	vec3 tofragdir = fragpos - camerapos;
+	vec3 reflectiondir = reflect(tofragdir, normal);
+
+	// Following is the parallax-correction code
+	// Find the ray intersection with box plane
+	vec3 firstplaneintersect = (boxmax - fragpos) / reflectiondir;
+	vec3 secondplaneintersect = (boxmin - fragpos) / reflectiondir;
+	// Get the furthest of these intersections along the ray
+	// (Ok because x/0 give +inf and -x/0 give –inf )
+	vec3 furthestplane = max(firstplaneintersect, secondplaneintersect);
+	// Find the closest far intersection
+	float dist = min(min(furthestplane.x, furthestplane.y), furthestplane.z);
+
+	// Get the intersection position
+	vec3 intersectfragpos = fragpos + reflectiondir * dist;
+	// Get corrected reflection
+	reflectiondir = intersectfragpos - boxpos;
+
+	return texture(envmap, reflectiondir).rgb;
+}
+
+
 void main(void) {
 	vec3 fraglocalpos = fragLocalPos;
 	
@@ -147,8 +174,15 @@ void main(void) {
 		#if defined REFLECTIVITY
 		bool isreflective = reflectivity > 1.0/256.0;
 		if (isreflective) {
-			vec3 reflectdirection = reflect(fragLocalPos, norm);
-			reflectioncolor = texture(environmentMap, reflectdirection).rgb;
+			reflectioncolor = parallaxCorrectedEnvMap(
+				fragWorldPos,
+				campos,
+				norm,
+				envMapPos,
+				BoxMin,
+				BoxMax,
+				environmentMap
+			);
 		}
 		#endif
 

@@ -23,7 +23,7 @@ final class DeferredGBuffersShader extends ShaderProgram {
 	private Uniform1f
 		znear,
 		zfar;
-	private Uniform3f campos;
+	private Uniform3f campos, environmentMapPosition, environmentMapSize;
 	private Uniform4f diffuseColor;
 	private Uniform1f
 			reflectivity,
@@ -99,6 +99,9 @@ final class DeferredGBuffersShader extends ShaderProgram {
 		fresnelScale = new Uniform1f(this, "FresnelScale");
 		fresnelExponent = new Uniform1f(this, "FresnelPower");
 
+		environmentMapPosition = new Uniform3f(this, "envMapPos");
+		environmentMapSize = new Uniform3f(this, "envMapSize");
+
 		time = new Uniform1f(this, "Time");
 	}
 
@@ -135,6 +138,9 @@ final class DeferredGBuffersShader extends ShaderProgram {
 	}
 	public void hasDepthMap(boolean hasdepthmap) { hasDepthMap.set(hasdepthmap); }
 	public void hasEnvironmentMap(boolean hasenvironmentmap) { hasEnvironmentMap.set(hasenvironmentmap); }
+
+	public void setEnvironmentMapPosition(Vector3f position) { environmentMapPosition.set(position); }
+	public void setEnvironmentMapSize(Vector3f size) { environmentMapSize.set(size); }
 
 	public void setSpecularity(float specularity) { this.specularity.set(specularity); }
 

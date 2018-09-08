@@ -8,7 +8,7 @@ in vec3 VertexTangent;
 uniform mat4
 	ModelMatrix,
 	VPMatrix;
-uniform vec3 CameraPos;
+uniform vec3 cameraPos;
 
 out vec3 FragLocalPos;
 out vec3 SurfaceNormal;
@@ -18,7 +18,7 @@ out vec2 SurfaceTexCoord;
 void main(void) {
 	gl_Position = VPMatrix * ModelMatrix * vec4(VertexPosition, 1.0) ;
 	
-	FragLocalPos = (ModelMatrix * vec4(VertexPosition, 1.0)).xyz - CameraPos;
+	FragLocalPos = (ModelMatrix * vec4(VertexPosition, 1.0)).xyz - cameraPos;
 	SurfaceNormal = VertexNormal;
 	SurfaceTexCoord = TextureCoords;
 	

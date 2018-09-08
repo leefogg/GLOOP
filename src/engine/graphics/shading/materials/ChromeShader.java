@@ -13,8 +13,8 @@ import org.lwjgl.util.vector.Vector3f;
 import java.io.IOException;
 
 public class ChromeShader extends ShaderProgram {
-	private Uniform3f campos;
-	private Uniform1i envmap;
+	private Uniform3f cameraPosition, environmentMapPosition, environmentMapSize;
+	private Uniform1i environmentMap;
 
 	public ChromeShader() throws ShaderCompilationException, IOException {
 		super(
@@ -33,13 +33,15 @@ public class ChromeShader extends ShaderProgram {
 
 	@Override
 	protected void getCustomUniformLocations() {
-		campos = new Uniform3f(this, "CameraPos");
-		envmap = new Uniform1i(this, "environmentMap");
+		cameraPosition = new Uniform3f(this, "cameraPos");
+		environmentMap = new Uniform1i(this, "environmentMap");
+		environmentMapPosition = new Uniform3f(this, "envMapPos");
+		environmentMapSize = new Uniform3f(this, "envMapSize");
 	}
 
 	@Override
 	protected void setDefaultCustomUniformValues() {
-		envmap.set(TextureUnit.EnvironmentMap);
+		environmentMap.set(TextureUnit.EnvironmentMap);
 	}
 
 	@Override
@@ -49,7 +51,10 @@ public class ChromeShader extends ShaderProgram {
 		setDefaultCustomUniformValues();
 	}
 
-	public void setCameraPosition(Vector3f position) { campos.set(position); }
+	public void setCameraPosition(Vector3f position) { cameraPosition.set(position); }
+
+	public void setEnvironmentMapPosition(Vector3f position) { environmentMapPosition.set(position); }
+	public void setEnvironmentMapSize(Vector3f size) { environmentMapSize.set(size); }
 
 	@Override
 	public boolean supportsTransparency() {
