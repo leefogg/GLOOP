@@ -304,14 +304,22 @@ public abstract class Renderer implements Disposable {
 		if (forwardRenderer != null)
 			sortModels(forwardRenderer.getScene().getModels(), forwardRenderer.getScene().getGameCamera());
 
-		// Update envrionment probes
-		if (forwardRenderer != null) {
-			int numprobes = forwardRenderer.getScene().GetNumberOfEnvironmentProbes();
-			for (int i=0; i<numprobes; i++) {
-				EnvironmentProbe probe = forwardRenderer.getScene().GetEnvironmentProbe(i);
-				if (probe.isExpired())
-					probe.renew();
-			}
+		updateEnvironemtnProbes();
+	}
+
+	private static void updateEnvironemtnProbes() {
+		//TODO: If both renderers use same scene and a probe is set to renew every frame, it will renew twice here
+		if (deferedRenderer != null)
+			updateEnvironmentProbes(deferedRenderer);
+		if (forwardRenderer != null)
+			updateEnvironmentProbes(forwardRenderer);
+	}
+	private static void updateEnvironmentProbes(Renderer renderer) {
+		int numprobes = renderer.getScene().GetNumberOfEnvironmentProbes();
+		for (int i=0; i<numprobes; i++) {
+			EnvironmentProbe probe = renderer.getScene().GetEnvironmentProbe(i);
+			if (probe.isExpired())
+				probe.renew();
 		}
 	}
 
