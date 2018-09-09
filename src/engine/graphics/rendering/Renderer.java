@@ -309,7 +309,8 @@ public abstract class Renderer implements Disposable {
 			int numprobes = forwardRenderer.getScene().GetNumberOfEnvironmentProbes();
 			for (int i=0; i<numprobes; i++) {
 				EnvironmentProbe probe = forwardRenderer.getScene().GetEnvironmentProbe(i);
-				probe.update();
+				if (probe.isExpired())
+					probe.renew();
 			}
 		}
 	}
