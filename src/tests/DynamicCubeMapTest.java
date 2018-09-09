@@ -58,20 +58,26 @@ public final class DynamicCubeMapTest {
 			EnvironmentProbe probe = new EnvironmentProbe(envmap);
 			scene.add(probe);
 
+			Texture normalmap = TextureManager.newTexture("res\\textures\\water1-n.jpg", PixelComponents.RGB, PixelFormat.RGB8);
 			DeferredMaterial deferredmaterail = deferredRenderer.getNewMaterial();
 			deferredmaterail.setAlbedoColor(0,0,0,1);
-			deferredmaterail.setRefractivity(0);
+			deferredmaterail.setRefractivity(1);
 			deferredmaterail.setEnvironmentMap(envmap);
-			deferredmaterail.setReflectivity(1f);
+			deferredmaterail.setReflectivity(0);
+			deferredmaterail.setTextureRepeat(10,10);
+			deferredmaterail.setNormalMap(normalmap);
 			Model3D plane = ModelFactory.getModel("res/models/plane.obj", deferredmaterail);
-			plane.setPosition(0,-9,0);
+			plane.setPosition(0,-1,0);
 			scene.add(plane);
 
+			normalmap = TextureManager.newTexture("res\\textures\\6624-normal.jpg", PixelComponents.RGB, PixelFormat.RGB8);
 			deferredmaterail = deferredRenderer.getNewMaterial();
 			deferredmaterail.setAlbedoColor(0,0,0,1);
-			deferredmaterail.setRefractivity(0);
+			deferredmaterail.setRefractivity(1);
 			deferredmaterail.setEnvironmentMap(envmap);
-			deferredmaterail.setReflectivity(1f);
+			deferredmaterail.setReflectivity(0);
+			deferredmaterail.setNormalMap(normalmap);
+			deferredmaterail.setTextureRepeat(5,5);
 			Model3D sphere = ModelFactory.getModel("res/models/sphere.obj", deferredmaterail);
 			sphere.setScale(4,4,4);
 			scene.add(sphere);

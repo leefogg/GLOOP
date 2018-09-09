@@ -102,14 +102,11 @@ float rand(vec2 p) {
     return fract((p3.x + p3.y) * p3.z);
 }
 
-vec3 parallaxCorrectedEnvMap(vec3 fragpos, vec3 camerapos, vec3 normal ,vec3 boxpos, vec3 boxmin, vec3 boxmax, samplerCube envmap) {
-	vec3 tofragdir = fragpos - camerapos;
-	vec3 reflectiondir = reflect(tofragdir, normal);
-
+vec3 AABBIntersect(vec3 pos, vec3 dir, vec3 boxmin, vec3 boxmax) {
 	// Following is the parallax-correction code
 	// Find the ray intersection with box plane
-	vec3 firstplaneintersect = (boxmax - fragpos) / reflectiondir;
-	vec3 secondplaneintersect = (boxmin - fragpos) / reflectiondir;
+	vec3 firstplaneintersect = (boxmax - pos) / dir;
+	vec3 secondplaneintersect = (boxmin - pos) / dir;
 	// Get the furthest of these intersections along the ray
 	// (Ok because x/0 give +inf and -x/0 give –inf )
 	vec3 furthestplane = max(firstplaneintersect, secondplaneintersect);
@@ -117,11 +114,23 @@ vec3 parallaxCorrectedEnvMap(vec3 fragpos, vec3 camerapos, vec3 normal ,vec3 box
 	float dist = min(min(furthestplane.x, furthestplane.y), furthestplane.z);
 
 	// Get the intersection position
-	vec3 intersectfragpos = fragpos + reflectiondir * dist;
-	// Get corrected reflection
-	reflectiondir = intersectfragpos - boxpos;
+	return pos + dir * dist;
+}
 
-	return texture(envmap, reflectiondir).rgb;
+vec3 parallaxCorrectedRefraction(vec3 fragpos, vec3 normal, vec3 campos, float refractionindex, vec3 boxpos, vec3 boxmin, vec3 boxmax) {
+	vec3 tofragdir = fragpos - campos;
+	vec3 reflectiondir = refract(tofragdir, normal, refractionindex);
+	vec3 intersectpos = AABBIntersect(fragpos, reflectiondir, boxmin, boxmax);
+	
+	return intersectpos - boxpos;
+}
+
+vec3 parallaxCorrectedEnvMap(vec3 fragpos, vec3 dir, vec3 boxpos, vec3 boxmin, vec3 boxmax, samplerCube envmap) {
+	vec3 intersectpos = AABBIntersect(fragpos, dir, boxmin, boxmax);
+	
+	dir = intersectpos - boxpos;
+
+	return texture(envmap, dir).rgb;
 }
 
 
@@ -174,10 +183,11 @@ void main(void) {
 		#if defined REFLECTIVITY
 		bool isreflective = reflectivity > 1.0/256.0;
 		if (isreflective) {
+			vec3 tofragdir = fragWorldPos - campos;
+			vec3 reflectiondir = reflect(tofragdir, norm);
 			reflectioncolor = parallaxCorrectedEnvMap(
 				fragWorldPos,
-				campos,
-				norm,
+				reflectiondir,
 				envMapPos,
 				BoxMin,
 				BoxMax,
@@ -189,20 +199,18 @@ void main(void) {
 		#if defined REFRACTIVITY
 		bool isrefractive = refractivity > 1.0/256.0;		
 		if (isrefractive) {
-			vec3 raydir = normalize(fraglocalpos);
-			vec3 normal = norm;
 			#if defined CHROMATICABERRATION
-			vec3 refractred = refract(raydir, normal, refractionIndices.r);
-			vec3 refractgreen = refract(raydir, normal, refractionIndices.g);
-			vec3 refractblue = refract(raydir, normal, refractionIndices.b);
+			vec3 refractreddir = parallaxCorrectedRefraction(fragWorldPos, norm, campos, refractionIndices.r, envMapPos, BoxMin, BoxMax);
+			vec3 refractgreendir = parallaxCorrectedRefraction(fragWorldPos, norm, campos, refractionIndices.g, envMapPos, BoxMin, BoxMax);
+			vec3 refractbluedir = parallaxCorrectedRefraction(fragWorldPos, norm, campos, refractionIndices.b, envMapPos, BoxMin, BoxMax);
 
 			refractioncolor = vec3(
-				texture(environmentMap, refractred).r,
-				texture(environmentMap, refractgreen).g,
-				texture(environmentMap, refractblue).b
+				texture(environmentMap, refractreddir).r,
+				texture(environmentMap, refractgreendir).g,
+				texture(environmentMap, refractbluedir).b
 			);
 			#else
-			vec3 refractiondir = refract(raydir, normal, refractionIndices.a);
+			vec3 refractiondir = parallaxCorrectedRefraction(fragWorldPos, norm, campos, refractionIndices.a, envMapPos, BoxMin, BoxMax);
 			refractioncolor = texture(environmentMap, refractiondir).rgb;
 			#endif
 			
