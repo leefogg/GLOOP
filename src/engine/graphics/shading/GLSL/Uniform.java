@@ -45,9 +45,7 @@ abstract class Uniform<T> {
 	protected static void load(int location, float value) {
 		glUniform1f(location, value);
 	}
-	protected static void load(int location, int value) {
-		glUniform1i(location, value);
-	}
+	protected static void load(int location, int value) { glUniform1i(location, value); }
 	protected static void load(int location, boolean value) {
 		glUniform1f(location, value ? 1 : 0);
 	}

@@ -2,6 +2,7 @@ package engine.graphics.shading.materials;
 
 import engine.graphics.cameras.Camera;
 import engine.graphics.models.VertexArray;
+import engine.graphics.shading.GLSL.CachedUniform1i;
 import engine.graphics.shading.GLSL.Uniform1i;
 import engine.graphics.shading.GLSL.Uniform3f;
 import engine.graphics.shading.ShaderCompilationException;
@@ -34,7 +35,7 @@ public class ChromeShader extends ShaderProgram {
 	@Override
 	protected void getCustomUniformLocations() {
 		cameraPosition = new Uniform3f(this, "cameraPos");
-		environmentMap = new Uniform1i(this, "environmentMap");
+		environmentMap = new CachedUniform1i(this, "environmentMap");
 		environmentMapPosition = new Uniform3f(this, "envMapPos");
 		environmentMapSize = new Uniform3f(this, "envMapSize");
 	}

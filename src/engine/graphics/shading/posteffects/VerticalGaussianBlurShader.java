@@ -1,6 +1,7 @@
 package engine.graphics.shading.posteffects;
 
 import engine.graphics.rendering.Viewport;
+import engine.graphics.shading.GLSL.CachedUniform1i;
 import engine.graphics.shading.GLSL.Uniform1i;
 import engine.graphics.shading.ShaderCompilationException;
 
@@ -20,8 +21,8 @@ public final class VerticalGaussianBlurShader extends PostEffectShader {
 
 	@Override
 	protected void getCustomUniformLocations() {
-		texture = new Uniform1i(this, "Texture");
-		screenHeight = new Uniform1i(this, "screenHeight");
+		texture = new CachedUniform1i(this, "Texture");
+		screenHeight = new CachedUniform1i(this, "screenHeight");
 	}
 
 	@Override

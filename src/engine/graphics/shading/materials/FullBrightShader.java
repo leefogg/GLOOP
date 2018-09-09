@@ -1,6 +1,7 @@
 package engine.graphics.shading.materials;
 
 import engine.graphics.models.VertexArray;
+import engine.graphics.shading.GLSL.CachedUniform1i;
 import engine.graphics.shading.GLSL.Uniform1i;
 import engine.graphics.shading.ShaderCompilationException;
 import engine.graphics.shading.ShaderProgram;
@@ -32,7 +33,7 @@ public class FullBrightShader extends ShaderProgram {
 
 	@Override
 	protected void getCustomUniformLocations() {
-		Texture = new Uniform1i(this, "Texture");
+		Texture = new CachedUniform1i(this, "Texture");
 	}
 
 	@Override

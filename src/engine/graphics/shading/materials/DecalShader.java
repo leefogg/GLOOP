@@ -1,6 +1,7 @@
 package engine.graphics.shading.materials;
 
 import engine.graphics.models.VertexArray;
+import engine.graphics.shading.GLSL.CachedUniform1i;
 import engine.graphics.shading.GLSL.Uniform16f;
 import engine.graphics.shading.GLSL.Uniform1i;
 import engine.graphics.shading.GLSL.Uniform3f;
@@ -31,10 +32,10 @@ public class DecalShader extends ShaderProgram {
 
 	@Override
 	protected void getCustomUniformLocations() {
-		albedoTexture = new Uniform1i(this, "albedomap");
+		albedoTexture = new CachedUniform1i(this, "albedomap");
 		//normalTexture = new Uniform1i(this, "normalmap");
-		specularTexture = new Uniform1i(this, "specularmap");
-		positionTexture = new Uniform1i(this, "positionBuffer");
+		specularTexture = new CachedUniform1i(this, "specularmap");
+		positionTexture = new CachedUniform1i(this, "positionBuffer");
 		campos = new Uniform3f(this, "campos");
 		
 		invModelMatrix = new Uniform16f(this, "inverseModelMatrix");

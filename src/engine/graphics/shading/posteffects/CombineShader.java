@@ -1,5 +1,6 @@
 package engine.graphics.shading.posteffects;
 
+import engine.graphics.shading.GLSL.CachedUniform1i;
 import engine.graphics.shading.GLSL.Uniform1i;
 import engine.graphics.shading.ShaderCompilationException;
 
@@ -17,8 +18,8 @@ final class CombineShader extends PostEffectShader {
 
 	@Override
 	protected void getCustomUniformLocations() {
-		texture1 = new Uniform1i(this, "Texture1");
-		texture2 = new Uniform1i(this, "Texture2");
+		texture1 = new CachedUniform1i(this, "Texture1");
+		texture2 = new CachedUniform1i(this, "Texture2");
 	}
 
 	@Override

@@ -79,7 +79,7 @@ public final class DynamicCubeMapTest {
 			deferredmaterail.setReflectivity(0);
 			deferredmaterail.setNormalMap(normalmap);
 			deferredmaterail.setTextureRepeat(5,5);
-			Model3D sphere = ModelFactory.getModel("res/models/sphere.obj", deferredmaterail);
+			Model3D sphere = ModelFactory.getModel("res/models/sphere.obj", new ChromeMaterial(envmap));
 			sphere.setScale(4,4,4);
 			scene.add(sphere);
 

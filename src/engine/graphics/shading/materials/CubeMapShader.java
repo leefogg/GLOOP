@@ -1,6 +1,7 @@
 package engine.graphics.shading.materials;
 
 import engine.graphics.models.VertexArray;
+import engine.graphics.shading.GLSL.CachedUniform1i;
 import engine.graphics.shading.GLSL.Uniform16f;
 import engine.graphics.shading.GLSL.Uniform1i;
 import engine.graphics.shading.ShaderCompilationException;
@@ -28,7 +29,7 @@ public final class CubeMapShader extends ShaderProgram {
 
 	@Override
 	protected void getCustomUniformLocations() {
-		Texture = new Uniform1i(this, "cubeMap");
+		Texture = new CachedUniform1i(this, "cubeMap");
 		ViewMatrix = new Uniform16f(this, "ViewMatrix");
 		ProjectionMatrix = new Uniform16f(this, "ProjectionMatrix");
 	}

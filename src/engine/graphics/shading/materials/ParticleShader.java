@@ -1,6 +1,7 @@
 package engine.graphics.shading.materials;
 
 import engine.graphics.models.VertexArray;
+import engine.graphics.shading.GLSL.CachedUniform1i;
 import engine.graphics.shading.GLSL.Uniform16f;
 import engine.graphics.shading.GLSL.Uniform1f;
 import engine.graphics.shading.GLSL.Uniform1i;
@@ -35,7 +36,7 @@ public class ParticleShader extends ShaderProgram {
 	protected void getCustomUniformLocations() {
 		ProjectionMatrix = new Uniform16f(this, "ProjectionMatrix");
 		ViewMatrix = new Uniform16f(this, "ViewMatrix");
-		Texture = new Uniform1i(this, "Texture");
+		Texture = new CachedUniform1i(this, "Texture");
 		Radius = new Uniform1f(this, "Radius");
 	}
 

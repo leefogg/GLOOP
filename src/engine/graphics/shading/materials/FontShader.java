@@ -1,10 +1,7 @@
 package engine.graphics.shading.materials;
 
 import engine.graphics.models.VertexArray;
-import engine.graphics.shading.GLSL.Uniform1f;
-import engine.graphics.shading.GLSL.Uniform1i;
-import engine.graphics.shading.GLSL.Uniform2f;
-import engine.graphics.shading.GLSL.Uniform3f;
+import engine.graphics.shading.GLSL.*;
 import engine.graphics.shading.ShaderCompilationException;
 import engine.graphics.shading.ShaderProgram;
 import engine.graphics.textures.TextureUnit;
@@ -40,7 +37,7 @@ public final class FontShader extends ShaderProgram {//TODO: Replace with Shader
 		EdgeWidth = new Uniform1f(this, "EdgeWidth");
 		Color = new Uniform3f(this, "Color");
 
-		TextureAtlas = new Uniform1i(this, "TextureAtlas");
+		TextureAtlas = new CachedUniform1i(this, "TextureAtlas");
 	}
 
 	@Override

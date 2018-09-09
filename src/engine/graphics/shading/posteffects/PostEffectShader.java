@@ -2,6 +2,7 @@ package engine.graphics.shading.posteffects;
 
 import engine.graphics.models.VertexArray;
 import engine.graphics.shading.FragmentShader;
+import engine.graphics.shading.GLSL.CachedUniform1i;
 import engine.graphics.shading.GLSL.Uniform1i;
 import engine.graphics.shading.ShaderCompilationException;
 import engine.graphics.shading.ShaderProgram;
@@ -31,7 +32,7 @@ public class PostEffectShader extends ShaderProgram {
 
 	@Override
 	protected void getCustomUniformLocations() {
-		texture1 = new Uniform1i(this, "Texture");
+		texture1 = new CachedUniform1i(this, "Texture");
 	}
 
 	@Override

@@ -2,7 +2,7 @@ package engine.graphics.shading.GLSL;
 
 import engine.graphics.shading.ShaderProgram;
 
-public final class Uniform1i extends Uniform<Integer> {
+public class Uniform1i extends Uniform<Integer> {
 
 	public Uniform1i(ShaderProgram program, String name) {
 		super(program, name);
