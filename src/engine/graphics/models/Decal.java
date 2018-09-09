@@ -1,5 +1,6 @@
 package engine.graphics.models;
 
+import engine.general.exceptions.UnsupportedException;
 import engine.graphics.shading.materials.DecalMaterial;
 import engine.graphics.textures.Texture;
 
@@ -9,10 +10,12 @@ public class Decal extends Model3D {
 	private static VertexArray model;
 	static {
 		try {
-			Geometry geometry = new Geometry("res/models/cube.obj");
+			Geometry geometry = ModelFactory.loadGeometry("res/models/cube.obj");
 			model = new VertexArray("System_DecalCube", geometry);
 		} catch (IOException e) {
 			// TODO: Either load something else or crash
+			e.printStackTrace();
+		} catch (UnsupportedException e) {
 			e.printStackTrace();
 		}
 	}

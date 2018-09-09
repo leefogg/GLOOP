@@ -1,5 +1,6 @@
 package tests;
 
+import engine.general.exceptions.UnsupportedException;
 import engine.graphics.cameras.DebugCamera;
 import engine.graphics.models.Model3D;
 import engine.graphics.models.ModelFactory;
@@ -82,6 +83,9 @@ public final class ParticleTest {
 			scene.add(omniemitter);
 		} catch (IOException | ShaderCompilationException e) {
 			System.err.println(e.getMessage());
+			exitCleanly(1);
+		} catch (UnsupportedException e) {
+			e.printStackTrace();
 			exitCleanly(1);
 		}
 

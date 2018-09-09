@@ -1,5 +1,6 @@
 package tests;
 
+import engine.general.exceptions.UnsupportedException;
 import engine.graphics.models.ModelFactory;
 import engine.graphics.rendering.*;
 import engine.graphics.cameras.DebugCamera;
@@ -84,6 +85,9 @@ public final class Specular {
 			scene.add(model1);
 		} catch (IOException e) {
 			e.printStackTrace(System.err);
+			exitCleanly(1);
+		} catch (UnsupportedException e) {
+			e.printStackTrace();
 			exitCleanly(1);
 		}
 

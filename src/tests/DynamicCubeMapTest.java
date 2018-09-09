@@ -1,5 +1,6 @@
 package tests;
 
+import engine.general.exceptions.UnsupportedException;
 import engine.graphics.cameras.DebugCamera;
 import engine.graphics.models.Model3D;
 import engine.graphics.models.ModelFactory;
@@ -86,6 +87,8 @@ public final class DynamicCubeMapTest {
 			System.err.println("Couldn't load scene!");
 			System.err.println(e.getMessage());
 			exitCleanly(1);
+		} catch (UnsupportedException e) {
+			e.printStackTrace();
 		}
 
 		DebugCamera camera = new DebugCamera();

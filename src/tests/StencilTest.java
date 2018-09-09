@@ -1,5 +1,6 @@
 package tests;
 
+import engine.general.exceptions.UnsupportedException;
 import engine.graphics.cameras.PerspectiveCamera;
 import engine.graphics.models.Model3D;
 import engine.graphics.models.ModelFactory;
@@ -73,6 +74,9 @@ public final class StencilTest {
 		} catch (IOException | ShaderCompilationException e) {
 			System.err.println("Couldn't load Model!");
 			System.err.println(e.getMessage());
+			exitCleanly(1);
+		} catch (UnsupportedException e) {
+			e.printStackTrace();
 			exitCleanly(1);
 		}
 

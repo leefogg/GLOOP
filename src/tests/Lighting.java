@@ -1,5 +1,6 @@
 package tests;
 
+import engine.general.exceptions.UnsupportedException;
 import engine.graphics.Settings;
 import engine.graphics.cameras.DebugCamera;
 import engine.graphics.models.Model3D;
@@ -129,6 +130,9 @@ public final class Lighting {
 		} catch (IOException e) {
 			System.err.println("Couldn't load Model!");
 			e.printStackTrace(System.err);
+			exitCleanly(1);
+		} catch (UnsupportedException e) {
+			e.printStackTrace();
 			exitCleanly(1);
 		}
 

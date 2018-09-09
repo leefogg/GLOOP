@@ -1,5 +1,6 @@
 package tests;
 
+import engine.general.exceptions.UnsupportedException;
 import engine.graphics.cameras.DebugCamera;
 import engine.graphics.models.Decal;
 import engine.graphics.models.Model3D;
@@ -112,6 +113,8 @@ public class DecalTest {
 			System.err.println("Couldn't load Model!");
 			e.printStackTrace(System.err);
 			exitCleanly(1);
+		} catch (UnsupportedException e) {
+			e.printStackTrace();
 		}
 
 		DebugCamera camera = new DebugCamera();

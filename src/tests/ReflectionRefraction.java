@@ -1,5 +1,6 @@
 package tests;
 
+import engine.general.exceptions.UnsupportedException;
 import engine.graphics.Settings;
 import engine.graphics.models.ModelFactory;
 import engine.graphics.rendering.*;
@@ -132,6 +133,9 @@ public final class ReflectionRefraction {
 			scene.add(sphere);
 		} catch (IOException e) {
 			e.printStackTrace(System.err);
+			exitCleanly(1);
+		} catch (UnsupportedException e) {
+			e.printStackTrace();
 			exitCleanly(1);
 		}
 		scene.add(model1);

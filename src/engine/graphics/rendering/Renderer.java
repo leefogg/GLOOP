@@ -6,6 +6,7 @@ import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER_SRGB;
 import engine.Disposable;
 import engine.general.GenericStackable;
 import engine.general.Stack;
+import engine.general.exceptions.UnsupportedException;
 import engine.graphics.Settings;
 import engine.graphics.cameras.Camera;
 import engine.graphics.models.Model3D;
@@ -83,6 +84,10 @@ public abstract class Renderer implements Disposable {
 		try {
 			CUBE = ModelFactory.getModel("res/models/primitives/cube.obj", new SingleColorMaterial(Color.red));
 		} catch (IOException e) {
+			e.printStackTrace();
+			Viewport.close();
+			System.exit(1);
+		} catch (UnsupportedException e) {
 			e.printStackTrace();
 			Viewport.close();
 			System.exit(1);

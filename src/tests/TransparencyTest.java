@@ -1,5 +1,6 @@
 package tests;
 
+import engine.general.exceptions.UnsupportedException;
 import engine.graphics.cameras.DebugCamera;
 import engine.graphics.models.Model3D;
 import engine.graphics.models.ModelFactory;
@@ -103,6 +104,9 @@ public final class TransparencyTest {
 			}
 		} catch (IOException e) {
 			e.printStackTrace(System.err);
+			exitCleanly(1);
+		} catch (UnsupportedException e) {
+			e.printStackTrace();
 			exitCleanly(1);
 		}
 		scene.add(bunny);
