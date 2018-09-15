@@ -65,30 +65,8 @@ public abstract class Renderer implements Disposable {
 	private static final Stack<StencilTestingEnabledState> StencilTestingEnabledStack = new Stack();
 	private static final Stack<StencilBufferState> StencilBufferStateStack = new Stack();
 	private static final Stack<BlendFunctionsState> BlendFunctionsStateStack = new Stack();
-	//TODO: Framebuffer stack
 
-	// Occlusion query stuff
-	private static final FrameBuffer OCCLUSION_BUFFER = new FrameBuffer(Viewport.getWidth()/2, Viewport.getHeight()/2, PixelFormat.R8);
-	private static final RenderQueryPool QUERY_POOL = new RenderQueryPool(10);
-	// Used to render bouding boxes
-	private static Model3D CUBE;
-	private static final AABB BOUNDING_BOX = new AABB(0,0,0,0,0,0);
-	private static final Vector3f POSITION = new Vector3f();
-	private static final Quaternion ROTATION = new Quaternion();
-
-	static {
-		try {
-			CUBE = ModelFactory.getModel("res/models/primitives/cube.obj", new SingleColorMaterial(Color.red));
-		} catch (IOException e) {
-			e.printStackTrace();
-			Viewport.close();
-			System.exit(1);
-		} catch (UnsupportedException e) {
-			e.printStackTrace();
-			Viewport.close();
-			System.exit(1);
-		}
-	}
+	private static CullingMethod CullingMethod = new FrustumCullingMethod();
 
 	private static class GLEnabledState extends GenericStackable {
 		protected int glEnum;
@@ -278,6 +256,11 @@ public abstract class Renderer implements Disposable {
 	}
 	public static Renderer getRenderer() { return currentRenderer; }
 
+	public static void setCullingMethod(CullingMethod method) {
+		if (method != null)
+			CullingMethod = method;
+	}
+
 
 	public static void addPostEffect(PostEffect effect){ postEffects.add(effect); }
 
@@ -306,6 +289,11 @@ public abstract class Renderer implements Disposable {
 			sortModels(forwardRenderer.getScene().getModels(), forwardRenderer.getScene().getGameCamera());
 
 		updateEnvironemtnProbes();
+
+		if (deferedRenderer != null)
+			CullingMethod.calculateSceneOcclusion(deferedRenderer.getScene().getModels());
+		if (forwardRenderer != null)
+			CullingMethod.calculateSceneOcclusion(forwardRenderer.getScene().getModels());
 	}
 
 	private static void updateEnvironemtnProbes() {
@@ -367,71 +355,7 @@ public abstract class Renderer implements Disposable {
 	}
 
 	public static final void calculateSceneOcclusion() {
-		boolean previouscamera = useDebugCamera;
-		useDebugCamera(false);
 
-		OCCLUSION_BUFFER.bind();
-		Renderer.clear(true, true, false);
-
-		ArrayList<Model3D> models = getRenderer().getScene().getModels();
-
-		// Render occuders
-		for (Model3D model : models) {
-			// Reset models visibility state, convenient here
-			model.setVisibility(Model.Visibility.Unknown);
-
-			if (!model.isOccluder())
-				continue;
-
-			// Assumes
-			model.render();
-		}
-
-		// Update models' visibility using previous frame(s) queries
-		List<RenderQuery> pendingqueries = QUERY_POOL.getPendingQueries();
-		for (RenderQuery renderquery : pendingqueries) {
-			if (renderquery.isResultAvailable())
-				renderquery.Model.setVisibility(renderquery.isModelVisible() ? Model.Visibility.Visible : Model.Visibility.NotVisible);
-			//TODO: Clear RenderQueries periodically so list no longer contains models removed from the scene
-		}
-
-		// Render new occusion queries
-		Renderer.enableColorBufferWriting(false, false, false, false);
-		Renderer.enableDepthBufferWriting(false);
-		// Always render occusion queries though game camera
-		for (Model3D model : models) {
-			if (model.isOccluder())
-				continue;
-
-			// If model outside frustum, dont bother with occlusion query
-			boolean failedfrustumtest = model.isOccluded();
-			if (failedfrustumtest)
-				model.setVisibility(Model.Visibility.NotVisible);
-
-
-			// Create query if object might be visible, even if known not visible this frame
-			// Need to keep queries running
-			if (failedfrustumtest)
-				continue;
-
-			if (model.getNumberOfVertcies() < Settings.OcclusionQueryMinVertcies || !model.hasBoundingBox()) { // Not reccomended by user or possible to do query
-				// Never going to perform occlusion query for this object so have to set it to result of frustum test
-				continue;
-			}
-
-			model.getBoundingBox(BOUNDING_BOX);
-			model.getPostition(POSITION);
-			model.getRotation(ROTATION);
-			CUBE.setScale(BOUNDING_BOX.width, BOUNDING_BOX.height, BOUNDING_BOX.depth);
-			CUBE.setPosition(POSITION.x, POSITION.y, POSITION.z);
-			CUBE.setRotation(ROTATION);
-			RenderQuery query = QUERY_POOL.startQuery(model);
-			CUBE.render();
-			query.end();
-		}
-		Renderer.popDepthBufferWritingState();
-		Renderer.popColorBufferWritingState();
-		useDebugCamera(previouscamera);
 	}
 
 	public static void enablePostEffects() {

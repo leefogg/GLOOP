@@ -6,10 +6,7 @@ import engine.graphics.cameras.DebugCamera;
 import engine.graphics.models.Model3D;
 import engine.graphics.models.ModelFactory;
 import engine.graphics.models.VertexArray;
-import engine.graphics.rendering.ForwardRenderer;
-import engine.graphics.rendering.Renderer;
-import engine.graphics.rendering.Scene;
-import engine.graphics.rendering.Viewport;
+import engine.graphics.rendering.*;
 import engine.graphics.shading.ShaderCompilationException;
 import engine.graphics.shading.lighting.PointLight;
 import engine.graphics.shading.materials.LambartMaterial;
@@ -22,14 +19,15 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 
 import java.io.IOException;
+import java.security.Key;
 import java.util.Random;
 
 public final class CullingTest {
 	public static void main(String[] args) {
 		try {
 			Viewport.create(1280, 720, "Engine Testing");
-//			Viewport.setVSyncEnabled(false);
-//			Viewport.limitFrameRate(false);
+			Viewport.setVSyncEnabled(false);
+			Viewport.limitFrameRate(false);
 			Viewport.show();
 			Settings.OcclusionQueryMinVertcies = 0;
 		} catch (LWJGLException e) {
@@ -44,6 +42,13 @@ public final class CullingTest {
 		light1.setPosition(0,1,0);
 		light1.quadraticAttenuation = 0.001f;
 		scene.add(light1);
+
+		try {
+			Renderer.setCullingMethod(new RenderQueryCullingMethod());
+		} catch (Exception e){
+			e.printStackTrace();
+			exitCleanly(1);
+		}
 
 		Model3D spinner = null;
 		try {
@@ -113,11 +118,15 @@ public final class CullingTest {
 
 		light1.setPosition((float)Math.sin(sincos)*20, 0, (float)Math.cos(sincos)*20);
 		Quaternion rotation = new Quaternion();
-		Renderer.useDebugCamera(true);
 		while(isrunning) {
 			Viewport.update();
 			float delta = Renderer.getTimeDelta();
 			float timescaler = Renderer.getTimeScaler();
+
+			if (Keyboard.isKeyDown(Keyboard.KEY_T)) {
+				usedebugcamera = !usedebugcamera;
+				Renderer.useDebugCamera(usedebugcamera);
+			}
 
 			gamecamera.update(delta, timescaler);
 
@@ -126,7 +135,7 @@ public final class CullingTest {
 			rotation.rotate(0,0.5f * timescaler, 0);
 			spinner.setRotation(rotation);
 
-			Renderer.calculateSceneOcclusion();
+			Renderer.update();
 			Renderer.setRenderer(renderer);
 			Renderer.render();
 			Renderer.swapBuffers();
