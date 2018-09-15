@@ -2,6 +2,7 @@ package engine.graphics.rendering;
 
 import engine.graphics.Settings;
 import engine.graphics.models.Decal;
+import engine.graphics.models.Model;
 import engine.graphics.models.Model2D;
 import engine.graphics.models.Model3D;
 import engine.graphics.shading.ShaderCompilationException;
@@ -141,7 +142,7 @@ public class DeferredRenderer extends Renderer {
 		for (Model3D model : scene.getModels()) {
 			if (!model.getMaterial().usesDeferredPipeline())
 				continue;
-			if (!model.isVisible())
+			if (model.visibility() == Model.Visibility.NotVisible)
 				continue;
 			if (model.getMaterial().isTransparent() != transparrent)
 				continue;

@@ -1,6 +1,7 @@
 package tests;
 
 import engine.general.exceptions.UnsupportedException;
+import engine.graphics.Settings;
 import engine.graphics.cameras.DebugCamera;
 import engine.graphics.models.Model3D;
 import engine.graphics.models.ModelFactory;
@@ -30,6 +31,7 @@ public final class CullingTest {
 //			Viewport.setVSyncEnabled(false);
 //			Viewport.limitFrameRate(false);
 			Viewport.show();
+			Settings.OcclusionQueryMinVertcies = 0;
 		} catch (LWJGLException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -89,6 +91,7 @@ public final class CullingTest {
 			exitCleanly(1);
 		} catch (UnsupportedException e) {
 			e.printStackTrace();
+			exitCleanly(1);
 		}
 
 		DebugCamera debugcamera = new DebugCamera();
@@ -98,6 +101,9 @@ public final class CullingTest {
 		debugcamera.setzfar(300);
 		gamecamera.setzfar(300);
 		gamecamera.setPosition(-1,7,19);
+		debugcamera.setPosition(0, 70, 120f);
+		debugcamera.setRotation(35,0,0);
+
 
 		System.gc();
 
@@ -107,19 +113,13 @@ public final class CullingTest {
 
 		light1.setPosition((float)Math.sin(sincos)*20, 0, (float)Math.cos(sincos)*20);
 		Quaternion rotation = new Quaternion();
+		Renderer.useDebugCamera(true);
 		while(isrunning) {
 			Viewport.update();
 			float delta = Renderer.getTimeDelta();
 			float timescaler = Renderer.getTimeScaler();
-			if (usedebugcamera)
-				debugcamera.update(delta, timescaler);
-			else
-				gamecamera.update(delta, timescaler);
 
-			if (Keyboard.isKeyDown(Keyboard.KEY_T)) {
-				usedebugcamera = !usedebugcamera;
-				Renderer.useDebugCamera(usedebugcamera);
-			}
+			gamecamera.update(delta, timescaler);
 
 			sincos += step * timescaler;
 			spinner.getRotation(rotation);

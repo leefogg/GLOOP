@@ -6,10 +6,16 @@ import engine.graphics.shading.materials.Material;
 import org.lwjgl.util.vector.Matrix4f;
 
 public abstract class Model implements Renderable {
+	public enum Visibility {
+		Unknown,
+		NotVisible,
+		Visible,
+	}
+
 	protected final VertexArray modelData;
 	protected Material material;
 	private Matrix4f modelMatrix = new Matrix4f();
-	private boolean isVisible = true;
+	private Visibility isVisible = Visibility.Unknown;
 
 	private boolean hidden = false;
 
@@ -42,8 +48,8 @@ public abstract class Model implements Renderable {
 		return (modelData.isIndexed()) ? modelData.getNumberOfIndices() : modelData.getNumberofVertcies();
 	}
 
-	public void setVisibility(boolean isvisible) { isVisible = isvisible; }
-	public boolean isVisible() { return isVisible; }
+	public void setVisibility(Visibility isvisible) { isVisible = isvisible; }
+	public Visibility visibility() { return isVisible; }
 
 	@Override
 	public void render() {

@@ -9,8 +9,6 @@ import engine.graphics.textures.FrameBuffer;
 import engine.graphics.textures.PixelFormat;
 import engine.graphics.textures.Texture;
 
-import java.util.HashSet;
-
 public class ForwardRenderer extends Renderer {
 	private boolean isDisposed;
 	private FrameBuffer buffer;
@@ -38,7 +36,7 @@ public class ForwardRenderer extends Renderer {
 		for (Model3D model : scene.getModels()) {
 			if (cannotRenderModel(model))
 				continue;
-			if (!model.isVisible())
+			if (model.visibility() == Model.Visibility.NotVisible)
 				continue;
 			if (model.getMaterial().isTransparent() != transparrent)
 				continue;

@@ -10,7 +10,7 @@ public class GPUQueryManager {
 	// TODO: No point using a unique type list as register is internal
 	private static final HashSet<GPUQuery> Queries = new HashSet<>();
 
-	static void register(GPUQuery query) { Queries.add(query); System.out.println("Generating new Query object " + (Queries.size()+1));}
+	static void register(GPUQuery query) { Queries.add(query); System.out.println("New query object " + (Queries.size()+1));}
 
 	static void unregister(GPUQuery query) { Queries.remove(query); }
 

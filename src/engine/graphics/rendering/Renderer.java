@@ -9,8 +9,7 @@ import engine.general.Stack;
 import engine.general.exceptions.UnsupportedException;
 import engine.graphics.Settings;
 import engine.graphics.cameras.Camera;
-import engine.graphics.models.Model3D;
-import engine.graphics.models.ModelFactory;
+import engine.graphics.models.*;
 import engine.graphics.shading.ShaderCompilationException;
 import engine.graphics.shading.materials.SingleColorMaterial;
 import engine.graphics.shading.posteffects.PostEffect;
@@ -20,8 +19,6 @@ import engine.math.Quaternion;
 import engine.physics.data.AABB;
 import org.lwjgl.opengl.Display;
 
-import engine.graphics.models.VertexArrayManager;
-import engine.graphics.models.VertexBufferManager;
 import engine.graphics.shading.ShaderManager;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
@@ -30,7 +27,6 @@ import org.lwjgl.util.vector.Vector3f;
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 public abstract class Renderer implements Disposable {
@@ -371,6 +367,9 @@ public abstract class Renderer implements Disposable {
 	}
 
 	public static final void calculateSceneOcclusion() {
+		boolean previouscamera = useDebugCamera;
+		useDebugCamera(false);
+
 		OCCLUSION_BUFFER.bind();
 		Renderer.clear(true, true, false);
 
@@ -378,48 +377,47 @@ public abstract class Renderer implements Disposable {
 
 		// Render occuders
 		for (Model3D model : models) {
+			// Reset models visibility state, convenient here
+			model.setVisibility(Model.Visibility.Unknown);
+
 			if (!model.isOccluder())
 				continue;
 
+			// Assumes
 			model.render();
 		}
 
-		List<RenderQuery> pendingqueries = QUERY_POOL.getPendingQueries();
-
 		// Update models' visibility using previous frame(s) queries
-		for (int i=0; i<pendingqueries.size(); i++) {
-			RenderQuery renderquery = pendingqueries.get(i);
+		List<RenderQuery> pendingqueries = QUERY_POOL.getPendingQueries();
+		for (RenderQuery renderquery : pendingqueries) {
 			if (renderquery.isResultAvailable())
-				renderquery.Model.setVisibility(renderquery.isModelVisible());
+				renderquery.Model.setVisibility(renderquery.isModelVisible() ? Model.Visibility.Visible : Model.Visibility.NotVisible);
 			//TODO: Clear RenderQueries periodically so list no longer contains models removed from the scene
 		}
-
 
 		// Render new occusion queries
 		Renderer.enableColorBufferWriting(false, false, false, false);
 		Renderer.enableDepthBufferWriting(false);
+		// Always render occusion queries though game camera
 		for (Model3D model : models) {
 			if (model.isOccluder())
 				continue;
+
 			// If model outside frustum, dont bother with occlusion query
-			// As render query has delay,
-			// we can throw the result away if object is definately outside frustum this frame
 			boolean failedfrustumtest = model.isOccluded();
-			if (model.getNumberOfVertcies() >= Settings.OcclusionQueryMinVertcies && model.hasBoundingBox()) { // Is worth a render query and possible?
-				// Going to be performing occlusion query so can only set to occluded if we're sure
-				if (failedfrustumtest)
-					model.setVisibility(false);
-			} else {
+			if (failedfrustumtest)
+				model.setVisibility(Model.Visibility.NotVisible);
+
+
+			// Create query if object might be visible, even if known not visible this frame
+			// Need to keep queries running
+			if (failedfrustumtest)
+				continue;
+
+			if (model.getNumberOfVertcies() < Settings.OcclusionQueryMinVertcies || !model.hasBoundingBox()) { // Not reccomended by user or possible to do query
 				// Never going to perform occlusion query for this object so have to set it to result of frustum test
-				model.setVisibility(!failedfrustumtest);
 				continue;
 			}
-
-
-			// Passed frustum test, do occlusion test if ready
-			// Skip if query is still pending
-			if (QUERY_POOL.isModelPending(model))
-				continue;
 
 			model.getBoundingBox(BOUNDING_BOX);
 			model.getPostition(POSITION);
@@ -433,6 +431,7 @@ public abstract class Renderer implements Disposable {
 		}
 		Renderer.popDepthBufferWritingState();
 		Renderer.popColorBufferWritingState();
+		useDebugCamera(previouscamera);
 	}
 
 	public static void enablePostEffects() {
