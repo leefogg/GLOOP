@@ -19,6 +19,5 @@ public class Settings {
 	public static int
 			MaxPointLights = 64,
 			MaxSpotLights = 32,
-			MaxDirectionalLights = 8,
-			OcclusionQueryMinVertcies = 500;
+			MaxDirectionalLights = 8;
 }

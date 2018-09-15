@@ -27,10 +27,15 @@ public class RenderQueryCullingMethod implements CullingMethod {
 	private static final Quaternion ROTATION = new Quaternion();
 	private static SingleColorMaterial RenderMaterial;
 
+	private int MinObjVertcies = 500;
+
 	public RenderQueryCullingMethod() throws IOException, UnsupportedException {
 		RenderMaterial = new SingleColorMaterial(Color.red);
 		CUBE = ModelFactory.getModel("res/models/primitives/cube.obj", RenderMaterial);
 	}
+
+	public void setMinimumRequiredVertcies(int numvertcies) { MinObjVertcies = numvertcies; }
+	public int getMinimumRequiredVertcies() { return MinObjVertcies; }
 
 
 	@Override
@@ -78,7 +83,7 @@ public class RenderQueryCullingMethod implements CullingMethod {
 			if (failedfrustumtest)
 				continue;
 
-			if (model.getNumberOfVertcies() < Settings.OcclusionQueryMinVertcies || !model.hasBoundingBox()) { // Not reccomended by user or possible to do query
+			if (model.getNumberOfVertcies() < MinObjVertcies || !model.hasBoundingBox()) { // Not reccomended by user or possible to do query
 				// Never going to perform occlusion query for this object so have to set it to result of frustum test
 				continue;
 			}

@@ -29,7 +29,6 @@ public final class CullingTest {
 			Viewport.setVSyncEnabled(false);
 			Viewport.limitFrameRate(false);
 			Viewport.show();
-			Settings.OcclusionQueryMinVertcies = 0;
 		} catch (LWJGLException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -44,7 +43,9 @@ public final class CullingTest {
 		scene.add(light1);
 
 		try {
-			Renderer.setCullingMethod(new RenderQueryCullingMethod());
+			RenderQueryCullingMethod cullingmethod = new RenderQueryCullingMethod();
+			cullingmethod.setMinimumRequiredVertcies(0);
+			Renderer.setCullingMethod(cullingmethod);
 		} catch (Exception e){
 			e.printStackTrace();
 			exitCleanly(1);
