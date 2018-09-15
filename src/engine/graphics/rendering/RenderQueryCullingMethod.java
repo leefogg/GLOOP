@@ -5,6 +5,7 @@ import engine.graphics.Settings;
 import engine.graphics.models.Model;
 import engine.graphics.models.Model3D;
 import engine.graphics.models.ModelFactory;
+import engine.graphics.shading.materials.Material;
 import engine.graphics.shading.materials.SingleColorMaterial;
 import engine.graphics.textures.FrameBuffer;
 import engine.graphics.textures.PixelFormat;
@@ -24,9 +25,11 @@ public class RenderQueryCullingMethod implements CullingMethod {
 	private static final AABB BOUNDING_BOX = new AABB(0,0,0,0,0,0);
 	private static final Vector3f POSITION = new Vector3f();
 	private static final Quaternion ROTATION = new Quaternion();
+	private static SingleColorMaterial RenderMaterial;
 
 	public RenderQueryCullingMethod() throws IOException, UnsupportedException {
-		CUBE = ModelFactory.getModel("res/models/primitives/cube.obj", new SingleColorMaterial(Color.red));
+		RenderMaterial = new SingleColorMaterial(Color.red);
+		CUBE = ModelFactory.getModel("res/models/primitives/cube.obj", RenderMaterial);
 	}
 
 
@@ -40,14 +43,13 @@ public class RenderQueryCullingMethod implements CullingMethod {
 
 		// Render occuders
 		for (Model3D model : models) {
-			// Reset models visibility state, convenient here
-			model.setVisibility(Model.Visibility.Unknown);
-
 			if (!model.isOccluder())
 				continue;
 
-			// Assumes
+			Material modelsmaterial = model.getMaterial();
+			model.setMaterial(RenderMaterial);
 			model.render();
+			model.setMaterial(modelsmaterial);
 		}
 
 		// Update models' visibility using previous frame(s) queries
@@ -55,7 +57,6 @@ public class RenderQueryCullingMethod implements CullingMethod {
 		for (RenderQuery renderquery : pendingqueries) {
 			if (renderquery.isResultAvailable())
 				renderquery.Model.setVisibility(renderquery.isModelVisible() ? Model.Visibility.Visible : Model.Visibility.NotVisible);
-			//TODO: Clear RenderQueries periodically so list no longer contains models removed from the scene
 		}
 
 		// Render new occusion queries
