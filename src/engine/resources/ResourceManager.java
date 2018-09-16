@@ -1,6 +1,6 @@
 package engine.resources;
 
-import engine.Disposable;
+import engine.general.Disposable;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,6 +1,6 @@
 package engine.graphics.data;
 
-import engine.Disposable;
+import engine.general.Disposable;
 import engine.resources.ResourceManager;
 
 public abstract class Buffer implements Disposable {

@@ -1,6 +1,6 @@
 package engine.graphics.rendering;
 
-import engine.Disposable;
+import engine.general.Disposable;
 import engine.general.exceptions.ObjectDisposedException;
 import engine.resources.ResourceManager;
 

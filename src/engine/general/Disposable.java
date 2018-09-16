@@ -1,4 +1,4 @@
-package engine;
+package engine.general;
 
 public interface Disposable { // TODO: Use this more! Register all the things.
 	void requestDisposal();

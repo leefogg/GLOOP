@@ -1,6 +1,6 @@
 package engine.graphics.particlesystem;
 
-import engine.Disposable;
+import engine.general.Disposable;
 import engine.graphics.cameras.Camera;
 import engine.graphics.data.DataConversion;
 import engine.graphics.models.*;

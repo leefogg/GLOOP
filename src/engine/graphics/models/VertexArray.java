@@ -1,6 +1,6 @@
 package engine.graphics.models;
 
-import engine.Disposable;
+import engine.general.Disposable;
 import engine.graphics.data.DataConversion;
 import engine.graphics.rendering.Renderer;
 import engine.resources.ResourceManager;

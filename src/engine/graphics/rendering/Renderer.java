@@ -3,20 +3,15 @@ package engine.graphics.rendering;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER_SRGB;
 
-import engine.Disposable;
+import engine.general.Disposable;
 import engine.general.GenericStackable;
 import engine.general.Stack;
-import engine.general.exceptions.UnsupportedException;
-import engine.graphics.Settings;
 import engine.graphics.cameras.Camera;
 import engine.graphics.models.*;
 import engine.graphics.shading.ShaderCompilationException;
-import engine.graphics.shading.materials.SingleColorMaterial;
 import engine.graphics.shading.posteffects.PostEffect;
 import engine.graphics.shading.posteffects.PostProcessor;
 import engine.graphics.textures.*;
-import engine.math.Quaternion;
-import engine.physics.data.AABB;
 import org.lwjgl.opengl.Display;
 
 import engine.graphics.shading.ShaderManager;
@@ -24,7 +19,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Vector3f;
 
-import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;

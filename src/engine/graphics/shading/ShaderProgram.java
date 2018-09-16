@@ -1,16 +1,14 @@
 package engine.graphics.shading;
 
-import engine.Disposable;
+import engine.general.Disposable;
 import engine.graphics.cameras.Camera;
 import engine.graphics.rendering.Renderer;
 import engine.graphics.shading.GLSL.Uniform16f;
 import engine.resources.ResourceManager;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import static org.lwjgl.opengl.GL20.*;
