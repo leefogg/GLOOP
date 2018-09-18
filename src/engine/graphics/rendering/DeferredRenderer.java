@@ -10,11 +10,9 @@ import engine.graphics.shading.materials.FullBrightMaterial;
 import engine.graphics.shading.posteffects.PostProcessor;
 import engine.graphics.textures.*;
 import engine.graphics.rendering.UI.GUIRenderer;
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL30;
-import org.lwjgl.util.vector.Vector4f;
 
 import java.io.IOException;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -153,7 +151,7 @@ public class DeferredRenderer extends Renderer {
 
 	@Override
 	protected void renderScene() {
-		int[] boundrenderattachments = GBuffers.getBoundColorAttachments();
+		final IntBuffer enabledrenderattachments = GBuffers.getEnabledColorAttachments();
 
 		clear(true, true, false);
 
@@ -165,11 +163,10 @@ public class DeferredRenderer extends Renderer {
 		glDisablei(GL_BLEND, 0);
 
 
-		for (Decal decal : scene.getDecals()) {
+		for (Decal decal : scene.getDecals())
 			decal.render();
 
-			GBuffers.bindRenderAttachments(boundrenderattachments);
-		}
+		GBuffers.enableRenderAttachments(enabledrenderattachments);
 
 		//TODO: Move to first thing for efficiency
 		for (Model2D overlay : scene.getOverlays())
