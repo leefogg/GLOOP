@@ -4,7 +4,7 @@ import java.util.HashSet;
 
 public class FrameBufferManager {
 	private static final HashSet<FrameBuffer> framebuffers = new HashSet<>();
-	private static FrameBuffer currentFrameBuffer = FrameBuffer.defaultframebuffer;
+	private static FrameBuffer currentFrameBuffer = FrameBuffer.DEFAULT_FRAME_BUFFER;
 
 	static void register(FrameBuffer frameBuffer) {	framebuffers.add(frameBuffer); }
 	static void unregister(FrameBuffer frameBuffer) {framebuffers.remove(frameBuffer); }

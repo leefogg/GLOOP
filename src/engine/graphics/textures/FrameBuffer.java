@@ -1,9 +1,14 @@
 package engine.graphics.textures;
 
+import com.sun.javaws.exceptions.InvalidArgumentException;
+import engine.general.Disposable;
 import engine.graphics.data.DataConversion;
 import engine.graphics.models.DataType;
 import engine.graphics.rendering.Renderer;
 import engine.graphics.rendering.Viewport;
+import engine.resources.ResourceManager;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL32;
 import org.lwjgl.util.vector.Vector4f;
@@ -11,6 +16,7 @@ import org.lwjgl.util.vector.Vector4f;
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 
 import static org.lwjgl.opengl.GL11.glDrawBuffer;
@@ -18,17 +24,28 @@ import static org.lwjgl.opengl.GL11.glReadPixels;
 import static org.lwjgl.opengl.GL20.glDrawBuffers;
 import static org.lwjgl.opengl.GL30.*;
 
-public class FrameBuffer { // TODO: implements Disposable
-	static final DefaultFrameBuffer defaultframebuffer = new DefaultFrameBuffer();
-	private int[] boundColorAttachments;
+public class FrameBuffer implements Disposable {
+	static final DefaultFrameBuffer DEFAULT_FRAME_BUFFER = new DefaultFrameBuffer();
+	private static final int MAX_COLOR_ATTACHMENTS = GL11.glGetInteger(GL30.GL_MAX_COLOR_ATTACHMENTS);
+	private static final String MAX_COLOR_ATTACHMENTS_ERROR =  "FBOs only support 0-"+(MAX_COLOR_ATTACHMENTS-1)+" ("+MAX_COLOR_ATTACHMENTS+") color attachments.";
+	private static final IntBuffer ALL_ATTCHMENTS;
+
+	static {
+		final int[] attachmentenums = new int[MAX_COLOR_ATTACHMENTS];
+		for (int i=0; i<MAX_COLOR_ATTACHMENTS; i++)
+			attachmentenums[i] = GL_COLOR_ATTACHMENT0 + i;
+		ALL_ATTCHMENTS = DataConversion.toGLBuffer(attachmentenums);
+	}
 
 	// TODO: Find a way to make these final
 	protected int ID;
 	protected int width, height;
 
-	protected ArrayList<FrameBufferColorTexture>    colorAttachments;
+	protected ArrayList<FrameBufferColorTexture>   colorAttachments;
 	protected FrameBufferDepthTexture 	            depthAttachment;
-	protected FrameBufferDepthStencilTexture        depthstencilAttachment;
+	protected FrameBufferDepthStencilTexture       depthstencilAttachment;
+	private IntBuffer boundColorAttachments;
+	private boolean disposed;
 
 	protected FrameBuffer() {}
 	public FrameBuffer(int colorbuffers) {
@@ -41,7 +58,9 @@ public class FrameBuffer { // TODO: implements Disposable
 	public FrameBuffer(PixelFormat[] formats) {	this(Viewport.getWidth(), Viewport.getHeight(), formats, true, false); }
 	public FrameBuffer(int width, int height, PixelFormat format) {	this(width, height, new PixelFormat[] {format}, true, false); }
 	public FrameBuffer(int width, int height, PixelFormat[] formats, boolean hasdepth, boolean hasstencil) {
-		//TODO: Throw exception if formats is null or empty
+		if (formats == null || formats.length == 0)
+			throw new IllegalArgumentException("Formats parameter may not be null or empty");
+
 		this.ID = glGenFramebuffers();
 		this.width = width;
 		this.height = height;
@@ -49,7 +68,7 @@ public class FrameBuffer { // TODO: implements Disposable
 		setCurrent(this);
 
 		addColorAttachments(formats);
-		bindRenderAttachments(colorAttachments.size());
+		enableRenderAttachments(colorAttachments.size());
 		addDepthStencilAttachments(hasdepth, hasstencil);
 		checkErrors();
 	}
@@ -88,6 +107,7 @@ public class FrameBuffer { // TODO: implements Disposable
 			default: errorinfo = "Unknown FBO Issue."; break;
 		}
 
+		//TODO: Throw on error with error code
 		System.err.println(errorinfo);
 		Renderer.checkErrors();
 	}
@@ -167,8 +187,6 @@ public class FrameBuffer { // TODO: implements Disposable
 
 	public void bind() {
 		setCurrent(this);
-		if (colorAttachments != null)
-			bindRenderAttachments(colorAttachments.size());
 
 		FrameBufferManager.setCurrentFrameBuffer(this);
 	}
@@ -182,31 +200,37 @@ public class FrameBuffer { // TODO: implements Disposable
 		Viewport.setDimensions(buffer.width, buffer.height);
 	}
 
+	public void enableAllRenderAttachments() {
+		enableRenderAttachments(ALL_ATTCHMENTS);
+	}
 	// Set which attachment to draw to
-	public void bindRenderAttachments(int count) {
+	public void enableRenderAttachments(int count) {
 		int[] renderbuffers = new int[count];
 		for (int i=0; i<count; i++)
 			renderbuffers[i] = GL_COLOR_ATTACHMENT0 + i;
 
-		bindRenderAttachments(renderbuffers);
+		enableRenderAttachments(renderbuffers);
 	}
-	public void bindRenderAttachments(int[] attachments) {
-		setCurrent(this);
+	public void enableRenderAttachments(int[] attachments) {
+		enableRenderAttachments(DataConversion.toGLBuffer(attachments));
+	}
+	public void enableRenderAttachments(IntBuffer attachments) {
+		bind();
 		boundColorAttachments = attachments;
-		glDrawBuffers(DataConversion.toGLBuffer(attachments)); // TODO: Maintain list as IntBuffer
+		glDrawBuffers(attachments);
 	}
-	private void bindRenderAttachment(int index) {
-		setCurrent(this);
-		if (index >= 16)// TODO: Get max number of color attachments. http://stackoverflow.com/questions/29707968/get-maximum-number-of-framebuffer-color-attachments
-			throw new IndexOutOfBoundsException("Cannot bind FBO color attachment " + index + ". FBOs only support 0-15 (16) color attachments.");
+	private void enableRenderAttachment(int index) {
+		bind();
+		if (index >= MAX_COLOR_ATTACHMENTS)
+			throw new IndexOutOfBoundsException("Cannot bind FBO color attachment " + index + "." + MAX_COLOR_ATTACHMENTS_ERROR);
 
-		glDrawBuffer(GL_COLOR_ATTACHMENT0 + index); //TODO: I dont think thats right https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glDrawBuffer.xhtml
+		glDrawBuffer(GL_COLOR_ATTACHMENT0 + index);
 	}
 
-	public int[] getBoundColorAttachments() { return boundColorAttachments; }
+	public IntBuffer getEnabledColorAttachments() { return boundColorAttachments; }
 
 	public static void bindDefault() {
-		defaultframebuffer.bind();
+		DEFAULT_FRAME_BUFFER.bind();
 	}
 
 	private static final PixelFormat[] createFormatList(int count, PixelFormat format) {
@@ -235,12 +259,22 @@ public class FrameBuffer { // TODO: implements Disposable
 		);
 	}
 
+	@Override
+	public void requestDisposal() {
+		ResourceManager.queueDisposal(this);
+	}
+
+	@Override
+	public boolean isDisposed() { return disposed; }
+
+	@Override
 	public void dispose() {
 		for (Texture colorattachment : colorAttachments)
 			colorattachment.requestDisposal();
 		if (depthAttachment != null)
 			depthAttachment.requestDisposal();
 		glDeleteFramebuffers(ID);
+		disposed = true;
 	}
 
 	public static final FrameBuffer getCurrent() { return FrameBufferManager.getCurrentFrameBuffer(); }
@@ -259,7 +293,6 @@ public class FrameBuffer { // TODO: implements Disposable
 		pixeldata.rewind();
 
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-		int i = 0;
 		for(int y=height-1; y>=0 && pixeldata.hasRemaining(); y--) {
 			for (int x = 0; x < width && pixeldata.hasRemaining(); x++) {
 				int blue = pixeldata.get();

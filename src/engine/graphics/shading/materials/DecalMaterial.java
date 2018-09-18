@@ -1,23 +1,14 @@
 package engine.graphics.shading.materials;
 
 import engine.graphics.cameras.Camera;
-import engine.graphics.data.DataConversion;
-import engine.graphics.rendering.DeferredRenderer;
-import engine.graphics.rendering.Renderer;
-import engine.graphics.rendering.Scene;
 import engine.graphics.textures.FrameBufferManager;
 import engine.graphics.textures.Texture;
 import engine.graphics.textures.TextureManager;
-import engine.graphics.textures.TextureUnit;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.io.IOException;
-import java.nio.IntBuffer;
 
-import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11.glBlendFunc;
 import static org.lwjgl.opengl.GL20.glDrawBuffers;
 import static org.lwjgl.opengl.GL30.*;
 
@@ -58,7 +49,7 @@ public class DecalMaterial extends Material<DecalShader> {
 		//  TextureManager.bindNormalMap(normalMap);
 		shader.bindTextureUnits();
 
-		FrameBufferManager.getCurrentFrameBuffer().bindRenderAttachments(EnabledAttachments);
+		FrameBufferManager.getCurrentFrameBuffer().enableRenderAttachments(EnabledAttachments);
 	}
 
 	@Override
