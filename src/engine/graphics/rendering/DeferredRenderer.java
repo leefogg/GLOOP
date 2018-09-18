@@ -315,14 +315,4 @@ public class DeferredRenderer extends Renderer {
 	public Texture getSpecularTexture() { return specularTexture; }
 	public Texture getPositionTexture() { return positionTexture; }
 	public Texture getLightTexture() { return lightTexture; }
-
-	//TODO: Incomplete crap
-	public void read() {
-		GBuffers.bind();
-		GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, TextureType.Bitmap.getGLEnum(), positionTexture.getID(), 0);
-		Vector4f color = FrameBuffer.read(Mouse.getX(), Mouse.getY());
-		System.out.println(String.format("%10.40f",color.x) + " " + String.format("%10.40f",color.y) + " " + String.format("%10.40f",color.z));
-		GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT1, TextureType.Bitmap.getGLEnum(), positionTexture.getID(), 0);
-		GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, TextureType.Bitmap.getGLEnum(), albedoTexture.getID(), 0);
-	}
 }
