@@ -194,14 +194,16 @@ public class Texture extends Buffer {
 
 	protected void setAttribute(TextureAttribute attribute, int value) {
 		//TODO: Add all parameters as of https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glTexParameter.xhtml
-		glTexParameteri(
+		if (bind())
+			glTexParameteri(
 				type.getGLEnum(),
 				attribute.getGLEnum(),
 				value
 			);
 	}
 	protected void setAttribute(TextureAttribute attribute, java.nio.FloatBuffer value) {
-		glTexParameter(
+		if (bind())
+			glTexParameter(
 				type.getGLEnum(),
 				attribute.getGLEnum(),
 				value
@@ -210,10 +212,10 @@ public class Texture extends Buffer {
 	protected void setAttribute(TextureAttribute attribute, java.nio.IntBuffer value) {
 		if (bind())
 			glTexParameter(
-					type.getGLEnum(),
-					attribute.getGLEnum(),
-					value
-				);
+				type.getGLEnum(),
+				attribute.getGLEnum(),
+				value
+			);
 	}
 
 	@Override
