@@ -2,6 +2,11 @@ package engine.graphics.models;
 
 import engine.graphics.rendering.Renderable;
 import engine.graphics.rendering.Renderer;
+import engine.graphics.shading.FragmentShader;
+import engine.graphics.shading.ShaderProgram;
+import engine.graphics.shading.VertexShader;
+import engine.graphics.shading.materials.BasicMaterial;
+import engine.graphics.shading.materials.BasicShader;
 import engine.graphics.shading.materials.Material;
 import org.lwjgl.util.vector.Matrix4f;
 
@@ -10,6 +15,27 @@ public abstract class Model implements Renderable {
 		Unknown,
 		NotVisible,
 		Visible,
+	}
+
+	private final static BasicMaterial ERROR_MATERIAL;
+	static {
+		String vertshadercode =
+				"#version 150\n" +
+				"in vec3 Position;" +
+				"uniform mat4 VPMatrix, ModelMatrix;" +
+				"void main(void) {" +
+				"gl_Position = VPMatrix * ModelMatrix * vec4(Position, 1);" +
+				"}";
+		VertexShader vertshader = new VertexShader(vertshadercode);
+		String fragshadercode =
+				"#version 150\n" +
+				"out vec3 fragColor;" +
+				"void main(void) {" +
+				"fragColor = vec3(1.0,0.0,1.0);" +
+				"}";
+		FragmentShader fragshader = new FragmentShader(fragshadercode);
+		BasicShader shader = new BasicShader(vertshader, fragshader);
+		ERROR_MATERIAL = new BasicMaterial<>(shader);
 	}
 
 	protected final VertexArray modelData;
@@ -58,11 +84,11 @@ public abstract class Model implements Renderable {
 		if (isHidden())
 			return;
 
-		//TODO: Render using error shader if shader is disposed
-		material.bind();
-		material.commit();
+		Material materialtouse = material.getShader().isDisposed() ? ERROR_MATERIAL : material;
+		materialtouse.bind();
+		materialtouse.commit();
 		getModelMatrix(modelMatrix);
-		material.setCameraAttributes(Renderer.getCurrentCamera(), modelMatrix);
+		materialtouse.setCameraAttributes(Renderer.getCurrentCamera(), modelMatrix);
 
 		modelData.render();
 	}
