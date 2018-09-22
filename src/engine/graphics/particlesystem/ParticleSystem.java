@@ -4,6 +4,7 @@ import engine.general.Disposable;
 import engine.graphics.cameras.Camera;
 import engine.graphics.data.DataConversion;
 import engine.graphics.models.*;
+import engine.graphics.rendering.Renderable;
 import engine.graphics.rendering.Renderer;
 import engine.graphics.shading.materials.ParticleMaterial;
 import engine.graphics.textures.Texture;
@@ -17,13 +18,11 @@ import org.lwjgl.util.vector.Vector3f;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 
-public abstract class ParticleSystem implements Disposable {
+public abstract class  ParticleSystem implements Renderable, Disposable{
 	protected static VertexBuffer QuadGeometry = getQuadBufferSingleton();
 	protected static ParticleMaterial material;
-	protected static final Matrix4f ModelMatrix = new Matrix4f();
-	protected static final Quaternion Rotation = new Quaternion();
 	protected static final Vector3f Scale = new Vector3f(1,1,1);
-	private static int InstanceCount=0;
+	private static int InstanceCount = 0;
 
 	protected final Texture texture;
 	private final int MaxParticles;
@@ -51,13 +50,13 @@ public abstract class ParticleSystem implements Disposable {
 		InstanceCount++;
 	}
 
-	private void constructVertexArray(int numparticles,DataVolatility volatility) {
+	private void constructVertexArray(int numparticles, DataVolatility volatility) {
 		data = new VertexArray("ParticleSystemBuffer" + InstanceCount);
-		Renderer.checkErrors();
 		data.storeStriped(getQuadBufferSingleton(), 5,
 				new int[] {3,2},
 				new boolean[] {false, false},
 				0, 4*5);
+		Renderer.checkErrors();
 
 		positionsbuffer = new VertexBuffer(GLArrayType.Array, numparticles * 3 * 4, volatility, DataType.Float);
 		data.bindAttribute(positionsbuffer, 2,3,3,0,true);
@@ -83,7 +82,6 @@ public abstract class ParticleSystem implements Disposable {
 		translations.rewind();
 		for (int i=0; i<particles.length; i++) {
 			Particle p = particles[i];
-			//MathFunctions.createTransformationMatrix(p.position, Rotation, Scale, ModelMatrix);
 			// Just uploading translation part for now
 			translations.put(p.position.x);
 			translations.put(p.position.y);
@@ -95,8 +93,7 @@ public abstract class ParticleSystem implements Disposable {
 		return translations;
 	}
 
-	public void update(float delta, float timescaler){}
-
+	@Override
 	public void render() {
 		render(MaxParticles);
 	}
@@ -127,6 +124,9 @@ public abstract class ParticleSystem implements Disposable {
 	}
 
 	public int getMaxParticleCount() { return MaxParticles; }
+
+	@Override
+	public void getModelMatrix(Matrix4f out) { out.setIdentity(); } // Shader doesn't use this anyway
 
 	@Override
 	public void requestDisposal() {	ResourceManager.queueDisposal(this);	}

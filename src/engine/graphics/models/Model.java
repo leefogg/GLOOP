@@ -58,7 +58,7 @@ public abstract class Model implements Renderable {
 	public Material getMaterial() { return material; }
 
 	@Override
- 	public void update(int delta, float timescaler) {}
+ 	public void update(float delta, float timescaler) {}
 
 	public final boolean isHidden() { return hidden; }
 	public final void setHidden(boolean hidden) {

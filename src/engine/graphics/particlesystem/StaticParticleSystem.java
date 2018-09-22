@@ -3,6 +3,7 @@ package engine.graphics.particlesystem;
 import engine.graphics.models.DataVolatility;
 import engine.graphics.rendering.Renderer;
 import engine.graphics.textures.Texture;
+import org.lwjgl.util.vector.Matrix4f;
 
 import java.io.IOException;
 import java.nio.BufferOverflowException;
@@ -16,6 +17,11 @@ public class StaticParticleSystem extends ParticleSystem {
 		addParticles(particles);
 
 		Renderer.checkErrors();
+	}
+
+	@Override
+	public void update(float delta, float timescaler) {
+
 	}
 
 	@Override

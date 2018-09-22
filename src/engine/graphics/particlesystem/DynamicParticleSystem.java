@@ -1,12 +1,11 @@
 package engine.graphics.particlesystem;
 
-import engine.graphics.data.DataConversion;
 import engine.graphics.models.DataVolatility;
 import engine.graphics.textures.Texture;
+import org.lwjgl.util.vector.Matrix4f;
 
 import java.io.IOException;
 
-// TODO: Implement Renderable
 public class DynamicParticleSystem extends ParticleSystem {
 	private int LastDead = 0;
 	private int LifeTime = 200;
