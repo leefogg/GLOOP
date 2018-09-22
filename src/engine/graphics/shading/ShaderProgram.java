@@ -4,6 +4,8 @@ import engine.general.Disposable;
 import engine.graphics.cameras.Camera;
 import engine.graphics.rendering.Renderer;
 import engine.graphics.shading.GLSL.Uniform16f;
+import engine.graphics.shading.materials.BasicMaterial;
+import engine.graphics.shading.materials.BasicShader;
 import engine.resources.ResourceManager;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
@@ -130,7 +132,9 @@ public abstract class ShaderProgram implements Disposable {
 
 	@Override
 	public void dispose() {
-		// TODO: Wait until the next frame as shader may be running
+		if (isDisposed)
+			return;
+
 		deleteProgram();
 		useNone();
 
