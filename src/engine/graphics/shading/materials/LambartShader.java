@@ -11,7 +11,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 import java.io.IOException;
 
-class LambartShader extends ShaderProgram {
+public class LambartShader extends ShaderProgram {
 	private Uniform3f
 		lightPosition,
 		lightColor;
