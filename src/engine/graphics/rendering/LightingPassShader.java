@@ -140,8 +140,8 @@ final class LightingPassShader extends PostEffectShader {
 
 	public LightingPassShader(String[] defines) throws ShaderCompilationException, IOException {
 		super(
-			"res/shaders/Post Effects/DeferredShading/LightPass/VertexShader.vert",
-			"res/shaders/Post Effects/DeferredShading/LightPass/FragmentShader.frag",
+			"res/_SYSTEM/Shaders/PostEffects/DeferredShading/LightPass/VertexShader.vert",
+			"res/_SYSTEM/Shaders/PostEffects/DeferredShading/LightPass/FragmentShader.frag",
 			defines
 		);
 	}

@@ -15,8 +15,8 @@ public final class DepthShader extends ShaderProgram {
 
 	public DepthShader() throws ShaderCompilationException, IOException {
 		super(
-			"res/shaders/depthshader/VertexShader.vert",
-			"res/shaders/depthshader/FragmentShader.frag"
+			"res/_SYSTEM/Shaders/Depth/VertexShader.vert",
+			"res/_SYSTEM/Shaders/Depth/FragmentShader.frag"
 		);
 	}
 

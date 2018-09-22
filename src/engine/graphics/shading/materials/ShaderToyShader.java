@@ -16,7 +16,7 @@ public class ShaderToyShader extends PostEffectShader {
 
 	public ShaderToyShader(String fragmentshaderpath) throws IOException {
 		super(
-				"res/shaders/Post Effects/shadertoy/vertexShader.vert",
+				"res/_SYSTEM/Shaders/PostEffects/shadertoy/vertexShader.vert",
 				fragmentshaderpath
 		);
 	}

@@ -20,8 +20,8 @@ public class DecalShader extends ShaderProgram {
 
 	public DecalShader() throws ShaderCompilationException, IOException {
 		super(
-				"res/shaders/decal/VertexShader.vert",
-				"res/shaders/decal/FragmentShader.frag"
+				"res/_SYSTEM/Shaders/Decal/VertexShader.vert",
+				"res/_SYSTEM/Shaders/Decal/FragmentShader.frag"
 		);
 	}
 

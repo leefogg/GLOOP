@@ -9,8 +9,8 @@ class GammaCorrectionShader extends PostEffectShader {
 
 	public GammaCorrectionShader() throws IOException {
 		super(
-				"res/shaders/post effects/GammaCorrection/VertexShader.vert",
-				"res/shaders/post effects/GammaCorrection/FragmentShader.frag"
+				"res/_SYSTEM/Shaders/PostEffects/GammaCorrection/VertexShader.vert",
+				"res/_SYSTEM/Shaders/PostEffects/GammaCorrection/FragmentShader.frag"
 		);
 	}
 

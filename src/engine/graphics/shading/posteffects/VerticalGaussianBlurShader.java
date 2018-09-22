@@ -14,8 +14,8 @@ public final class VerticalGaussianBlurShader extends PostEffectShader {
 
 	public VerticalGaussianBlurShader() throws ShaderCompilationException, IOException {
 		super(
-				"res/shaders/Post Effects/Blur/Vertical.vert",
-				"res/shaders/Post Effects/Blur/Vertical.frag"
+				"res/_SYSTEM/Shaders/PostEffects/Blur/Vertical.vert",
+				"res/_SYSTEM/Shaders/PostEffects/Blur/Vertical.frag"
 			);
 	}
 

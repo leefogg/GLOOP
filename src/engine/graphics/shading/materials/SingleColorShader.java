@@ -13,8 +13,8 @@ public final class SingleColorShader extends ShaderProgram {
 
 	public SingleColorShader() throws ShaderCompilationException, IOException {
 		super(
-				"res/shaders/ColorShader/VertexShader.vert",
-				"res/shaders/ColorShader/FragmentShader.frag"
+				"res/_SYSTEM/Shaders/SingleColor/VertexShader.vert",
+				"res/_SYSTEM/Shaders/SingleColor/FragmentShader.frag"
 		);
 	}
 

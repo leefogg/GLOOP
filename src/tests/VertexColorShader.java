@@ -9,8 +9,8 @@ import java.io.IOException;
 public class VertexColorShader extends ShaderProgram {
 	public VertexColorShader() throws ShaderCompilationException, IOException {
 		super(
-				"res/shaders/vertexcolors/VertexShader.vert",
-				"res/shaders/vertexcolors/FragmentShader.frag"
+				"res/shaders/Tests/VertexColors/VertexShader.vert",
+				"res/shaders/Tests/VertexColors/FragmentShader.frag"
 		);
 	}
 

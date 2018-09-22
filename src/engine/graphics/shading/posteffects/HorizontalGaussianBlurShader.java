@@ -14,8 +14,8 @@ public final class HorizontalGaussianBlurShader extends PostEffectShader {
 
 	public HorizontalGaussianBlurShader() throws ShaderCompilationException, IOException {
 		super(
-				"res/shaders/Post Effects/Blur/Horizontal.vert",
-				"res/shaders/Post Effects/Blur/Horizontal.frag"
+				"res/_SYSTEM/Shaders/PostEffects/Blur/Horizontal.vert",
+				"res/_SYSTEM/Shaders/PostEffects/Blur/Horizontal.frag"
 			);
 	}
 

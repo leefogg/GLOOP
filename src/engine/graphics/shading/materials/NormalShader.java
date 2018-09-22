@@ -9,8 +9,8 @@ import java.io.IOException;
 public class NormalShader extends ShaderProgram {
 	public NormalShader() throws ShaderCompilationException, IOException {
 		super(
-				"res/shaders/normalshader/vertexShader.vert",
-				"res/shaders/normalshader/fragmentShader.frag"
+				"res/_SYSTEM/Shaders/Normal/vertexShader.vert",
+				"res/_SYSTEM/Shaders/Normal/fragmentShader.frag"
 			);
 	}
 

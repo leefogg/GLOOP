@@ -7,8 +7,8 @@ import java.io.IOException;
 public class GreyscaleShader extends PostEffectShader { // TODO: Make post effect
 	public GreyscaleShader() throws ShaderCompilationException, IOException {
 		super(
-				"res/shaders/Post Effects/Greyscale/VertexShader.vert",
-				"res/shaders/Post Effects/Greyscale/FragmentShader.frag"
+				"res/_SYSTEM/Shaders/PostEffects/Greyscale/VertexShader.vert",
+				"res/_SYSTEM/Shaders/PostEffects/Greyscale/FragmentShader.frag"
 		);
 	}
 }

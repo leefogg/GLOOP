@@ -8,8 +8,8 @@ import java.io.IOException;
 public final class ExtractBrightShader extends PostEffectShader {
 	public ExtractBrightShader() throws ShaderCompilationException, IOException {
 		super(
-				"res/shaders/Post Effects/ExtractBright/VertexShader.vert",
-				"res/shaders/Post Effects/ExtractBright/FragmentShader.frag"
+				"res/_SYSTEM/Shaders/PostEffects/ExtractBright/VertexShader.vert",
+				"res/_SYSTEM/Shaders/PostEffects/ExtractBright/FragmentShader.frag"
 			);
 	}
 }

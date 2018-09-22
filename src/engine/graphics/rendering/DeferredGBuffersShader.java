@@ -50,8 +50,8 @@ final class DeferredGBuffersShader extends ShaderProgram {
 
 	public DeferredGBuffersShader(String[] defines) throws ShaderCompilationException, IOException {
 		super(
-			"res/shaders/deferredlightingshader/VertexShader.vert",
-			"res/shaders/deferredlightingshader/FragmentShader.frag",
+			"res/_SYSTEM/Shaders/DeferredLighting/VertexShader.vert",
+			"res/_SYSTEM/Shaders/DeferredLighting/FragmentShader.frag",
 			defines
 		);
 	}

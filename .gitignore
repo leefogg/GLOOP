@@ -25,12 +25,11 @@ bin
 libs
 references/KailashEngine
 res/*
-!res/shaders
+!res/_SYSTEM/
 *.png
 *.bmp
 *.jpg
 *.csv
-*.obj
 *.mtl
 
 .idea/*

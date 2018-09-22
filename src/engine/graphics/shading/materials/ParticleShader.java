@@ -20,8 +20,8 @@ public class ParticleShader extends ShaderProgram {
 
 	public ParticleShader() throws ShaderCompilationException, IOException {
 		super(
-				"res/shaders/Particle/VertexShader.vert",
-				"res/shaders/Particle/FragmentShader.frag"
+				"res/_SYSTEM/Shaders/Particle/VertexShader.vert",
+				"res/_SYSTEM/Shaders/Particle/FragmentShader.frag"
 		);
 	}
 

@@ -35,19 +35,19 @@ public final class ShaderToyShaders {
 			int halfheight =  Viewport.getHeight()/2;
 
 			Model2D ui = new Model2D(0,0, halfwidth, halfheight);
-			ui.setMaterial(new ShaderToyMaterial("res\\shaders\\Tests\\Divide.frag"));
+			ui.setMaterial(new ShaderToyMaterial("res\\shaders\\Tests\\ShaderToy\\Divide.frag"));
 			scene.add(ui);
 
 			ui = new Model2D(halfwidth, 0, halfwidth, halfheight);
-			ui.setMaterial(new ShaderToyMaterial("res\\shaders\\Tests\\Flame.frag"));
+			ui.setMaterial(new ShaderToyMaterial("res\\shaders\\Tests\\ShaderToy\\Flame.frag"));
 			scene.add(ui);
 
 			ui = new Model2D(0, halfheight, halfwidth, halfheight);
-			ui.setMaterial(new ShaderToyMaterial("res\\shaders\\Tests\\FlowNoise.frag"));
+			ui.setMaterial(new ShaderToyMaterial("res\\shaders\\Tests\\ShaderToy\\FlowNoise.frag"));
 			scene.add(ui);
 
 			ui = new Model2D(halfwidth, halfheight, halfwidth, halfheight);
-			ui.setMaterial(new ShaderToyMaterial("res\\shaders\\Tests\\ImplicitSurfaces.frag"));
+			ui.setMaterial(new ShaderToyMaterial("res\\shaders\\Tests\\ShaderToy\\ImplicitSurfaces.frag"));
 			scene.add(ui);
 		} catch (Exception e) {
 			e.printStackTrace();

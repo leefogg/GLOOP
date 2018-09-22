@@ -17,8 +17,8 @@ public final class CubeMapShader extends ShaderProgram {
 
 	CubeMapShader() throws ShaderCompilationException, IOException {
 		super(
-				"res/shaders/cubemap/VertexShader.vert",
-				"res/shaders/cubemap/FragmentShader.frag"
+				"res/_SYSTEM/Shaders/Cubemap/VertexShader.vert",
+				"res/_SYSTEM/Shaders/Cubemap/FragmentShader.frag"
 			);
 	}
 

@@ -10,7 +10,7 @@ public class Decal extends Model3D {
 	private static VertexArray model;
 	static {
 		try {
-			Geometry geometry = ModelFactory.loadGeometry("res/models/cube.obj");
+			Geometry geometry = ModelFactory.loadGeometry("res/_SYSTEM/Models/cube.obj");
 			model = new VertexArray("System_DecalCube", geometry);
 		} catch (IOException e) {
 			// TODO: Either load something else or crash

@@ -31,7 +31,7 @@ public class RenderQueryCullingMethod implements CullingMethod {
 
 	public RenderQueryCullingMethod() throws IOException, UnsupportedException {
 		RenderMaterial = new SingleColorMaterial(Color.red);
-		CUBE = ModelFactory.getModel("res/models/primitives/cube.obj", RenderMaterial);
+		CUBE = ModelFactory.getModel("res/_SYSTEM/models/Cube.obj", RenderMaterial);
 	}
 
 	public void setMinimumRequiredVertcies(int numvertcies) { MinObjVertcies = numvertcies; }

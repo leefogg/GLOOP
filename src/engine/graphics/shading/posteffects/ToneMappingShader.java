@@ -9,8 +9,8 @@ public class ToneMappingShader extends PostEffectShader {
 
 	public ToneMappingShader() throws IOException {
 		super(
-				"res/shaders/post effects/ToneMap/VertexShader.vert",
-				"res/shaders/post effects/ToneMap/FragmentShader.frag"
+				"res/_SYSTEM/Shaders/PostEffects/ToneMap/VertexShader.vert",
+				"res/_SYSTEM/Shaders/PostEffects/ToneMap/FragmentShader.frag"
 		);
 	}
 

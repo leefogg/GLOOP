@@ -10,7 +10,7 @@ public class VignetteShader extends ShaderToyShader {
 	private Uniform1f Start, End;
 
 	public VignetteShader() throws ShaderCompilationException, IOException {
-		super("res/shaders/Post Effects/Vignette/FragmentShader.frag");
+		super("res/_SYSTEM/Shaders/PostEffects/Vignette/FragmentShader.frag");
 	}
 
 	@Override

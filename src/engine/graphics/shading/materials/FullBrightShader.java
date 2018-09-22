@@ -14,8 +14,8 @@ public class FullBrightShader extends ShaderProgram {
 
 	public FullBrightShader() throws ShaderCompilationException, IOException {
 		super(
-			"res/shaders/textureshader/VertexShader.vert",
-			"res/shaders/textureshader/FragmentShader.frag"
+			"res/_SYSTEM/Shaders/Texture/VertexShader.vert",
+			"res/_SYSTEM/Shaders/Texture/FragmentShader.frag"
 		);
 	}
 	FullBrightShader(String vertexfilepath, String fragmentfilepath) throws ShaderCompilationException, IOException {

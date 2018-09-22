@@ -20,8 +20,8 @@ public class LambartShader extends ShaderProgram {
 
 	public LambartShader() throws ShaderCompilationException, IOException {
 		super(
-			"res/shaders/lightingshader/VertexShader.vert",
-			"res/shaders/lightingshader/FragmentShader.frag"
+			"res/_SYSTEM/Shaders/Lambart/VertexShader.vert",
+			"res/_SYSTEM/Shaders/Lambart/FragmentShader.frag"
 		);
 	}
 

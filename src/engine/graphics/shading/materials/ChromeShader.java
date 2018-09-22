@@ -19,8 +19,8 @@ public class ChromeShader extends ShaderProgram {
 
 	public ChromeShader() throws ShaderCompilationException, IOException {
 		super(
-			"res/shaders/chromeshader/VertexShader.vert",
-			"res/shaders/chromeshader/FragmentShader.frag"
+			"res/_SYSTEM/Shaders/Chrome/VertexShader.vert",
+			"res/_SYSTEM/Shaders/Chrome/FragmentShader.frag"
 		);
 	}
 

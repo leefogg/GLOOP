@@ -18,8 +18,8 @@ public final class FontShader extends ShaderProgram {//TODO: Replace with Shader
 
 	public FontShader() throws ShaderCompilationException, IOException {
 		super(
-				"res/shaders/FontShader/VertexShader.vert",
-				"res/shaders/FontShader/FragmentShader.frag"
+				"res/_SYSTEM/Shaders/Font/VertexShader.vert",
+				"res/_SYSTEM/Shaders/Font/FragmentShader.frag"
 		);
 	}
 

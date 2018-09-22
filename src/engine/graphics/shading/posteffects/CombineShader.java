@@ -11,8 +11,8 @@ final class CombineShader extends PostEffectShader {
 
 	public CombineShader() throws ShaderCompilationException, IOException {
 		super(
-				"res/shaders/Post Effects/Combine/VertexShader.vert",
-				"res/shaders/Post Effects/Combine/FragmentShader.frag"
+				"res/_SYSTEM/Shaders/PostEffects/Combine/VertexShader.vert",
+				"res/_SYSTEM/Shaders/PostEffects/Combine/FragmentShader.frag"
 			);
 	}
 

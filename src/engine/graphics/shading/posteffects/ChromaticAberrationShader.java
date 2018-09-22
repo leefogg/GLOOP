@@ -12,8 +12,8 @@ class ChromaticAberrationShader extends PostEffectShader {
 
 	public ChromaticAberrationShader() throws IOException {
 		super(
-				"res/shaders/Post Effects/ChromaticAberration/VertexShader.vert",
-				"res/shaders/Post Effects/ChromaticAberration/FragmentShader.frag"
+				"res/_SYSTEM/Shaders/PostEffects/ChromaticAberration/VertexShader.vert",
+				"res/_SYSTEM/Shaders/PostEffects/ChromaticAberration/FragmentShader.frag"
 		);
 	}
 
