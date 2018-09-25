@@ -60,10 +60,15 @@ public final class CullingTest {
 			scene.add(floor);
 
 			albedo = TextureManager.newTexture("res/textures/default.png", PixelComponents.RGB, PixelFormat.SRGB8);
-			Model3D walls = ModelFactory.getModel("res/models/circular walls.obj", new LambartMaterial(albedo));
-			walls.setScale(4,4,4);
-			walls.setIsOccuder(true);
-			scene.add(walls);
+			Quaternion rotation = new Quaternion();
+			for (int i=0; i<4; i++) {
+				Model3D walls = ModelFactory.getModel("res/models/circular walls slice.obj", new LambartMaterial(albedo));
+				walls.setScale(4, 4, 4);
+				walls.setRotation(rotation);
+				walls.setIsOccuder(true);
+				scene.add(walls);
+				rotation.rotate(0,90,0);
+			}
 
 			Material material = new LambartMaterial(albedo);
 			Model3D cube = ModelFactory.getModel("res/models/primitives/cube.obj", material);
@@ -75,7 +80,7 @@ public final class CullingTest {
 					ModelFactory.getModel("res/models/primitives/soccer ball.obj", material),
 					ModelFactory.getModel("res/models/primitives/torus.obj", material)
 			};
-			Quaternion rotation = new Quaternion();
+			rotation.toIdentity();
 			Random r = new Random();
 			for (int i=0; i<2000; i++) {
 				Model3D newmodel = models[r.nextInt(models.length)].clone();

@@ -50,6 +50,12 @@ public class RenderQueryCullingMethod implements CullingMethod {
 		for (Model3D model : models) {
 			if (!model.isOccluder())
 				continue;
+			boolean failedfrustumtest = model.isOccluded();
+			if (failedfrustumtest) {
+				model.setVisibility(Model.Visibility.NotVisible);
+				continue;
+			}
+			model.setVisibility(Model.Visibility.Visible);
 
 			Material modelsmaterial = model.getMaterial();
 			model.setMaterial(RenderMaterial);
