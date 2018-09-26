@@ -1,16 +1,16 @@
 package tests;
 
-import engine.general.exceptions.UnsupportedException;
-import engine.graphics.Settings;
-import engine.graphics.models.ModelFactory;
-import engine.graphics.rendering.*;
-import engine.graphics.rendering.DeferredRenderer;
-import engine.graphics.textures.*;
-import engine.math.Quaternion;
-import engine.graphics.cameras.DebugCamera;
-import engine.graphics.models.Model3D;
-import engine.graphics.models.Skybox;
-import engine.graphics.rendering.DeferredMaterial;
+import GLOOP.general.exceptions.UnsupportedException;
+import GLOOP.graphics.Settings;
+import GLOOP.graphics.data.models.ModelFactory;
+import GLOOP.graphics.rendering.*;
+import GLOOP.graphics.rendering.DeferredRenderer;
+import GLOOP.graphics.rendering.texturing.*;
+import GLOOP.general.math.Quaternion;
+import GLOOP.graphics.cameras.DebugCamera;
+import GLOOP.graphics.data.models.Model3D;
+import GLOOP.graphics.data.models.Skybox;
+import GLOOP.graphics.rendering.DeferredMaterial;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;

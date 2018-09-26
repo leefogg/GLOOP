@@ -1,25 +1,22 @@
 package tests;
 
-import engine.general.exceptions.UnsupportedException;
-import engine.graphics.Settings;
-import engine.graphics.models.ModelFactory;
-import engine.graphics.models.Skybox;
-import engine.graphics.rendering.*;
-import engine.graphics.cameras.DebugCamera;
-import engine.graphics.models.Model3D;
-import engine.graphics.rendering.DeferredRenderer;
-import engine.graphics.shading.ShaderCompilationException;
-import engine.graphics.shading.lighting.PointLight;
-import engine.graphics.rendering.DeferredMaterial;
-import engine.graphics.shading.materials.SingleColorMaterial;
-import engine.graphics.shading.posteffects.BloomPostEffect;
-import engine.graphics.shading.posteffects.ToneMappingPostEffect;
-import engine.graphics.textures.*;
+import GLOOP.general.exceptions.UnsupportedException;
+import GLOOP.graphics.Settings;
+import GLOOP.graphics.data.models.ModelFactory;
+import GLOOP.graphics.data.models.Skybox;
+import GLOOP.graphics.rendering.*;
+import GLOOP.graphics.cameras.DebugCamera;
+import GLOOP.graphics.data.models.Model3D;
+import GLOOP.graphics.rendering.DeferredRenderer;
+import GLOOP.graphics.rendering.shading.ShaderCompilationException;
+import GLOOP.graphics.rendering.shading.lights.PointLight;
+import GLOOP.graphics.rendering.DeferredMaterial;
+import GLOOP.graphics.rendering.shading.posteffects.ToneMappingPostEffect;
+import GLOOP.graphics.rendering.texturing.*;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.util.vector.Vector3f;
 
 import java.io.IOException;
 

@@ -1,23 +1,17 @@
 package tests;
 
-import engine.general.exceptions.UnsupportedException;
-import engine.graphics.cameras.DebugCamera;
-import engine.graphics.models.Model3D;
-import engine.graphics.models.ModelFactory;
-import engine.graphics.rendering.*;
-import engine.graphics.shading.ShaderCompilationException;
-import engine.graphics.shading.lighting.PointLight;
-import engine.graphics.shading.lighting.SpotLight;
-import engine.graphics.shading.materials.DecalMaterial;
-import engine.graphics.shading.materials.LambartMaterial;
-import engine.graphics.shading.posteffects.FXAAPostEffect;
-import engine.graphics.textures.*;
-import engine.math.Quaternion;
+import GLOOP.general.exceptions.UnsupportedException;
+import GLOOP.graphics.cameras.DebugCamera;
+import GLOOP.graphics.data.models.Model3D;
+import GLOOP.graphics.data.models.ModelFactory;
+import GLOOP.graphics.rendering.*;
+import GLOOP.graphics.rendering.shading.ShaderCompilationException;
+import GLOOP.graphics.rendering.shading.lights.SpotLight;
+import GLOOP.graphics.rendering.texturing.*;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.util.vector.Vector3f;
 
 import java.io.IOException;
 

@@ -1,19 +1,16 @@
 package tests;
 
-import engine.graphics.rendering.ForwardRenderer;
-import engine.graphics.rendering.Renderer;
-import engine.graphics.rendering.Scene;
-import engine.graphics.rendering.Viewport;
-import engine.graphics.cameras.DebugCamera;
-import engine.graphics.rendering.UI.GUIRenderer;
+import GLOOP.graphics.rendering.ForwardRenderer;
+import GLOOP.graphics.rendering.Renderer;
+import GLOOP.graphics.rendering.Scene;
+import GLOOP.graphics.rendering.Viewport;
+import GLOOP.graphics.cameras.DebugCamera;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
-import engine.graphics.models.Model2D;
-import engine.graphics.shading.materials.ShaderToyMaterial;
-
-import java.util.ArrayList;
+import GLOOP.graphics.data.models.Model2D;
+import GLOOP.graphics.rendering.shading.materials.ShaderToyMaterial;
 
 public final class ShaderToyShaders {
 	public static void main(String[] args) {

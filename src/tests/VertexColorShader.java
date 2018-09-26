@@ -1,8 +1,8 @@
 package tests;
 
-import engine.graphics.models.VertexArray;
-import engine.graphics.shading.ShaderCompilationException;
-import engine.graphics.shading.ShaderProgram;
+import GLOOP.graphics.data.models.VertexArray;
+import GLOOP.graphics.rendering.shading.ShaderCompilationException;
+import GLOOP.graphics.rendering.shading.ShaderProgram;
 
 import java.io.IOException;
 

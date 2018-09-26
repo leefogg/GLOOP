@@ -1,25 +1,22 @@
 package tests;
 
-import engine.general.exceptions.UnsupportedException;
-import engine.graphics.Settings;
-import engine.graphics.cameras.DebugCamera;
-import engine.graphics.models.Model3D;
-import engine.graphics.models.ModelFactory;
-import engine.graphics.models.VertexArray;
-import engine.graphics.rendering.*;
-import engine.graphics.shading.ShaderCompilationException;
-import engine.graphics.shading.lighting.PointLight;
-import engine.graphics.shading.materials.LambartMaterial;
-import engine.graphics.shading.materials.Material;
-import engine.graphics.textures.*;
-import engine.math.Quaternion;
+import GLOOP.general.exceptions.UnsupportedException;
+import GLOOP.graphics.cameras.DebugCamera;
+import GLOOP.graphics.data.models.Model3D;
+import GLOOP.graphics.data.models.ModelFactory;
+import GLOOP.graphics.rendering.*;
+import GLOOP.graphics.rendering.shading.ShaderCompilationException;
+import GLOOP.graphics.rendering.shading.lights.PointLight;
+import GLOOP.graphics.rendering.shading.materials.LambartMaterial;
+import GLOOP.graphics.rendering.shading.materials.Material;
+import GLOOP.graphics.rendering.texturing.*;
+import GLOOP.general.math.Quaternion;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 
 import java.io.IOException;
-import java.security.Key;
 import java.util.Random;
 
 public final class CullingTest {

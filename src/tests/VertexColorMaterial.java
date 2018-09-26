@@ -1,6 +1,6 @@
 package tests;
 
-import engine.graphics.shading.materials.Material;
+import GLOOP.graphics.rendering.shading.materials.Material;
 
 public class VertexColorMaterial extends Material<VertexColorShader> {
 	public VertexColorShader shader;

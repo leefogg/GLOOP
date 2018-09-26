@@ -1,15 +1,15 @@
 package tests;
 
-import engine.graphics.rendering.ForwardRenderer;
-import engine.graphics.rendering.Renderer;
-import engine.graphics.rendering.Viewport;
-import engine.graphics.cameras.DebugCamera;
-import engine.graphics.models.Model3D;
-import engine.graphics.models.RenderMode;
-import engine.graphics.models.VertexArray;
-import engine.graphics.shading.ShaderCompilationException;
-import engine.graphics.shading.materials.FullBrightMaterial;
-import engine.graphics.shading.materials.FullBrightShader;
+import GLOOP.graphics.rendering.ForwardRenderer;
+import GLOOP.graphics.rendering.Renderer;
+import GLOOP.graphics.rendering.Viewport;
+import GLOOP.graphics.cameras.DebugCamera;
+import GLOOP.graphics.data.models.Model3D;
+import GLOOP.graphics.data.models.RenderMode;
+import GLOOP.graphics.data.models.VertexArray;
+import GLOOP.graphics.rendering.shading.ShaderCompilationException;
+import GLOOP.graphics.rendering.shading.materials.FullBrightMaterial;
+import GLOOP.graphics.rendering.shading.materials.FullBrightShader;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;

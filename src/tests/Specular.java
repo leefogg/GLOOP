@@ -1,17 +1,17 @@
 package tests;
 
-import engine.general.exceptions.UnsupportedException;
-import engine.graphics.models.ModelFactory;
-import engine.graphics.rendering.*;
-import engine.graphics.cameras.DebugCamera;
-import engine.graphics.models.Model3D;
-import engine.graphics.rendering.DeferredRenderer;
-import engine.graphics.shading.lighting.PointLight;
-import engine.graphics.rendering.DeferredMaterial;
-import engine.graphics.textures.PixelComponents;
-import engine.graphics.textures.PixelFormat;
-import engine.graphics.textures.Texture;
-import engine.graphics.textures.TextureManager;
+import GLOOP.general.exceptions.UnsupportedException;
+import GLOOP.graphics.data.models.ModelFactory;
+import GLOOP.graphics.rendering.*;
+import GLOOP.graphics.cameras.DebugCamera;
+import GLOOP.graphics.data.models.Model3D;
+import GLOOP.graphics.rendering.DeferredRenderer;
+import GLOOP.graphics.rendering.shading.lights.PointLight;
+import GLOOP.graphics.rendering.DeferredMaterial;
+import GLOOP.graphics.rendering.texturing.PixelComponents;
+import GLOOP.graphics.rendering.texturing.PixelFormat;
+import GLOOP.graphics.rendering.texturing.Texture;
+import GLOOP.graphics.rendering.texturing.TextureManager;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -30,7 +30,7 @@ public final class Specular {
 			System.exit(1);
 		}
 
-		//engine.logging.Logger.enableMemoryLog(100);
+		//GLOOP.logging.Logger.enableMemoryLog(100);
 
 		DeferredRenderer deferredrenderer = null;
 		try {
