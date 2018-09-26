@@ -3,6 +3,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class FrameCounter extends TimerTask {
+	// TODO: Make atomic
 	public volatile int fps = 0;
 	private volatile int fpstemp = 0;
 
