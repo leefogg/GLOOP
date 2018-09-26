@@ -13,9 +13,6 @@ public abstract class Transform<T> {
 	public abstract void getScale(T out);
 	public abstract void setRotation(Quaternion rotation);
 	public abstract void getRotation(Quaternion out);
-
-	public abstract void getTranslationMatrix(Matrix4f out);
-	public abstract void getScaleMatrix(Matrix4f out);
-	public abstract void getRotationMatrix(Matrix4f out);
+	
 	public abstract void getModelMatrix(Matrix4f out);
 }
