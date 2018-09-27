@@ -55,7 +55,6 @@ public final class BoundingBoxTest {
 			scene.add(charizard);
 
 			box = ModelFactory.getModel("res/models/frame.obj", new SingleColorMaterial());
-			scene.add(box);
 		} catch (IOException | ShaderCompilationException e) {
 			System.err.println("Couldn't load Model!");
 			System.err.println(e.getMessage());
@@ -89,16 +88,23 @@ public final class BoundingBoxTest {
 
 			sincos += step;
 
-			rotation.toIdentity();
 			rotation.rotate(0, sincos*20, 0);
+
 			charizard.setRotation(rotation);
-			charizard.setPosition((float)Math.cos(sincos)*20, 0,0);
-			charizard.setScale(1f + (float)Math.cos(sincos)*0.2f, 1 + (float)Math.cos(sincos)*0.2f, 1 + (float)Math.cos(sincos)*0.2f);
+			charizard.setScale(1f + (float)Math.cos(sincos)*0.5f, 1 + (float)Math.cos(sincos)*0.5f, 1 + (float)Math.cos(sincos)*0.5f);
 
 			charizard.getBoundingBox(charboundingbox);
 			box.setScale(charboundingbox.width, charboundingbox.height, charboundingbox.depth);
-			box.setPosition(charboundingbox.getCentre().x+(float)Math.cos(sincos)*20, charboundingbox.getCentre().y, charboundingbox.getCentre().z);
+			box.setPosition(charboundingbox.getCentre().x, charboundingbox.getCentre().y, charboundingbox.getCentre().z);
 			box.setRotation(rotation);
+			box.render();
+
+			AABB.createFromRotated(rotation, charboundingbox);
+			box.setScale(charboundingbox.width, charboundingbox.height, charboundingbox.depth);
+			box.setPosition(charboundingbox.getCentre().x, charboundingbox.getCentre().y, charboundingbox.getCentre().z);
+			rotation.toIdentity();
+			box.setRotation(rotation);
+			box.render();
 
 			Renderer.swapBuffers();
 

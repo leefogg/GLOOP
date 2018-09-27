@@ -1,57 +1,87 @@
 package GLOOP.physics.data;
 
+import GLOOP.general.math.Quaternion;
+import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 public class AABB {
+	private static final Vector3f[] ROTATED_VERTS = new Vector3f[8];
+	private static final Matrix4f ROTATION_MATRIX = new Matrix4f();
+
+	static {
+		for (int i=0; i<ROTATED_VERTS.length; i++)
+			ROTATED_VERTS[i] = new Vector3f();
+	}
 
 	public float x, y, z, width, height, depth;
 	
 	public AABB(Vector3f[] points) {
-		float 
-		minx = Float.MAX_VALUE,
-		maxx = Float.MIN_VALUE,
-		miny = Float.MAX_VALUE,
-		maxy = Float.MIN_VALUE,
-		minz = Float.MAX_VALUE,
-		maxz = Float.MIN_VALUE;
+		create(points, this);
+	}
+
+	public static final void create(Vector3f[] points, AABB out) {
+		float
+			minx = Float.MAX_VALUE,
+			maxx = Float.MIN_VALUE,
+			miny = Float.MAX_VALUE,
+			maxy = Float.MIN_VALUE,
+			minz = Float.MAX_VALUE,
+			maxz = Float.MIN_VALUE;
 		for (Vector3f p : points) {
 			if (p.x > maxx)
 				maxx = p.x;
 			if (p.x < minx)
 				minx = p.x;
-			
+
 			if (p.y > maxy)
 				maxy = p.y;
 			if (p.y < miny)
 				miny = p.y;
-			
+
 			if (p.z > maxz)
 				maxz = p.z;
 			if (p.z < minz)
 				minz = p.z;
 		}
-		
-		set(minx, miny, minz, maxx-minx, maxy-miny, maxz-minz);
+
+		set(minx, miny, minz, maxx-minx, maxy-miny, maxz-minz, out);
 	}
 
 	public AABB(Vector3f position, Vector3f size) {
 		this(position.x, position.y, position.z, size.x, size.y, size.z);
 	}
+	public AABB(float x, float y, float z, float width, float height, float depth) { set(x, y, z, width, height, depth, this);	}
 	
-	public AABB(float x, float y, float z, float width, float height, float depth) {
-		set(x, y, z, width, height, depth);
+	public static final void set(AABB out, Vector3f position, Vector3f size) { set(position.x, position.y, position.z, size.x, size.y, size.z, out); }
+	public static final void set(float x, float y, float z, float width, float height, float depth,AABB out) {
+		out.x = x;
+		out.y = y;
+		out.z = z;
+		out.width = width;
+		out.height = height;
+		out.depth = depth;
 	}
-	
-	public final void set(Vector3f position, Vector3f size) {
-		set(position.x, position.y, position.z, size.x, size.y, size.z);
+
+	public static final void createFromRotated(Quaternion rotation, AABB out) {
+		out.getVertcies(ROTATED_VERTS);
+		// Now rotate the verts
+
+		for(int i=0; i<ROTATED_VERTS.length; i++)
+			rotation.multiply(ROTATED_VERTS[i]);
+		// Create BoundingBox of rotated verts
+		create(ROTATED_VERTS, out);
 	}
-	public final void set(float x, float y, float z, float width, float height, float depth) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		this.width = width;
-		this.height = height;
-		this.depth = depth;
+
+	public final void getVertcies(Vector3f[] out) {
+		// TODO: Validate if correct length?
+		out[0].set(x,y,z);//0,0,0
+		out[1].set(x+width,y,z);//1,0,0
+		out[2].set(x,y+height,z);//0,1,0
+		out[3].set(x+width,y+height,z);//1,1,0
+		out[4].set(x,y,z+height);//0,0,1
+		out[5].set(x+width,y,z+depth);//1,0,1
+		out[6].set(x,y+height,z+height);//0,1,1
+		out[7].set(x+width,y+height,z+height);//1,1,1
 	}
 	
 	public void translate(float x, float y, float z) {
@@ -73,7 +103,6 @@ public class AABB {
 	public Vector3f getCentre() {
 		return new Vector3f(x + (width / 2), y + (height / 2), z + (depth / 2));
 	}
-	
 
 	public Vector3f getPosition() {
 		return new Vector3f(x, y, z);

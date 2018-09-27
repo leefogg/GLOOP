@@ -111,13 +111,14 @@ public final class Quaternion {
 		);
 	}
 
-	public Vector3f multiply(Vector3f other) {
-		Vector3f vcV = Vector3f.cross(this.v, other, new Vector3f());
+	private static final Vector3f vcV = new Vector3f();
+	private static final Vector3f VcV2w = new Vector3f();
+	public void multiply(Vector3f out) {
+		Vector3f.cross(this.v, out, vcV);
+		VcV2w.set(vcV).scale(2f*w);
 
-		Vector3f temp = (Vector3f)new Vector3f(vcV).scale(2f*w);
-		Vector3f.add(other, temp, temp);
-		Vector3f.add(temp, (Vector3f)Vector3f.cross(this.v, vcV, new Vector3f()).scale(2f), temp);
-		return temp;
+		Vector3f.add(out, VcV2w, VcV2w);
+		Vector3f.add(VcV2w, (Vector3f)Vector3f.cross(this.v, vcV, vcV).scale(2f), out);
 	}
 	public Quaternion multiply(Quaternion other) {
 		multiply(this, other.v.x, other.v.y, other.v.z, other.w, this);
