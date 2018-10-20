@@ -88,7 +88,6 @@ public final class StencilTest {
 
 		System.gc();
 
-		Renderer.enableStencilTesting(true);
 		Quaternion initialrotation = new Quaternion();
 		Quaternion around = new Quaternion();
 		Vector3f centre = new Vector3f(0,6,0);

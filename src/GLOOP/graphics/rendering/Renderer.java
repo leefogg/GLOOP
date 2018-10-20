@@ -213,7 +213,7 @@ public abstract class Renderer implements Disposable {
 		setFaceCulling(GLOOP.graphics.rendering.CullFaceState.Back);
 		enableDepthBufferWriting(true);
 		enableColorBufferWriting(true, true, true, true);
-		enableStencilTesting(false);
+		enableStencilTesting(true);
 		setStencilBufferState(Condition.Always, 1, 0xFF);
 		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE); // TODO: Pull this out to public methods
 		Renderer.setDepthFunction(DepthFunction.Less);
