@@ -36,6 +36,8 @@ public abstract class Camera {
 		clone.set(Position);
 	}
 
+	public void getRotation(Vector3f clone) { clone.set(Rotation); }
+
 	public void setRotation(Vector3f rotation) {
 		setRotation(rotation.x, rotation.y, rotation.z);
 	}
