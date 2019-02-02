@@ -7,11 +7,12 @@ public final class SpotLight {
 	private final Vector3f direction = new Vector3f(0,-1,0); // TODO: Make Quaternion
 	private final Vector3f color = new Vector3f(1,1,1);
 	private float innerCone, outerCone;
-	private float QuadraticAttenuation = Integer.MAX_VALUE;
+	private float QuadraticAttenuation;
 
 	public SpotLight() {
 		setInnerCone(45);
 		setOuterCone(90);
+		setQuadraticAttenuation(0.01f);
 	}
 
 	public void getPosition(Vector3f destination) { destination.set(position); }
@@ -28,11 +29,11 @@ public final class SpotLight {
 	public float getQuadraticAttenuation() { return QuadraticAttenuation; }
 	public void  setQuadraticAttenuation(float quadraticattenuation) { QuadraticAttenuation = quadraticattenuation; }
 
-	public void pointAt(Vector3f point) { pointAt(point.x, point.y, point.z); }
-	public void pointAt(float x, float y, float z) {
-		direction.x -= x;
-		direction.y -= y;
-		direction.z -= z;
+	public void lookAt(Vector3f point) { lookAt(point.x, point.y, point.z); }
+	public void lookAt(float x, float y, float z) {
+		direction.x = x - position.x;
+		direction.y = y - position.y;
+		direction.z = z - position.z;
 
 		direction.normalise();
 	}
