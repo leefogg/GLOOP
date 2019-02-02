@@ -55,6 +55,7 @@ public class MathFunctions {
 	}
 
 
+	// TODO: Remove new objects in this class
  	public static Matrix4f createTransformationMatrix(Vector3f translation) {
 		return createTransformationMatrix(translation, new Vector3f());
 	}
@@ -143,7 +144,7 @@ public class MathFunctions {
 			out.setIdentity();
 
 		float aspectRatio = (float)width / (float)height;
-		float y_scale = (float)(1f / Math.tan(Math.toRadians(fov / 2f)) * aspectRatio);
+		float y_scale = (float)(1f / Math.tan(Math.toRadians(fov / 2f)));
 		float x_scale = y_scale / aspectRatio;
 		float frustum_length = zfar - znear;
 
