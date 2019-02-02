@@ -81,6 +81,9 @@ public final class Quaternion {
 		return this;
 	}
 
+	public Quaternion rotate(Vector3f rotation) {
+		return rotate(rotation.x, rotation.y, rotation.z);
+	}
 	public Quaternion rotate(float xdegrees, float ydegrees, float zdegrees) {
 		rotate(1,0,0, xdegrees);
 		rotate(0,0,1, zdegrees);
