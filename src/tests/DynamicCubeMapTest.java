@@ -1,13 +1,17 @@
 package tests;
 
 import GLOOP.general.exceptions.UnsupportedException;
+import GLOOP.general.math.Quaternion;
 import GLOOP.graphics.cameras.DebugCamera;
 import GLOOP.graphics.data.models.Model3D;
 import GLOOP.graphics.data.models.ModelFactory;
+import GLOOP.graphics.data.models.Skybox;
 import GLOOP.graphics.rendering.*;
 import GLOOP.graphics.rendering.shading.ShaderCompilationException;
+import GLOOP.graphics.rendering.shading.lights.PointLight;
 import GLOOP.graphics.rendering.shading.materials.ChromeMaterial;
 import GLOOP.graphics.rendering.shading.materials.FullBrightMaterial;
+import GLOOP.graphics.rendering.shading.materials.LambartMaterial;
 import GLOOP.graphics.rendering.texturing.*;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
@@ -41,44 +45,58 @@ public final class DynamicCubeMapTest {
 		Scene scene = forwardrenderer.getScene();
 		deferredRenderer.setScene(scene);
 
-		scene.getAmbientlight().setColor(1,1,1);
+		PointLight light = new PointLight();
+		light.setPosition(1,12,1);
+		light.quadraticAttenuation = 0.0001f;
+		scene.add(light);
 
+		Model3D cube = null;
 		try {
-			Texture albedo = TextureManager.newTexture("res\\textures\\kitten.png", PixelComponents.RGBA, PixelFormat.SRGBA8);
-			albedo.setFilteringMode(TextureFilter.Nearest);
-			Model3D house = ModelFactory.getModel("res\\models\\insideout box.obj", new FullBrightMaterial(albedo));
-			Vector3f roomscale = new Vector3f(20,20,20);
-			house.setScale(roomscale);
-			scene.add(house);
+			Texture wallstexture = TextureManager.newTexture("res\\textures\\portal\\concrete_modular_wall001_gradient00.bmp", PixelComponents.RGB, PixelFormat.SRGB8);
+			Texture floortexture = TextureManager.newTexture("res\\textures\\portal\\concrete_modular_floor001c.bmp", PixelComponents.RGB, PixelFormat.SRGB8);
+			Model3D floor = ModelFactory.getModel("res/models/portal/floor.obj", new LambartMaterial(floortexture));
+			scene.add(floor);
+			Model3D ceiling = ModelFactory.getModel("res/models/portal/floor.obj", new LambartMaterial(floortexture));
+			Quaternion rotation = new Quaternion();
+			rotation.rotate(180,0,0);
+			ceiling.setRotation(rotation);
+			ceiling.setPosition(0,30,0);
+			scene.add(ceiling);
+			Model3D redlevel = ModelFactory.getModel("res/models/portal/walls.obj", new LambartMaterial(wallstexture));
+			scene.add(redlevel);
 
-			Vector3f probepos = new Vector3f(0,0,0);
-			CubeMap envmap = new CubeMap("environemntmap", 128, PixelFormat.SRGB8, probepos, roomscale);
+			Vector3f roomscale = new Vector3f(24,30,24);
+			Vector3f probepos = new Vector3f(0,15,0);
+			CubeMap envmap = new CubeMap("environemntmap", 256, PixelFormat.SRGB8, probepos, roomscale);
 			EnvironmentProbe probe = new EnvironmentProbe(envmap);
 			scene.add(probe);
+
 
 			Texture normalmap = TextureManager.newTexture("res\\textures\\water1-n.jpg", PixelComponents.RGB, PixelFormat.RGB8);
 			DeferredMaterial deferredmaterail = deferredRenderer.getNewMaterial();
 			deferredmaterail.setAlbedoColor(0,0,0,1);
-			deferredmaterail.setRefractivity(1);
+			deferredmaterail.setRefractivity(0);
 			deferredmaterail.setEnvironmentMap(envmap);
-			deferredmaterail.setReflectivity(0);
-			deferredmaterail.setTextureRepeat(10,10);
+			deferredmaterail.setReflectivity(1);
+			deferredmaterail.setTextureRepeat(5,5);
 			deferredmaterail.setNormalMap(normalmap);
 			Model3D plane = ModelFactory.getModel("res/models/plane.obj", deferredmaterail);
-			plane.setPosition(0,-1,0);
+			plane.setPosition(0,1,0);
 			scene.add(plane);
+
 
 			normalmap = TextureManager.newTexture("res\\textures\\6624-normal.jpg", PixelComponents.RGB, PixelFormat.RGB8);
 			deferredmaterail = deferredRenderer.getNewMaterial();
-			deferredmaterail.setAlbedoColor(0,0,0,1);
-			deferredmaterail.setRefractivity(1);
+			deferredmaterail.setAlbedoColor(1,1,1,1);
+			deferredmaterail.setRefractivity(0);
 			deferredmaterail.setEnvironmentMap(envmap);
-			deferredmaterail.setReflectivity(0);
+			deferredmaterail.setReflectivity(1);
 			deferredmaterail.setNormalMap(normalmap);
 			deferredmaterail.setTextureRepeat(5,5);
-			Model3D sphere = ModelFactory.getModel("res/models/sphere.obj", new ChromeMaterial(envmap));
-			sphere.setScale(4,4,4);
-			scene.add(sphere);
+			cube = ModelFactory.getModel("res/models/cube.obj", new ChromeMaterial(envmap));
+			cube.setScale(4,4,4);
+			cube.setPosition(probepos);
+			scene.add(cube);
 
 		} catch (IOException | ShaderCompilationException e) {
 			System.err.println("Couldn't load scene!");
@@ -98,6 +116,7 @@ public final class DynamicCubeMapTest {
 
 		boolean isrunning = true;
 		double sincos = (float)Math.PI, step = (float)Math.PI/500f;
+		Quaternion cuberotation = new Quaternion();
 		while(isrunning) {
 			Viewport.update();
 			float delta = Renderer.getTimeDelta();
@@ -105,6 +124,8 @@ public final class DynamicCubeMapTest {
 			camera.update(delta, timescaler);
 
 			sincos += step * timescaler;
+			cuberotation.rotate(0.12f, 0.09f, .1f);
+			cube.setRotation(cuberotation);
 
 			Renderer.setRenderer(forwardrenderer);
 			Renderer.update();
