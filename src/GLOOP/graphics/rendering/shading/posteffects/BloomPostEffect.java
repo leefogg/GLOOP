@@ -7,7 +7,7 @@ import GLOOP.graphics.rendering.texturing.*;
 
 import java.io.IOException;
 
-public class BloomPostEffect extends PostEffect<ExtractBrightShader> implements PostProcess {
+public class BloomPostEffect extends PostEffect<ExtractBrightShader> {
 	private static ExtractBrightShader shader;
 	private static FrameBuffer vblurbuffer, hblurbuffer;
 	private static VerticalGaussianBlurPostEffect vblureffect;
