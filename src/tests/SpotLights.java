@@ -96,8 +96,8 @@ public final class SpotLights {
 
 			Renderer.setRenderer(renderer);
 			Renderer.render();
+			renderer.debugGBuffer();
 			Renderer.swapBuffers();
-			renderer.renderAttachments(6);
 			Viewport.setTitle("Development Engine " + Viewport.getCurrentFrameRate() + "Hz");
 
 			if (Display.isCloseRequested())

@@ -136,8 +136,8 @@ public class DecalTest {
 
 			Renderer.setRenderer(deferredrenderer);
 			Renderer.render();
+			deferredrenderer.debugGBuffer();
 			Renderer.swapBuffers();
-			deferredrenderer.renderAttachments();
 
 
 			Viewport.setTitle("ModelViewer " + Viewport.getCurrentFrameRate() + "Hz");

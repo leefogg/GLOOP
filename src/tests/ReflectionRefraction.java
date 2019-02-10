@@ -172,8 +172,8 @@ public final class ReflectionRefraction {
 			Renderer.render();
 			Renderer.setRenderer(forwardrenderer);
 			Renderer.render();
+			deferredrenderer.debugGBuffer();
 			Renderer.swapBuffers();
-			deferredrenderer.renderAttachments();
 
 			Viewport.setTitle("Reflection and Refraction " + Viewport.getCurrentFrameRate() + "Hz");
 

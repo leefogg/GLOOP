@@ -133,8 +133,8 @@ public final class DynamicCubeMapTest {
 			Renderer.render();
 			Renderer.setRenderer(forwardrenderer);
 			Renderer.render();
+			deferredRenderer.debugGBuffer();
 			Renderer.swapBuffers();
-			deferredRenderer.renderAttachments();
 
 			Viewport.setTitle("Development Engine " + Viewport.getCurrentFrameRate() + "Hz");
 

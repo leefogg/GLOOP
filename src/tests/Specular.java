@@ -112,8 +112,8 @@ public final class Specular {
 			Renderer.setRenderer(deferredrenderer);
 			Renderer.render();
 			Renderer.render();
+			deferredrenderer.debugGBuffer();
 			Renderer.swapBuffers();
-			deferredrenderer.renderAttachments();
 
 
 			Viewport.setTitle("Development Engine " + Viewport.getCurrentFrameRate() + "Hz");

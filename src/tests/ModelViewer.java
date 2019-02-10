@@ -72,7 +72,7 @@ public class ModelViewer {
 			material.setSpecularMap(specular);
 			material.setRoughness(0.2f);
 			material.setEnvironmentMap(cubemap);
-			material.setReflectivity(0.1f);
+			material.setReflectivity(0.2f);
 			Model3D model = ModelFactory.getModel("res\\models\\SOMA\\ark\\model.obj", material);
 			model.setScale(20,20,20);
 			scene.add(model);
@@ -114,8 +114,8 @@ public class ModelViewer {
 			Renderer.render();
 			Renderer.setRenderer(forwardrenderer);
 			Renderer.render();
+			deferredrenderer.debugGBuffer();
 			Renderer.swapBuffers();
-			//deferredrenderer.renderAttachments();
 
 			Viewport.update();
 			Viewport.setTitle("ModelViewer " + Viewport.getCurrentFrameRate() + "Hz");

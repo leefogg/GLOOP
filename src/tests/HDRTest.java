@@ -134,8 +134,8 @@ public class HDRTest {
 			Renderer.setRenderer(forwardrenderer);
 			Renderer.render();
 
+			deferredrenderer.debugGBuffer();
 			Renderer.swapBuffers();
-			deferredrenderer.renderAttachments();
 
 			Viewport.update();
 			Viewport.setTitle("HDR Testing " + Viewport.getCurrentFrameRate() + "Hz");

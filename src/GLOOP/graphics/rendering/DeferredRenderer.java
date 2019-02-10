@@ -6,15 +6,13 @@ import GLOOP.graphics.data.models.Model;
 import GLOOP.graphics.data.models.Model2D;
 import GLOOP.graphics.data.models.Model3D;
 import GLOOP.graphics.rendering.shading.ShaderCompilationException;
-import GLOOP.graphics.rendering.shading.materials.FullBrightMaterial;
 import GLOOP.graphics.rendering.shading.posteffects.PostProcessor;
 import GLOOP.graphics.rendering.texturing.*;
-import GLOOP.graphics.rendering.ui.GUIRenderer;
+import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -36,7 +34,7 @@ public class DeferredRenderer extends Renderer {
 	private LightingPassPostEffect lightingPosteffect;
 	private boolean HDREnabled;
 
-	private static Model2D[] UIs;
+	private int debugGBufferColorIndex = 0;
 
 	DeferredRenderer() throws IOException, ShaderCompilationException {
 		load();
@@ -230,71 +228,21 @@ public class DeferredRenderer extends Renderer {
 
 	public void setVolumetricLightsStrength(float volumetriclightsstrength) { lightingPosteffect.setVolumetricLightsStrength(volumetriclightsstrength);}
 
-	public void renderAttachments() {
-		renderAttachments(8);
-	}
-	public void renderAttachments(float scaledivisor) {
-		if (isDisposed)
+	public void debugGBuffer() {
+		// Update which buffer
+		int mousescroll = Math.max(-1, Math.min(Mouse.getDWheel(), 1));
+		debugGBufferColorIndex += mousescroll;
+		int numbuffers = GBuffers.getNumberOfColorAttachments() + 1;
+		if (debugGBufferColorIndex == numbuffers)
+			debugGBufferColorIndex = 0;
+		else if (debugGBufferColorIndex == -1)
+			debugGBufferColorIndex = numbuffers-1;
+
+		// Dont show any overlay if on 0. 0 Is nothing/output/normal
+		if (debugGBufferColorIndex == 0)
 			return;
 
-		// Always render to the screen so aren't affected by post effects
-		FrameBuffer.bindDefault();
-		Viewport.setDimensions(Viewport.getWidth(), Viewport.getHeight());
-
-		ensureUIsExist();
-
-		int	viewportheight = Viewport.getHeight(),
-			viewportwidth = Viewport.getWidth(),
-			width = (int)Math.floor(viewportwidth / scaledivisor),
-			height = (int)Math.floor(viewportheight / scaledivisor),
-			x = 0,
-			y = 0;
-
-		int numattachments = GBuffers.getNumberOfColorAttachments() + targetFBO.getNumberOfColorAttachments();
-		Texture[] allattachments = new Texture[numattachments];
-
-		int i=0;
-		Texture[] attachments = GBuffers.getAllColorAttachments();
-		for (int attachmentindex=0; attachmentindex<attachments.length; i++, attachmentindex++)
-			allattachments[i] = attachments[attachmentindex];
-		attachments = targetFBO.getAllColorAttachments();
-		for (int attachmentindex=0; attachmentindex<attachments.length; i++, attachmentindex++)
-			allattachments[i] = attachments[attachmentindex];
-
-		for (i=0; i<allattachments.length; i++) {
-			Model2D ui = UIs[i];
-
-			ui.setScale(width, height);
-
-			ui.setPosition(x, y);
-
-			x += width;
-			if (x+width > viewportwidth) {
-				y += height;
-				x = 0;
-			}
-
-			((FullBrightMaterial)ui.getMaterial()).setAlbedoTexture(allattachments[i]);
-		}
-
-		GUIRenderer.render(UIs);
-	}
-
-	private void ensureUIsExist() {
-		int numattachments = GBuffers.getNumberOfColorAttachments() + targetFBO.getNumberOfColorAttachments() ;
-
-		if (UIs == null) {
-			UIs = new Model2D[numattachments];
-
-			for (int i=0; i<numattachments; i++)
-				UIs[i] = new Model2D(0,0,0,0);
-		} else if (UIs.length < numattachments) {
-			int oldsize = UIs.length;
-			UIs = Arrays.copyOf(UIs, numattachments);
-
-			for (int i=oldsize; i<UIs.length; i++)
-				UIs[i] = new Model2D(0,0,0,0);
-		}
+		PostProcessor.render(GBuffers.getColorTexture(debugGBufferColorIndex -1));
 	}
 
 	public void reload() throws IOException {
