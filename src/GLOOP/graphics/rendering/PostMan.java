@@ -29,10 +29,15 @@ abstract class PostMan {
 	}
 
 	public static final void render(Texture initialImage, PostEffect[] effects) {
+		if (effects.length == 0)
+			return;
+
+		PostProcessor.beginPostEffects();
 		render(initialImage);
 		for (PostEffect effect : effects)
 			if (effect.isEnabled())
 				render(effect);
+		PostProcessor.endPostEffects();
 	}
 	public static final void render(Texture initialImage, Iterable<PostEffect> effects) {
 		render(initialImage);

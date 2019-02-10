@@ -10,6 +10,7 @@ import GLOOP.graphics.rendering.texturing.Texture;
 public class PostProcessor {
 	private static final Model2D fullscreenquad = new Model2D(0, 0, Viewport.getWidth(), Viewport.getHeight());
 	private static FullBrightMaterial FullBrightMaterial = (FullBrightMaterial)fullscreenquad.getMaterial(); // Model2D's default material is FullBrightMaterial
+	private static boolean PostModeEnabled = false;
 
 	public static void render(Texture texture) { render(texture, FullBrightMaterial); }
 	public static void render(Texture texture, Material shader) {
@@ -20,20 +21,36 @@ public class PostProcessor {
 		shader.setTexture(texture);
 		render(shader);
 	}
-
-	// Renders in the currently bound frame buffer
 	public static void render(Material material) {
 		// Rescale to the current resolution
 		fullscreenquad.setScale(Viewport.getWidth(), Viewport.getHeight());
 
+		beginPostEffects();
+		fullscreenquad.setMaterial(material);
+		fullscreenquad.render();
+		endPostEffects();
+	}
+
+	public static void beginPostEffects() {
+		if (PostModeEnabled)
+			return;
+
 		// rendering post effects shouldn't affect the depth buffer
 		Renderer.enableStencilTesting(false);
-			Renderer.enableDepthTesting(false);
-				Renderer.enableDepthBufferWriting(false);
-					fullscreenquad.setMaterial(material);
-					fullscreenquad.render();
-				Renderer.popDepthBufferWritingState();
-			Renderer.popDepthTestingEnabledState();
+		Renderer.enableDepthTesting(false);
+		Renderer.enableDepthBufferWriting(false);
+
+		PostModeEnabled = true;
+	}
+
+	public static void endPostEffects() {
+		if (!PostModeEnabled)
+			return;
+
+		Renderer.popDepthBufferWritingState();
+		Renderer.popDepthTestingEnabledState();
 		Renderer.popStencilTestingState();
+
+		PostModeEnabled = false;
 	}
 }
