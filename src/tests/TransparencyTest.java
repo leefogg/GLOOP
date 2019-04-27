@@ -72,7 +72,7 @@ public final class TransparencyTest {
 			DeferredMaterial material = deferredrenderer.getNewMaterial();
 			material.setAlbedoColor(0,0,0,1);
 			Texture albedomap = TextureManager.newTexture("res\\textures\\wood.png", PixelComponents.RGB, PixelFormat.SRGB8);
-			material.setAlbedoTexture(albedomap);
+			material.setAlbedoMap(albedomap);
 			material.setTextureRepeat(10,10);
 			material.setEnvironmentMap(cubemaptexture);
 			material.setReflectivity(0.2f);
@@ -80,7 +80,7 @@ public final class TransparencyTest {
 
 			DeferredMaterial bilboardmaterial = deferredrenderer.getNewMaterial();
 			albedomap = TextureManager.newTexture("res\\textures\\transparent\\window.png", PixelComponents.RGBA, PixelFormat.SRGBA8);
-			bilboardmaterial.setAlbedoTexture(albedomap);
+			bilboardmaterial.setAlbedoMap(albedomap);
 			bilboardmaterial.setReflectivity(0.2f);
 			bilboardmaterial.setEnvironmentMap(cubemaptexture);
 			Quaternion rotation = new Quaternion();

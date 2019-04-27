@@ -98,7 +98,7 @@ public final class Lighting {
 			DeferredMaterial wallsmaterial = deferredrenderer.getNewMaterial();
 			wallsmaterial.setAlbedoColor(1,1,1,1);
 			//Texture albedomap = TextureManager.newTexture("res\\textures\\plane-d.png", PixelComponents.RGB, PixelFormat.SRGB8);
-			//floormaterial.setAlbedoTexture(albedomap);
+			//floormaterial.setAlbedoMap(albedomap);
 			wallsmaterial.setAlbedoColor(1,1,1,1);
 			Texture normalmap = TextureManager.newTexture("res\\textures\\plane-n.png", PixelComponents.RGB, PixelFormat.RGB8);
 			wallsmaterial.setNormalMap(normalmap);

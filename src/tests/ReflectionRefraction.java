@@ -94,7 +94,7 @@ public final class ReflectionRefraction {
 			Texture albedomap = TextureManager.newTexture("res\\textures\\Metal_Weave_002_SD\\Metal_Weave_002_COLOR.jpg", PixelComponents.RGB, PixelFormat.SRGB8);
 			Texture normalmap = TextureManager.newTexture("res\\textures\\Metal_Weave_002_SD\\Metal_Weave_002_NORM.jpg", PixelComponents.RGB, PixelFormat.RGB8);
 			Texture heightmap = TextureManager.newTexture("res\\textures\\Metal_Weave_002_SD\\Metal_Weave_002_DISP.png", PixelComponents.RGB, PixelFormat.RGB8);
-			material.setAlbedoTexture(albedomap);
+			material.setAlbedoMap(albedomap);
 			material.setNormalMap(normalmap);
 			material.setDepthMap(heightmap);
 			material.setTextureRepeat(10,10);

@@ -39,7 +39,7 @@ public final class DeferredMaterial extends Material<DeferredGBuffersShader> {
 		return DeferredRenderer.getGBuffersShader();
 	}
 
-	public void setAlbedoTexture(Texture texture) {
+	public void setAlbedoMap(Texture texture) {
 		this.albedoMap = texture;
 		setAlbedoColor(1, 1, 1, 1);
 	}

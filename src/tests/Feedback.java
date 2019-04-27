@@ -44,7 +44,7 @@ public class Feedback {
 		try {
 			DeferredMaterial floormaterial = deferredrenderer.getNewMaterial();
 			Texture albedo = TextureManager.newTexture("res\\textures\\default.png", PixelComponents.RGB, PixelFormat.SRGB8);
-			floormaterial.setAlbedoTexture(albedo);
+			floormaterial.setAlbedoMap(albedo);
 			Model3D floor = ModelFactory.getModel("res/models/plane.obj", floormaterial);
 			scene.add(floor);
 
@@ -52,14 +52,14 @@ public class Feedback {
 
 			DeferredMaterial cubematerial = deferredrenderer.getNewMaterial();
 			albedo = TextureManager.newTexture("res\\textures\\glados_head.png", PixelComponents.RGB, PixelFormat.SRGB8);
-			cubematerial.setAlbedoTexture(albedo);
+			cubematerial.setAlbedoMap(albedo);
 			glados = ModelFactory.getModel("res/models/glados.obj", cubematerial);
 			glados.setPosition(-20,10,0);
 			glados.setScale(20,20,20);
 			scene.add(glados);
 
 			cubematerial = deferredrenderer.getNewMaterial();
-			cubematerial.setAlbedoTexture(lastframe);
+			cubematerial.setAlbedoMap(lastframe);
 			Model3D plane = ModelFactory.getModel("res/models/plane.obj", cubematerial);
 			plane.setPosition(20,5,0);
 			Quaternion rotation = new Quaternion();

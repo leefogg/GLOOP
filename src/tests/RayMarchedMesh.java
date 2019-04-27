@@ -5,15 +5,12 @@ import GLOOP.graphics.data.models.ModelFactory;
 import GLOOP.graphics.rendering.*;
 import GLOOP.graphics.cameras.DebugCamera;
 import GLOOP.graphics.rendering.shading.lights.PointLight;
-import GLOOP.graphics.rendering.shading.materials.LambartMaterial;
 import GLOOP.graphics.rendering.texturing.*;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import tests.Materials.RayMarchMaterial;
-
-import java.io.IOException;
 
 public final class RayMarchedMesh {
 	public static void main(String[] args) {
@@ -50,7 +47,7 @@ public final class RayMarchedMesh {
 			DeferredMaterial material = deferredrenderer.getNewMaterial();
 			Texture albedo = TextureManager.newTexture("res/textures/154.JPG", PixelComponents.RGB, PixelFormat.SRGB8);
 			albedo.setFilteringMode(TextureFilter.Linear);
-			material.setAlbedoTexture(albedo);
+			material.setAlbedoMap(albedo);
 			Model3D floor = ModelFactory.getModel("res/models/plane.obj", material);
 			floor.setPosition(0,-3,0);
 			scene.add(floor);
@@ -58,7 +55,7 @@ public final class RayMarchedMesh {
 			material = deferredrenderer.getNewMaterial();
 			albedo = TextureManager.newTexture("res/textures/charizard.png", PixelComponents.RGB, PixelFormat.SRGB8);
 			albedo.setFilteringMode(TextureFilter.Linear);
-			material.setAlbedoTexture(albedo);
+			material.setAlbedoMap(albedo);
 			Model3D model2 = ModelFactory.getModel("res/models/charizard.obj", material);
 			model2.setPosition(12,-3,0);
 			scene.add(model2);

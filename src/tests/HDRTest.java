@@ -71,7 +71,7 @@ public class HDRTest {
 
 			DeferredMaterial material = deferredrenderer.getNewMaterial();
 			Texture albedo = TextureManager.newTexture("res\\models\\SOMA\\ark\\albedo.bmp", PixelComponents.RGB, PixelFormat.SRGB8);
-			material.setAlbedoTexture(albedo);
+			material.setAlbedoMap(albedo);
 			Texture normals = TextureManager.newTexture("res\\models\\SOMA\\ark\\normals.bmp", PixelComponents.RGB, PixelFormat.RGB8);
 			material.setNormalMap(normals);
 			Texture specular = TextureManager.newTexture("res\\models\\SOMA\\ark\\specular.png", PixelComponents.R, PixelFormat.R8);
@@ -87,7 +87,7 @@ public class HDRTest {
 
 			material = deferredrenderer.getNewMaterial();
 			albedo = TextureManager.newTexture("res\\textures\\wood.png", PixelComponents.RGB, PixelFormat.SRGB8);
-			material.setAlbedoTexture(albedo);
+			material.setAlbedoMap(albedo);
 			Model3D tunnel = ModelFactory.getModel("res\\models\\masking\\box.obj", material);
 			tunnel.setScale(1, 1, 10);
 			tunnel.setPosition(0, -2.5f,0);

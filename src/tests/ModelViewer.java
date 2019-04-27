@@ -65,7 +65,7 @@ public class ModelViewer {
 
 			DeferredMaterial material = deferredrenderer.getNewMaterial();
 			Texture albedo = TextureManager.newTexture("res\\models\\SOMA\\ark\\albedo.bmp", PixelComponents.RGB, PixelFormat.SRGB8);
-			material.setAlbedoTexture(albedo);
+			material.setAlbedoMap(albedo);
 			Texture normals = TextureManager.newTexture("res\\models\\SOMA\\ark\\normals.bmp", PixelComponents.RGB, PixelFormat.RGB8);
 			material.setNormalMap(normals);
 			Texture specular = TextureManager.newTexture("res\\models\\SOMA\\ark\\specular.png", PixelComponents.R, PixelFormat.R8);

@@ -75,7 +75,7 @@ public final class Specular {
 			Texture normalmap = TextureManager.newTexture("res\\textures\\SOMA\\scanningroom_tiles_nrm.bmp", PixelComponents.RGB, PixelFormat.RGB8);
 			albedomap.generateAnisotropicMipMaps(100);
 			DeferredMaterial material = deferredrenderer.getNewMaterial();
-			material.setAlbedoTexture(albedomap);
+			material.setAlbedoMap(albedomap);
 			material.setSpecularMap(specularmap);
 			material.setNormalMap(normalmap);
 			material.setTextureRepeat(10,10);

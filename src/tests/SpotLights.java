@@ -47,7 +47,7 @@ public final class SpotLights {
 		try {
 			DeferredMaterial boxmaterial = renderer.getNewMaterial();
 			Texture albedo = TextureManager.newTexture("res\\textures\\default.png", PixelComponents.RGB, PixelFormat.SRGB8);
-			boxmaterial.setAlbedoTexture(albedo);
+			boxmaterial.setAlbedoMap(albedo);
 			boxmaterial.setTextureRepeat(5,5);
 			Model3D outerbox = ModelFactory.getModel("res\\models\\insideout box.obj", boxmaterial);
 			outerbox.setScale(50,50,50);
@@ -56,7 +56,7 @@ public final class SpotLights {
 
 			DeferredMaterial material = renderer.getNewMaterial();
 			albedo = TextureManager.newTexture("res\\models\\SOMA\\ark\\albedo.bmp", PixelComponents.RGB, PixelFormat.SRGB8);
-			material.setAlbedoTexture(albedo);
+			material.setAlbedoMap(albedo);
 			Texture normals = TextureManager.newTexture("res\\models\\SOMA\\ark\\normals.bmp", PixelComponents.RGB, PixelFormat.RGB8);
 			material.setNormalMap(normals);
 			Texture specular = TextureManager.newTexture("res\\models\\SOMA\\ark\\specular.png", PixelComponents.RGB, PixelFormat.R8);

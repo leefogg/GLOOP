@@ -46,7 +46,7 @@ public class DecalTest {
 		try {
 			Texture albedo = TextureManager.newTexture("res/textures/default.png", PixelComponents.RGB, PixelFormat.SRGB8);
 			DeferredMaterial roommaterial = deferredrenderer.getNewMaterial();
-			roommaterial.setAlbedoTexture(albedo);
+			roommaterial.setAlbedoMap(albedo);
 			roommaterial.setTextureRepeat(4,4);
 			Model3D room = ModelFactory.getModel("res/models/decalsroom.obj", roommaterial);
 			scene.add(room);
