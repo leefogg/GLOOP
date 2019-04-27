@@ -17,7 +17,7 @@ public final class DeferredMaterial extends Material<DeferredGBuffersShader> {
 		normalMap,
 		specularMap,
 		depthMap;
-	private CubeMap environemtnMap;
+	private CubeMap environmentMap;
 	private final Vector4f
 			diffuseColor = new Vector4f(1, 0, 1, 1),
 			refractionIndices = new Vector4f(1f/1.2f + 0.005f, 1f/1.2f + 0.010f, 1f/1.2f + 0.015f, 1f/1.2f);
@@ -33,7 +33,6 @@ public final class DeferredMaterial extends Material<DeferredGBuffersShader> {
 		fresnelBias = 0,
 		fresnelScale = 1f,
 		fresnelExponent = 10f;
-	public static final float MaxSpecularExponent = 256f;
 
 	@Override
 	public DeferredGBuffersShader getShader() {
@@ -64,9 +63,9 @@ public final class DeferredMaterial extends Material<DeferredGBuffersShader> {
 		this.depthMap = texture;
 	}
 	public Texture getDepthMap() { return depthMap; }
-	public void setEnvironmentMap(CubeMap texture) { this.environemtnMap = texture; }
+	public void setEnvironmentMap(CubeMap texture) { this.environmentMap = texture; }
 	public CubeMap getEnvironmentMap() {
-		return environemtnMap;
+		return environmentMap;
 	}
 
 	public void setSpecularity(float specularity) { this.specularity = Math.min(Math.max(specularity / 100f,0),1); }
@@ -156,18 +155,18 @@ public final class DeferredMaterial extends Material<DeferredGBuffersShader> {
 
 
 		if (Settings.EnableEnvironemntMapping) {
-			if (environemtnMap == null) {
+			if (environmentMap == null) {
 				shader.hasEnvironmentMap(false);
 			} else {
 				shader.hasEnvironmentMap(true);
 				shader.setReflectivity(reflectivity);
 				shader.setRefractivity(refractivity);
 				shader.setRefractionIndices(refractionIndices);
-				environemtnMap.getPosition(Temp);
+				environmentMap.getPosition(Temp);
 				shader.setEnvironmentMapPosition(Temp);
-				environemtnMap.getSize(Temp);
+				environmentMap.getSize(Temp);
 				shader.setEnvironmentMapSize(Temp);
-				TextureManager.bindReflectionMap(environemtnMap);
+				TextureManager.bindReflectionMap(environmentMap);
 			}
 		}
 

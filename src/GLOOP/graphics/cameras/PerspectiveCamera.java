@@ -8,7 +8,7 @@ public class PerspectiveCamera extends Camera {
 	protected float fov;
 
 	public static final float
-		DEFAULT_FOV = 90F;
+		DEFAULT_FOV = 70;
 
 	public PerspectiveCamera() {
 		this(Viewport.getWidth(), Viewport.getHeight(), DEFAULT_FOV, DEFAULT_ZNEAR, DEFAULT_ZFAR);
@@ -36,6 +36,8 @@ public class PerspectiveCamera extends Camera {
 
 		updateProjectionMatrix();
 	}
+	public float getznear() { return znear; }
+
 
 	@Override
 	public void setzfar(float zfar) {
@@ -43,12 +45,14 @@ public class PerspectiveCamera extends Camera {
 
 		updateProjectionMatrix();
 	}
+	public float getzfar() { return zfar; }
 
 	public void setFov(float fov) {
 		this.fov = fov;
 
 		updateProjectionMatrix();
 	}
+	public float getFov() { return fov; }
 
 	private void updateProjectionMatrix() {
 		MathFunctions.createProjectionMatrix(width, height, fov, znear, zfar, ProjectionMatrix);

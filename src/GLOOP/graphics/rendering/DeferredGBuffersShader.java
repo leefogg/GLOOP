@@ -4,7 +4,6 @@ import GLOOP.graphics.cameras.Camera;
 import GLOOP.graphics.data.models.VertexArray;
 import GLOOP.graphics.rendering.shading.GLSL.*;
 import GLOOP.graphics.rendering.shading.ShaderCompilationException;
-import GLOOP.graphics.rendering.shading.ShaderProgram;
 import GLOOP.graphics.rendering.texturing.TextureUnit;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector2f;
@@ -13,17 +12,15 @@ import org.lwjgl.util.vector.Vector4f;
 
 import java.io.IOException;
 
-final class DeferredGBuffersShader extends ShaderProgram {
+final class DeferredGBuffersShader extends GBufferShader {
 	private Uniform1i
 		albedoMap,
 		normalMap,
 		specularMap,
 		environmentMap,
 		depthMap;
-	private Uniform1f
-		znear,
-		zfar;
-	private Uniform3f campos, environmentMapPosition, environmentMapSize;
+	private Uniform1f znear;
+	private Uniform3f environmentMapPosition, environmentMapSize;
 	private Uniform4f diffuseColor;
 	private Uniform1f
 			reflectivity,
@@ -34,8 +31,7 @@ final class DeferredGBuffersShader extends ShaderProgram {
 			roughness,
 			fresnelBias,
 			fresnelScale,
-			fresnelExponent,
-			time;
+			fresnelExponent;
 	private Uniform2f textureRepeat;
 	private Uniform2f textureOffset;
 	private Uniform1b
@@ -45,8 +41,6 @@ final class DeferredGBuffersShader extends ShaderProgram {
 		hasEnvironmentMap,
 		hasDepthMap;
 	private Uniform4f refractionIndices;
-
-	private static final Vector3f cameraposition = new Vector3f(); // Pass through
 
 	public DeferredGBuffersShader(String[] defines) throws ShaderCompilationException, IOException {
 		super(
@@ -66,9 +60,9 @@ final class DeferredGBuffersShader extends ShaderProgram {
 
 	@Override
 	protected void getCustomUniformLocations() {
+		super.getCustomUniformLocations();
+
 		znear 	= new Uniform1f(this, "znear");
-		zfar 	= new Uniform1f(this, "zfar");
-		campos 	= new Uniform3f(this, "campos");
 
 		albedoMap 	= new Uniform1i(this, "albedoMap");
 		hasDiffuseMap = new Uniform1b(this, "HasAlbedoMap");
@@ -101,14 +95,6 @@ final class DeferredGBuffersShader extends ShaderProgram {
 
 		environmentMapPosition = new Uniform3f(this, "envMapPos");
 		environmentMapSize = new Uniform3f(this, "envMapSize");
-
-		time = new Uniform1f(this, "Time");
-	}
-
-	@Override
-	protected void setDefaultCustomUniformValues() {
-		setzfar(Camera.DEFAULT_ZFAR);
-		setznear(Camera.DEFAULT_ZNEAR);
 	}
 
 	@Override
@@ -179,22 +165,16 @@ final class DeferredGBuffersShader extends ShaderProgram {
 		this.znear.set(znear);
 	}
 
-	public void setzfar(float zfar) {
-		this.zfar.set(zfar);
+	@Override
+	protected void setDefaultCustomUniformValues() {
+		super.setDefaultCustomUniformValues();
+		setznear(Camera.DEFAULT_ZNEAR);
 	}
-
-	public void setTime(float time) { this.time.set(time); }
-
-	public void setCameraPosition(Vector3f cameraposition) { campos.set(cameraposition); }
 
 	@Override
 	public void setCameraUniforms(Camera camera, Matrix4f modelmatrix) {
 		super.setCameraUniforms(camera, modelmatrix);
-
-		setzfar(camera.getzfar());
 		setznear(camera.getznear());
-		camera.getPosition(cameraposition);
-		setCameraPosition(cameraposition);
 
 		//TODO: Why do I have to update these each frame?
 		setAlbedoMap(TextureUnit.AlbedoMap);
