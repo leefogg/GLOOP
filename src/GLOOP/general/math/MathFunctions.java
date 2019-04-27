@@ -144,7 +144,7 @@ public class MathFunctions {
 			out.setIdentity();
 
 		float aspectRatio = (float)width / (float)height;
-		float y_scale = (float)(1f / Math.tan(Math.toRadians(fov / 2f)));
+		float y_scale = (float)(1f / Math.tan(Math.toRadians(fov / 2f)) * aspectRatio);
 		float x_scale = y_scale / aspectRatio;
 		float frustum_length = zfar - znear;
 
