@@ -1,20 +1,20 @@
-package GLOOP.graphics.rendering;
+package GLOOP.graphics.rendering.shading.posteffects;
 
-import GLOOP.graphics.rendering.shading.posteffects.PostEffect;
+import GLOOP.graphics.rendering.Renderer;
+import GLOOP.graphics.rendering.shading.GBufferLightingShader;
 import GLOOP.graphics.rendering.texturing.Texture;
 import GLOOP.graphics.rendering.texturing.TextureManager;
 import GLOOP.graphics.rendering.texturing.TextureUnit;
 
-final class LightingPassPostEffect extends PostEffect<LightingPassShader> {
+public abstract class GBufferPostEffect<T extends GBufferLightingShader> extends PostEffect<T> {
 	private Texture
-		positionTexture,
-		normalTexture,
-		specularTexture;
-	private float volumetricLightsStrength = 2;
+			positionTexture,
+			normalTexture,
+			specularTexture;
 
-	private static LightingPassShader shader;
+	protected T shader;
 
-	public LightingPassPostEffect(LightingPassShader shader, Texture normalbuffer, Texture specularbuffer, Texture positionbuffer) {
+	public GBufferPostEffect(T shader, Texture normalbuffer, Texture specularbuffer, Texture positionbuffer) {
 		this.shader = shader;
 
 		setNormalTexture(normalbuffer);
@@ -23,8 +23,14 @@ final class LightingPassPostEffect extends PostEffect<LightingPassShader> {
 	}
 
 	@Override
-	public LightingPassShader getShader() {
+	public T getShader() {
 		return shader;
+	}
+
+	@Override
+	public void bind() {
+		super.bind();
+		shader.bindGBuffers();
 	}
 
 	public final void setPositionTexture(Texture positiontexture) {
@@ -38,24 +44,13 @@ final class LightingPassPostEffect extends PostEffect<LightingPassShader> {
 	}
 
 	@Override
-	public void bind() {
-		super.bind();
-		shader.bindGBuffers();
-	}
-
-	@Override
 	public void commit() {
 		// Bind GBuffer texturing to the uniforms
 		TextureManager.bindTextureToUnit(normalTexture, TextureUnit.GBuffer_Normal);
 		TextureManager.bindTextureToUnit(positionTexture, TextureUnit.GBuffer_Position);
 		TextureManager.bindTextureToUnit(specularTexture, TextureUnit.GBuffer_Specular);
 		shader.setCameraAttributes(Renderer.getCurrentCamera());
-		shader.updateLights();
-		shader.setVolumetricLightsStrength(volumetricLightsStrength);
-		shader.setTime(Viewport.getElapsedSeconds());
 	}
-
-	public void setVolumetricLightsStrength(float volumetriclightsstrength) { volumetricLightsStrength = volumetriclightsstrength; }
 
 	@Override
 	public void setTexture(Texture texture) {

@@ -30,8 +30,8 @@ public class DeferredRenderer extends Renderer {
 			specularTexture,
 			lightTexture;
 	private static DeferredGBuffersShader GBuffersShader;
-	private LightingPassShader lightingshader;
-	private LightingPassPostEffect lightingPosteffect;
+	private GBufferDeferredLightingPassShader lightingshader;
+	private GBufferLightingPassPostEffect lightingPosteffect;
 	private boolean HDREnabled;
 
 	private int debugGBufferColorIndex = 0;
@@ -99,8 +99,8 @@ public class DeferredRenderer extends Renderer {
 			if (Settings.EnableVolumetricLights)
 				defines.add("VOLUMETRICLIGHTING");
 
-			lightingshader = new LightingPassShader(defines.toArray(new String[0]));
-			lightingPosteffect = new LightingPassPostEffect(lightingshader, normalsTexture, specularTexture, positionTexture);
+			lightingshader = new GBufferDeferredLightingPassShader(defines.toArray(new String[0]));
+			lightingPosteffect = new GBufferLightingPassPostEffect(lightingshader, normalsTexture, specularTexture, positionTexture);
 		}
 
 		Renderer.checkErrors();

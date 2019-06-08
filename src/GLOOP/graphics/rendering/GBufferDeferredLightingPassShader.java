@@ -12,27 +12,19 @@ import org.lwjgl.util.vector.Vector3f;
 
 import java.io.IOException;
 
-final class LightingPassShader extends PostEffectShader {
+final class GBufferDeferredLightingPassShader extends GBufferLightingShader {
 	private Uniform1i
-		positionTexture,
-		normalTexture,
-		specularTexture,
-
 		pointLightCount,
 		directionalLightCount,
 		spotLightCount;
 
 	private Uniform1f
-		znear,
-		zfar,
 		time,
-
 		VolumetricLightsStrength;
+
 	private Uniform16f ViewMatrix;
 
-	private Uniform3f
-		ambientColor,
-		campos;
+	private Uniform3f ambientColor;
 
 	private static final Vector3f passthrough = new Vector3f();
 
@@ -138,7 +130,7 @@ final class LightingPassShader extends PostEffectShader {
 
 	private static final Vector3f cameraposition = new Vector3f(); // Pass through
 
-	public LightingPassShader(String[] defines) throws ShaderCompilationException, IOException {
+	public GBufferDeferredLightingPassShader(String[] defines) throws ShaderCompilationException, IOException {
 		super(
 			"res/_SYSTEM/Shaders/PostEffects/DeferredShading/LightPass/VertexShader.vert",
 			"res/_SYSTEM/Shaders/PostEffects/DeferredShading/LightPass/FragmentShader.frag",
@@ -148,15 +140,9 @@ final class LightingPassShader extends PostEffectShader {
 
 	@Override
 	protected void getCustomUniformLocations() {
-		// Buffers
-		positionTexture = new Uniform1i(this, "positionTexture");
-		normalTexture 	= new Uniform1i(this, "normalTexture");
-		specularTexture = new Uniform1i(this, "specularTexture");
+		super.getCustomUniformLocations();
 
 		// Camera
-		znear 	= new Uniform1f(this, "znear");
-		zfar 	= new Uniform1f(this, "zfar");
-		campos 	= new Uniform3f(this, "campos");
 		ViewMatrix = new Uniform16f(this, "ViewMatrix");
 
 		// Lights
@@ -186,17 +172,6 @@ final class LightingPassShader extends PostEffectShader {
 		time = new Uniform1f(this, "time");
 
 		VolumetricLightsStrength = new Uniform1f(this, "VolumetricLightStrength");
-	}
-
-	@Override
-	protected void setDefaultCustomUniformValues() {
-		bindGBuffers();
-	}
-
-	public void bindGBuffers() {
-		setNormalTexture(TextureUnit.GBuffer_Normal);
-		setPositionTexture(TextureUnit.GBuffer_Position);
-		setSpecularTexture(TextureUnit.GBuffer_Specular);
 	}
 
 	public final void updateLights() { //TODO: Upload all lights to a UBO
@@ -233,28 +208,14 @@ final class LightingPassShader extends PostEffectShader {
 		fog.setDensity(scene.getFogDensity());
 	}
 
-
-	public final void setPositionTexture(int unit) { positionTexture.set(unit);	}
-
-	public final void setNormalTexture(int unit) { normalTexture.set(unit); }
-
-	public final void setSpecularTexture(int unit) { specularTexture.set(unit); }
-
-	public void setznear(float znear) { this.znear.set(znear); }
-
-	public void setzfar(float zfar) { this.zfar.set(zfar); }
-
-	public void setCameraPosition(Vector3f cameraposition) { campos.set(cameraposition); }
-
 	public void setTime(float timeinseconds) { time.set(timeinseconds); }
 
 	public void setVolumetricLightsStrength(float volumetricLightsStrength) { VolumetricLightsStrength.set(volumetricLightsStrength); }
 
+	@Override
 	public void setCameraAttributes(Camera camera) {
-		setzfar(camera.getzfar());
-		setznear(camera.getznear());
-		camera.getPosition(cameraposition);
-		setCameraPosition(cameraposition);
+		super.setCameraAttributes(camera);
+
 		ViewMatrix.set(camera.getViewMatrix());
 	}
 }
