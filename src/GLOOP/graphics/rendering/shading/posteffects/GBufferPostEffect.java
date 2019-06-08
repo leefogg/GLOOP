@@ -2,6 +2,7 @@ package GLOOP.graphics.rendering.shading.posteffects;
 
 import GLOOP.graphics.rendering.Renderer;
 import GLOOP.graphics.rendering.shading.GBufferLightingShader;
+import GLOOP.graphics.rendering.texturing.FrameBuffer;
 import GLOOP.graphics.rendering.texturing.Texture;
 import GLOOP.graphics.rendering.texturing.TextureManager;
 import GLOOP.graphics.rendering.texturing.TextureUnit;
@@ -15,11 +16,14 @@ public abstract class GBufferPostEffect<T extends GBufferLightingShader> extends
 	protected T shader;
 
 	public GBufferPostEffect(T shader, Texture normalbuffer, Texture specularbuffer, Texture positionbuffer) {
-		this.shader = shader;
+		this(shader);
 
 		setNormalTexture(normalbuffer);
 		setSpecularTexture(specularbuffer);
 		setPositionTexture(positionbuffer);
+	}
+	public GBufferPostEffect(T shader) {
+		this.shader = shader;
 	}
 
 	@Override
@@ -55,5 +59,14 @@ public abstract class GBufferPostEffect<T extends GBufferLightingShader> extends
 	@Override
 	public void setTexture(Texture texture) {
 		// Not used in the post processor
+	}
+
+	//TODO: Horrible hack, find a nicer way that eliminates the second method below
+	public void render() {
+		render(null, null);
+	}
+	@Override
+	public void render(FrameBuffer target, Texture lastframe) {
+		PostProcessor.render(this);
 	}
 }

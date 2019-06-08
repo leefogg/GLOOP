@@ -6,6 +6,7 @@ import GLOOP.graphics.data.models.Model;
 import GLOOP.graphics.data.models.Model2D;
 import GLOOP.graphics.data.models.Model3D;
 import GLOOP.graphics.rendering.shading.ShaderCompilationException;
+import GLOOP.graphics.rendering.shading.posteffects.GBufferPostEffect;
 import GLOOP.graphics.rendering.shading.posteffects.PostProcessor;
 import GLOOP.graphics.rendering.texturing.*;
 import org.lwjgl.input.Mouse;
@@ -33,6 +34,7 @@ public class DeferredRenderer extends Renderer {
 	private GBufferDeferredLightingPassShader lightingshader;
 	private GBufferLightingPassPostEffect lightingPosteffect;
 	private boolean HDREnabled;
+	private ArrayList<GBufferPostEffect> PostEffects = new ArrayList<>();
 
 	private int debugGBufferColorIndex = 0;
 
@@ -193,9 +195,13 @@ public class DeferredRenderer extends Renderer {
 		// Calculate lights
 		GBuffers.bind();
 		PostProcessor.render(lightingPosteffect);
+		for (GBufferPostEffect posteffect : PostEffects) {
+			posteffect.bind();
+			posteffect.commit();
+			posteffect.render();
+		}
 
 		// Blend lights with albedo texture attachment
-
 		targetFBO.bind();
 		GBuffers.blitTo(targetFBO, true, true, false); //TODO: Check stencil is making its way from the GBuffer to forward renderer
 		Renderer.enableBlending(true); // Multiply not add
@@ -225,6 +231,13 @@ public class DeferredRenderer extends Renderer {
 	}
 
 	public DeferredMaterial getNewMaterial() { return new DeferredMaterial(); }
+
+	public void addPostEffect(GBufferPostEffect posteffect) {
+		posteffect.setNormalTexture(normalsTexture);
+		posteffect.setPositionTexture(positionTexture);
+		posteffect.setSpecularTexture(specularTexture);
+		PostEffects.add(posteffect);
+	}
 
 	public void setVolumetricLightsStrength(float volumetriclightsstrength) { lightingPosteffect.setVolumetricLightsStrength(volumetriclightsstrength);}
 
