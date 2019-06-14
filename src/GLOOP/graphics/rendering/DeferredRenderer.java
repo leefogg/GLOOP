@@ -195,10 +195,13 @@ public class DeferredRenderer extends Renderer {
 		// Calculate lights
 		GBuffers.bind();
 		PostProcessor.render(lightingPosteffect);
-		for (GBufferPostEffect posteffect : PostEffects) {
-			posteffect.bind();
-			posteffect.commit();
-			posteffect.render();
+		if (PostEffects.size() > 0) {
+			Renderer.enableBlending(true); // Multiply not add
+			Renderer.setBlendFunctionsState(BlendFunction.DestinationColor, BlendFunction.Zero);
+			for (GBufferPostEffect posteffect : PostEffects)
+				posteffect.render();
+			popBlendFunctionsState();
+			Renderer.popBlendingEnabledState();
 		}
 
 		// Blend lights with albedo texture attachment
