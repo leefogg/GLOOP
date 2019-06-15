@@ -1,5 +1,7 @@
 package GLOOP.graphics.rendering.shading.posteffects;
 
+import GLOOP.graphics.Settings;
+import GLOOP.graphics.rendering.Viewport;
 import GLOOP.graphics.rendering.shading.GBufferLightingShader;
 import GLOOP.graphics.rendering.texturing.Texture;
 
@@ -44,5 +46,6 @@ public class SSAOGBufferPostEffect extends GBufferPostEffect {
 		shader.setBias(bias);
 		shader.setSampleRadius(sampleRadius);
 		shader.setMaxDistanceDifference(maxDistance);
+		shader.setElapsedSeconds(Settings.EnableDither ? Viewport.getElapsedSeconds() : 1);
 	}
 }

@@ -49,7 +49,6 @@ public class SSAOGBufferPostEffectShader extends GBufferLightingShader {
 		MathFunctions.createRotatationMatrix(PassThrough, RotationMatrix);
 		RotationMatrix.invert();
 		rotationMatrix.set(RotationMatrix);
-		time.set(Viewport.getElapsedSeconds());
 	}
 
 	public void setTotalSamples(int totalsamples) { samples.set(totalsamples); }
@@ -57,4 +56,5 @@ public class SSAOGBufferPostEffectShader extends GBufferLightingShader {
 	public void setBias(float bias) { this.bias.set(bias); }
 	public void setSampleRadius(float sampleradius) { this.sampleRadius.set(sampleradius); }
 	public void setMaxDistanceDifference(float maxsampledistance) { maxDistance.set(maxsampledistance); }
+	public void setElapsedSeconds(float seconds) { time.set(seconds); }
 }
