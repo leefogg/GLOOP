@@ -22,8 +22,6 @@ final class GBufferDeferredLightingPassShader extends GBufferLightingShader {
 		time,
 		VolumetricLightsStrength;
 
-	private Uniform16f ViewMatrix;
-
 	private Uniform3f ambientColor;
 
 	private static final Vector3f passthrough = new Vector3f();
@@ -142,9 +140,6 @@ final class GBufferDeferredLightingPassShader extends GBufferLightingShader {
 	protected void getCustomUniformLocations() {
 		super.getCustomUniformLocations();
 
-		// Camera
-		ViewMatrix = new Uniform16f(this, "ViewMatrix");
-
 		// Lights
 		// Ambience
 		ambientColor = new Uniform3f(this, "ambientLight");
@@ -211,11 +206,4 @@ final class GBufferDeferredLightingPassShader extends GBufferLightingShader {
 	public void setTime(float timeinseconds) { time.set(timeinseconds); }
 
 	public void setVolumetricLightsStrength(float volumetricLightsStrength) { VolumetricLightsStrength.set(volumetricLightsStrength); }
-
-	@Override
-	public void setCameraAttributes(Camera camera) {
-		super.setCameraAttributes(camera);
-
-		ViewMatrix.set(camera.getViewMatrix());
-	}
 }

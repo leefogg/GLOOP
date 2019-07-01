@@ -93,7 +93,7 @@ public abstract class ShaderProgram implements Disposable {
 		setInverseViewProjectionMatrix(vpmatrix);
 		setModelMatrix(modelmatrix);
 	}
-	private void getMandatoryUniformLocations() {
+	private void getMandatoryUniformLocations() { // TODO: Move these to a shader made for 3D objects only
 		modelMatrix      = new Uniform16f(this, "ModelMatrix");
 		VPMatrix         = new Uniform16f(this, "VPMatrix");
 		inverseVPMatrix  = new Uniform16f(this, "InverseVPMatrix");

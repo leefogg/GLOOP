@@ -216,7 +216,7 @@ public abstract class Renderer implements Disposable {
 		enableStencilTesting(true);
 		setStencilBufferState(Condition.Always, 1, 0xFF);
 		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE); // TODO: Pull this out to public methods
-		Renderer.setDepthFunction(DepthFunction.Less);
+		setDepthFunction(DepthFunction.Less);
 
 		setBlendFunctionsState(BlendFunction.SourceAlpha, BlendFunction.OneMinusSourceAlpha); // TODO: Sure this is the default?
 		glEnable(GL_FRAMEBUFFER_SRGB); // TODO: Pull this out to public methods

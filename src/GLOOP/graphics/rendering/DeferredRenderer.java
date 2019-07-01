@@ -10,6 +10,7 @@ import GLOOP.graphics.rendering.shading.posteffects.GBufferPostEffect;
 import GLOOP.graphics.rendering.shading.posteffects.PostProcessor;
 import GLOOP.graphics.rendering.texturing.*;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.util.vector.Vector3f;
 
 import java.io.IOException;
 import java.nio.IntBuffer;
@@ -21,6 +22,7 @@ import static org.lwjgl.opengl.GL30.glDisablei;
 import static org.lwjgl.opengl.GL30.glEnablei;
 
 public class DeferredRenderer extends Renderer {
+	private static final Vector3f passthrough = new Vector3f();
 	private boolean isDisposed;
 	private FrameBuffer GBuffers, targetFBO;
 	private Texture
@@ -33,6 +35,12 @@ public class DeferredRenderer extends Renderer {
 	private static DeferredGBuffersShader GBuffersShader;
 	private GBufferDeferredLightingPassShader lightingshader;
 	private GBufferLightingPassPostEffect lightingPosteffect;
+	private PointLightGBufferPostEffect pointlightLightingPost;
+	private SpotLightGBufferPostEffect spotLightLightingPost;
+	private AmbientLightGBufferPostEffect ambientLightPostEffect;
+	private DirectionalLightGBufferPostEffect directionalLightPostEffect;
+	private DitherGBufferPostEffect ditherPostEffect;
+	private FogGBufferPostEffect fogPostEffect;
 	private boolean HDREnabled;
 	private ArrayList<GBufferPostEffect> PostEffects = new ArrayList<>();
 
@@ -71,38 +79,57 @@ public class DeferredRenderer extends Renderer {
 	}
 
 	private void loadShaders() throws IOException {
-		List<String> defines = new ArrayList<>();
+		List<String> definesArray = new ArrayList<>();
 		if (GBuffersShader == null || GBuffersShader.isDisposed()) {
 			if (Settings.EnableSpecularMapping)
-				defines.add("SPECULARMAPPING");
+				definesArray.add("SPECULARMAPPING");
 			if (Settings.EnableNormalMapping)
-				defines.add("NORMALMAPPING");
+				definesArray.add("NORMALMAPPING");
 			if (Settings.EnableEnvironemntMapping)
-				defines.add("ENVIRONMENTMAP");
+				definesArray.add("ENVIRONMENTMAP");
 			if (Settings.EnableReflectivity)
-				defines.add("REFLECTIVITY");
+				definesArray.add("REFLECTIVITY");
 			if (Settings.EnableRefractivity)
-				defines.add("REFRACTIVITY");
+				definesArray.add("REFRACTIVITY");
 			if (Settings.EnableChromaticAberration)
-				defines.add("CHROMATICABERRATION");
+				definesArray.add("CHROMATICABERRATION");
 			if (Settings.EnableParallaxMapping)
-				defines.add("PARALLAXMAPPING");
+				definesArray.add("PARALLAXMAPPING");
 			if (Settings.EnableFresnel)
-				defines.add("FRESNEL");
+				definesArray.add("FRESNEL");
 
-			GBuffersShader = new DeferredGBuffersShader(defines.toArray(new String[0]));
+			GBuffersShader = new DeferredGBuffersShader(definesArray.toArray(new String[0]));
 		}
 		if (lightingshader == null || lightingshader.isDisposed()) {
-			defines.clear();
+			definesArray.clear();
 			if (Settings.EnableDither)
-				defines.add("DITHER");
+				definesArray.add("DITHER");
 			if (Settings.EnableFog)
-				defines.add("FOG");
+				definesArray.add("FOG");
 			if (Settings.EnableVolumetricLights)
-				defines.add("VOLUMETRICLIGHTING");
+				definesArray.add("VOLUMETRICLIGHTING");
 
-			lightingshader = new GBufferDeferredLightingPassShader(defines.toArray(new String[0]));
+			String[] defines = definesArray.toArray(new String[0]);
+			lightingshader = new GBufferDeferredLightingPassShader(defines);
 			lightingPosteffect = new GBufferLightingPassPostEffect(lightingshader, normalsTexture, specularTexture, positionTexture);
+
+			PointLightDeferredLightingPassShader pointlightshader = new PointLightDeferredLightingPassShader(defines);
+			pointlightLightingPost = new PointLightGBufferPostEffect(pointlightshader, normalsTexture, specularTexture, positionTexture);
+
+			SpotLightDeferredLightingPassShader spotlightshader = new SpotLightDeferredLightingPassShader(defines);
+			spotLightLightingPost = new SpotLightGBufferPostEffect(spotlightshader, normalsTexture, specularTexture, positionTexture);
+
+			AmbientLightDeferredLightingPassShader ambientlightShader = new AmbientLightDeferredLightingPassShader();
+			ambientLightPostEffect = new AmbientLightGBufferPostEffect(ambientlightShader, normalsTexture, specularTexture, positionTexture);
+
+			DirectionalLightLightingPassShader directionallightShader = new DirectionalLightLightingPassShader();
+			directionalLightPostEffect = new DirectionalLightGBufferPostEffect(directionallightShader, normalsTexture, specularTexture, positionTexture);
+
+			DitherDeferredLightingPassShader ditherShader = new DitherDeferredLightingPassShader();
+			ditherPostEffect = new DitherGBufferPostEffect(ditherShader, normalsTexture, specularTexture, positionTexture);
+
+			FogDeferredLightingPassShader fogShader = new FogDeferredLightingPassShader();
+			fogPostEffect = new FogGBufferPostEffect(fogShader, normalsTexture, specularTexture, positionTexture);
 		}
 
 		Renderer.checkErrors();
@@ -192,26 +219,51 @@ public class DeferredRenderer extends Renderer {
 		if (isDisposed)
 			return;
 
-		// Calculate lights
+		// Render lights
 		GBuffers.bind();
-		PostProcessor.render(lightingPosteffect);
-		if (PostEffects.size() > 0) {
-			Renderer.enableBlending(true); // Multiply not add
-			Renderer.setBlendFunctionsState(BlendFunction.DestinationColor, BlendFunction.Zero);
-			for (GBufferPostEffect posteffect : PostEffects)
-				posteffect.render();
-			popBlendFunctionsState();
-			Renderer.popBlendingEnabledState();
+		//PostProcessor.render(lightingPosteffect);
+		enableBlending(true);
+
+		setBlendFunctionsState(BlendFunction.One, BlendFunction.One); // Additive
+		// Point lights
+		scene.getFogColor(passthrough);
+		for (int i=0; i<scene.getNumberOfPointLights(); i++) {
+			pointlightLightingPost.set(scene.getPointLight(i));
+			pointlightLightingPost.render();
 		}
+		for (int i=0; i<scene.getNumberOfSpotLights(); i++) {
+			spotLightLightingPost.set(scene.getSpotLight(i));
+			spotLightLightingPost.render();
+		}
+		for (int i=0; i<scene.getNumberOfDirectionalLights(); i++) {
+			directionalLightPostEffect.set(scene.getDirectionallight(i));
+			directionalLightPostEffect.render();
+		}
+		scene.getAmbientlight().getColor(passthrough);
+		ambientLightPostEffect.setAmbientColor(passthrough);
+		ambientLightPostEffect.render();
+		if (Settings.EnableDither)
+			ditherPostEffect.render();
+		popBlendFunctionsState();
+		setBlendFunctionsState(BlendFunction.OneMinusSourceAlpha, BlendFunction.SourceAlpha); // Mix
+		if (Settings.EnableFog) {
+			scene.getFogColor(passthrough);
+			fogPostEffect.setFogColor(passthrough);
+			fogPostEffect.setFogDensity(scene.getFogDensity());
+			fogPostEffect.render();
+		}
+		popBlendFunctionsState();
+
+		setBlendFunctionsState(BlendFunction.DestinationColor, BlendFunction.Zero); // Multiplicative
+		for (GBufferPostEffect posteffect : PostEffects)
+			posteffect.render();
 
 		// Blend lights with albedo texture attachment
 		targetFBO.bind();
 		GBuffers.blitTo(targetFBO, true, true, false); //TODO: Check stencil is making its way from the GBuffer to forward renderer
-		Renderer.enableBlending(true); // Multiply not add
-		Renderer.setBlendFunctionsState(BlendFunction.DestinationColor, BlendFunction.Zero);
 		PostProcessor.render(lightTexture);
-		Renderer.popBlendFunctionsState();
-		Renderer.popBlendingEnabledState();
+		popBlendFunctionsState();
+		popBlendingEnabledState();
 	}
 
 	@Override
@@ -242,7 +294,10 @@ public class DeferredRenderer extends Renderer {
 		PostEffects.add(posteffect);
 	}
 
-	public void setVolumetricLightsStrength(float volumetriclightsstrength) { lightingPosteffect.setVolumetricLightsStrength(volumetriclightsstrength);}
+	public void setVolumetricLightsStrength(float volumetriclightsstrength) {
+		lightingPosteffect.setVolumetricLightsStrength(volumetriclightsstrength);
+		spotLightLightingPost.setVolumetricLightsStrength(volumetriclightsstrength);
+	}
 
 	public void debugGBuffer() {
 		// Update which buffer
