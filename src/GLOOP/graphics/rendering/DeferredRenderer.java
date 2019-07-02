@@ -6,6 +6,9 @@ import GLOOP.graphics.data.models.Model;
 import GLOOP.graphics.data.models.Model2D;
 import GLOOP.graphics.data.models.Model3D;
 import GLOOP.graphics.rendering.shading.ShaderCompilationException;
+import GLOOP.graphics.rendering.shading.lights.DirectionalLight;
+import GLOOP.graphics.rendering.shading.lights.PointLight;
+import GLOOP.graphics.rendering.shading.lights.SpotLight;
 import GLOOP.graphics.rendering.shading.posteffects.GBufferPostEffect;
 import GLOOP.graphics.rendering.shading.posteffects.PostProcessor;
 import GLOOP.graphics.rendering.texturing.*;
@@ -14,8 +17,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 import java.io.IOException;
 import java.nio.IntBuffer;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30.glDisablei;
@@ -79,44 +81,48 @@ public class DeferredRenderer extends Renderer {
 	}
 
 	private void loadShaders() throws IOException {
-		List<String> definesArray = new ArrayList<>();
+		Map<String, String> defines = new HashMap<>();
+		
 		if (GBuffersShader == null || GBuffersShader.isDisposed()) {
 			if (Settings.EnableSpecularMapping)
-				definesArray.add("SPECULARMAPPING");
+				defines.put("SPECULARMAPPING", "");
 			if (Settings.EnableNormalMapping)
-				definesArray.add("NORMALMAPPING");
+				defines.put("NORMALMAPPING", "");
 			if (Settings.EnableEnvironemntMapping)
-				definesArray.add("ENVIRONMENTMAP");
+				defines.put("ENVIRONMENTMAP", "");
 			if (Settings.EnableReflectivity)
-				definesArray.add("REFLECTIVITY");
+				defines.put("REFLECTIVITY", "");
 			if (Settings.EnableRefractivity)
-				definesArray.add("REFRACTIVITY");
+				defines.put("REFRACTIVITY", "");
 			if (Settings.EnableChromaticAberration)
-				definesArray.add("CHROMATICABERRATION");
+				defines.put("CHROMATICABERRATION", "");
 			if (Settings.EnableParallaxMapping)
-				definesArray.add("PARALLAXMAPPING");
+				defines.put("PARALLAXMAPPING", "");
 			if (Settings.EnableFresnel)
-				definesArray.add("FRESNEL");
+				defines.put("FRESNEL", "");
 
-			GBuffersShader = new DeferredGBuffersShader(definesArray.toArray(new String[0]));
+			GBuffersShader = new DeferredGBuffersShader(defines.entrySet());
 		}
 		if (lightingshader == null || lightingshader.isDisposed()) {
-			definesArray.clear();
+			defines.clear();
 			if (Settings.EnableDither)
-				definesArray.add("DITHER");
+				defines.put("DITHER", "");
 			if (Settings.EnableFog)
-				definesArray.add("FOG");
+				defines.put("FOG", "");
 			if (Settings.EnableVolumetricLights)
-				definesArray.add("VOLUMETRICLIGHTING");
+				defines.put("VOLUMETRICLIGHTING", "");
 
-			String[] defines = definesArray.toArray(new String[0]);
-			lightingshader = new GBufferDeferredLightingPassShader(defines);
+			defines.put("MAX_POINT_LIGHTS", Integer.toString(Settings.MaxPointLights));
+			defines.put("MAX_SPOT_LIGHTS", Integer.toString(Settings.MaxSpotLights));
+			defines.put("MAX_DIRECTIONAL_LIGHTS", Integer.toString(Settings.MaxDirectionalLights));
+
+			lightingshader = new GBufferDeferredLightingPassShader(defines.entrySet());
 			lightingPosteffect = new GBufferLightingPassPostEffect(lightingshader, normalsTexture, specularTexture, positionTexture);
 
-			PointLightDeferredLightingPassShader pointlightshader = new PointLightDeferredLightingPassShader(defines);
+			PointLightDeferredLightingPassShader pointlightshader = new PointLightDeferredLightingPassShader();
 			pointlightLightingPost = new PointLightGBufferPostEffect(pointlightshader, normalsTexture, specularTexture, positionTexture);
 
-			SpotLightDeferredLightingPassShader spotlightshader = new SpotLightDeferredLightingPassShader(defines);
+			SpotLightDeferredLightingPassShader spotlightshader = new SpotLightDeferredLightingPassShader();
 			spotLightLightingPost = new SpotLightGBufferPostEffect(spotlightshader, normalsTexture, specularTexture, positionTexture);
 
 			AmbientLightDeferredLightingPassShader ambientlightShader = new AmbientLightDeferredLightingPassShader();
@@ -221,10 +227,12 @@ public class DeferredRenderer extends Renderer {
 
 		// Render lights
 		GBuffers.bind();
-		//PostProcessor.render(lightingPosteffect);
 		enableBlending(true);
-
 		setBlendFunctionsState(BlendFunction.One, BlendFunction.One); // Additive
+
+		RenderSimpleLights();
+
+		/*
 		// Point lights
 		scene.getFogColor(passthrough);
 		for (int i=0; i<scene.getNumberOfPointLights(); i++) {
@@ -239,6 +247,7 @@ public class DeferredRenderer extends Renderer {
 			directionalLightPostEffect.set(scene.getDirectionallight(i));
 			directionalLightPostEffect.render();
 		}
+		*/
 		scene.getAmbientlight().getColor(passthrough);
 		ambientLightPostEffect.setAmbientColor(passthrough);
 		ambientLightPostEffect.render();
@@ -264,6 +273,37 @@ public class DeferredRenderer extends Renderer {
 		PostProcessor.render(lightTexture);
 		popBlendFunctionsState();
 		popBlendingEnabledState();
+	}
+
+	private void RenderSimpleLights() {
+		int renderedSpotLights = 0;
+		int renderedPointLights = 0;
+		int rendererdDirectionalLights = 0;
+		List<PointLight> pointLights = new ArrayList<>(Settings.MaxPointLights);
+		List<SpotLight> spotLights = new ArrayList<>(Settings.MaxSpotLights);
+		List<DirectionalLight> directionalLights = new ArrayList<>(Settings.MaxDirectionalLights);
+		do {
+			// Load up the next batch
+			for (int i=0; i<Math.min(scene.getNumberOfPointLights()-renderedPointLights, Settings.MaxPointLights); i++)
+				pointLights.add(scene.getPointLight(renderedPointLights + i));
+			for (int i=0; i<Math.min(scene.getNumberOfSpotLights()-renderedSpotLights, Settings.MaxSpotLights); i++)
+				spotLights.add(scene.getSpotLight(renderedSpotLights + i));
+			for (int i=0; i<Math.min(scene.getNumberOfDirectionalLights()-rendererdDirectionalLights, Settings.MaxDirectionalLights); i++)
+				directionalLights.add(scene.getDirectionallight(rendererdDirectionalLights + i));
+
+			lightingPosteffect.setDirectionalLights(directionalLights);
+			lightingPosteffect.setPointLights(pointLights);
+			lightingPosteffect.setSpotLights(spotLights);
+
+			PostProcessor.render(lightingPosteffect);
+
+			renderedPointLights += pointLights.size();
+			renderedSpotLights += spotLights.size();
+			rendererdDirectionalLights += directionalLights.size();
+			pointLights.clear();
+			spotLights.clear();
+			directionalLights.clear();
+		} while (renderedPointLights < scene.getNumberOfPointLights() || renderedSpotLights < scene.getNumberOfSpotLights() || rendererdDirectionalLights < scene.getNumberOfDirectionalLights());
 	}
 
 	@Override

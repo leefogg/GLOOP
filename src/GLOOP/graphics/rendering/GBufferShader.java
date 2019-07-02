@@ -8,6 +8,7 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.io.IOException;
+import java.util.Map;
 
 public abstract class GBufferShader extends ShaderProgram {
 	private static final Vector3f cameraposition = new Vector3f(); // Pass through
@@ -19,7 +20,7 @@ public abstract class GBufferShader extends ShaderProgram {
 	public GBufferShader(String vertexshaderpath, String fragmentshaderpath) throws IOException {
 		super(vertexshaderpath, fragmentshaderpath);
 	}
-	public GBufferShader(String vertexshaderpath, String fragmentshaderpath, String[] defines) throws IOException {
+	public GBufferShader(String vertexshaderpath, String fragmentshaderpath, Iterable<Map.Entry<String, String>> defines) throws IOException {
 		super(vertexshaderpath, fragmentshaderpath, defines);
 	}
 

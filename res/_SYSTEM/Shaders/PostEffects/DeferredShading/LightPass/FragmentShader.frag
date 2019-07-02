@@ -18,16 +18,13 @@ struct SpotLight {
 	float quadraticAttenuation;
 };
 
-uniform vec3 ambientLight = vec3(0);
 uniform int numberOfPointLights = 0;
-uniform PointLight pointLights[64];
+uniform PointLight pointLights[MAX_POINT_LIGHTS];
 uniform int numberOfDirectionalLights = 0;
-uniform DirectionalLight directionalLights[8];
+uniform DirectionalLight directionalLights[MAX_DIRECTIONAL_LIGHTS];
 uniform int numberOfSpotLights;
-uniform SpotLight spotLights[32];
+uniform SpotLight spotLights[MAX_SPOT_LIGHTS];
 uniform float VolumetricLightStrength = 2.0;
-uniform float fogDensity = 0.02;
-uniform vec3 fogColor = vec3(0,0,0);
 
 #include <GBuffers.include.glsl>
 
@@ -87,7 +84,7 @@ void main(void) {
 	
 	
 	// Ambiance
-	vec3 ambientcolor = ambientLight;
+	vec3 ambientcolor = vec3(0);
 	
 	vec3 pixelcolor = ambientcolor;
 	
@@ -166,19 +163,6 @@ void main(void) {
 		// Specular has luminosity built in
 		pixelcolor += diffusecolor + specularcolor + halo;
 	}
-	
-	//TODO: Change to Blue Noise
-	#if defined DITHER
-	pixelcolor = pixelcolor + dither(textureCoord, time);
-	#endif
-	
-	#if defined FOG
-	float dist = abs(length(campos - worldspaceposition));
-	float fogfactor = 1.0 / exp(dist * fogDensity);
-	fogfactor = clamp(fogfactor, 0.0, 1.0);
-	
-	pixelcolor = mix(fogColor, pixelcolor, fogfactor);
-	#endif
 	
 	pixelColor = vec4(pixelcolor, 1.0);
 }

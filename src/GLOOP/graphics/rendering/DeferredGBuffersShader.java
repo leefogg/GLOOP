@@ -11,6 +11,7 @@ import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
 import java.io.IOException;
+import java.util.Map;
 
 final class DeferredGBuffersShader extends GBufferShader {
 	private Uniform1i
@@ -42,7 +43,7 @@ final class DeferredGBuffersShader extends GBufferShader {
 		hasDepthMap;
 	private Uniform4f refractionIndices;
 
-	public DeferredGBuffersShader(String[] defines) throws ShaderCompilationException, IOException {
+	public DeferredGBuffersShader(Iterable<Map.Entry<String, String>> defines) throws ShaderCompilationException, IOException {
 		super(
 			"res/_SYSTEM/Shaders/DeferredLighting/VertexShader.vert",
 			"res/_SYSTEM/Shaders/DeferredLighting/FragmentShader.frag",

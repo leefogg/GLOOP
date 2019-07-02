@@ -6,6 +6,7 @@ import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class ShaderBuilder {
 	private StringBuilder sourceCode;
@@ -15,15 +16,15 @@ public class ShaderBuilder {
 		sourceCode = loadTextFile(shaderfilepath);
 	}
 
-	public ShaderBuilder addDefines(String[] defines) {
-		for (String define : defines)
+	public ShaderBuilder addDefines(Iterable<Map.Entry<String, String>> defines) {
+		for (Map.Entry<String, String> define : defines)
 			define(define);
 
 		return this;
 	}
-	public ShaderBuilder define(String constant) {
+	public ShaderBuilder define(Map.Entry<String, String> kvPair) {
 		int firstnewline = sourceCode.indexOf("\n") + 1;
-		sourceCode.insert(firstnewline, "#define " + constant + "\n");
+		sourceCode.insert(firstnewline, "#define " + kvPair.getKey() + " " + kvPair.getValue() + "\n");
 
 		return this;
 	}

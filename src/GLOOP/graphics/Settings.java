@@ -17,7 +17,7 @@ public class Settings {
 			EnableHDR = false,
 			EnableVolumetricLights = false;
 	public static int
-			MaxPointLights = 64,
+			MaxPointLights = 32,
 			MaxSpotLights = 32,
 			MaxDirectionalLights = 8;
 }

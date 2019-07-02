@@ -12,11 +12,10 @@ class PointLightDeferredLightingPassShader extends GBufferLightingShader {
 	private Uniform3f position, color;
 	private Uniform1f quadraticAttenuation;
 
-	PointLightDeferredLightingPassShader(String[] defines) throws ShaderCompilationException, IOException {
+	PointLightDeferredLightingPassShader() throws ShaderCompilationException, IOException {
 		super(
 				"res/_SYSTEM/Shaders/PostEffects/DeferredShading/LightPass/VertexShader.vert",
-				"res/_SYSTEM/Shaders/PostEffects/DeferredShading/LightPass/PointLight.glsl",
-				defines
+				"res/_SYSTEM/Shaders/PostEffects/DeferredShading/LightPass/PointLight.glsl"
 		);
 	}
 

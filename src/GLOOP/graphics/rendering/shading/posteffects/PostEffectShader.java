@@ -10,6 +10,7 @@ import GLOOP.graphics.rendering.shading.VertexShader;
 import GLOOP.graphics.rendering.texturing.TextureUnit;
 
 import java.io.IOException;
+import java.util.Map;
 
 public class PostEffectShader extends ShaderProgram {
 	private Uniform1i texture1;
@@ -17,7 +18,7 @@ public class PostEffectShader extends ShaderProgram {
 	public PostEffectShader(String vertexshader, String fragmentshader) throws ShaderCompilationException, IOException {
 		super(vertexshader, fragmentshader);
 	}
-	public PostEffectShader(String vertexshader, String fragmentshader, String[] defines) throws ShaderCompilationException, IOException {
+	public PostEffectShader(String vertexshader, String fragmentshader, Iterable<Map.Entry<String, String>> defines) throws ShaderCompilationException, IOException {
 		super(vertexshader, fragmentshader, defines);
 	}
 	public PostEffectShader(VertexShader vertexshader, FragmentShader fragmentshader) {

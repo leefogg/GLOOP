@@ -10,6 +10,7 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
 
 import java.io.IOException;
+import java.util.Map;
 
 import static org.lwjgl.opengl.GL20.*;
 
@@ -35,7 +36,7 @@ public abstract class ShaderProgram implements Disposable {
 			new FragmentShader(new ShaderBuilder(fragmentshaderpath).getSourceCode())
 		);
 	}
-	public ShaderProgram(String vertexshaderpath, String fragmentshaderpath, String[] defines) throws ShaderCompilationException, IOException {
+	public ShaderProgram(String vertexshaderpath, String fragmentshaderpath, Iterable<Map.Entry<String, String>> defines) throws ShaderCompilationException, IOException {
 		this(
 			new VertexShader(new ShaderBuilder(vertexshaderpath).addDefines(defines).getSourceCode()),
 			new FragmentShader(new ShaderBuilder(fragmentshaderpath).addDefines(defines).getSourceCode())

@@ -9,6 +9,7 @@ import GLOOP.graphics.rendering.texturing.TextureUnit;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.io.IOException;
+import java.util.Map;
 
 public class GBufferLightingShader extends PostEffectShader {
 	private static final Vector3f cameraposition = new Vector3f(); // Pass through
@@ -28,7 +29,7 @@ public class GBufferLightingShader extends PostEffectShader {
 		super(vertexshader, fragmentshader);
 	}
 
-	public GBufferLightingShader(String vertexshader, String fragmentshader, String[] defines) throws ShaderCompilationException, IOException {
+	public GBufferLightingShader(String vertexshader, String fragmentshader, Iterable<Map.Entry<String, String>> defines) throws ShaderCompilationException, IOException {
 		super(vertexshader, fragmentshader, defines);
 	}
 

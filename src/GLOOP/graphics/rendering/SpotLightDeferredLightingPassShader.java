@@ -19,11 +19,10 @@ class SpotLightDeferredLightingPassShader extends GBufferLightingShader {
 			quadraticAttenuation,
 			volumetricLightStrength;
 
-	SpotLightDeferredLightingPassShader(String[] defines) throws ShaderCompilationException, IOException {
+	SpotLightDeferredLightingPassShader() throws ShaderCompilationException, IOException {
 		super(
 				"res/_SYSTEM/Shaders/PostEffects/DeferredShading/LightPass/VertexShader.vert",
-				"res/_SYSTEM/Shaders/PostEffects/DeferredShading/LightPass/SpotLight.glsl",
-				defines
+				"res/_SYSTEM/Shaders/PostEffects/DeferredShading/LightPass/SpotLight.glsl"
 		);
 	}
 
