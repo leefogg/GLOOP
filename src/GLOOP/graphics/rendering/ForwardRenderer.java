@@ -5,6 +5,7 @@ import GLOOP.graphics.data.models.Model;
 import GLOOP.graphics.data.models.Model2D;
 import GLOOP.graphics.data.models.Model3D;
 import GLOOP.graphics.rendering.particlesystem.ParticleSystem;
+import GLOOP.graphics.rendering.shading.materials.Material;
 import GLOOP.graphics.rendering.texturing.FrameBuffer;
 import GLOOP.graphics.rendering.texturing.PixelFormat;
 import GLOOP.graphics.rendering.texturing.Texture;
@@ -27,9 +28,15 @@ public class ForwardRenderer extends Renderer {
 
 		if (previoustechnique != null)
 			if (previoustechnique instanceof ForwardRenderer)
-				Renderer.clear(true, true, true);
+				reset();
 			else
 				previoustechnique.getBuffer().blitTo(buffer, true, true, false);
+	}
+
+	@Override
+	public void reset() {
+		buffer.bind();
+		clear(true, true, true);
 	}
 
 	private void renderModels(boolean transparrent) {
@@ -65,6 +72,18 @@ public class ForwardRenderer extends Renderer {
 		for (Model2D overlay : scene.getOverlays())
 			if (!cannotRenderModel(overlay))
 				overlay.render();
+	}
+
+	public void render3DModels(Material materialOverride) {
+		if (materialOverride.usesDeferredPipeline())
+			return;
+
+		for (Model3D model : scene.getModels()) {
+			if (model.visibility() == Model.Visibility.NotVisible)
+				continue;
+
+			model.render(materialOverride);
+		}
 	}
 
 	private boolean cannotRenderModel(Model model) {

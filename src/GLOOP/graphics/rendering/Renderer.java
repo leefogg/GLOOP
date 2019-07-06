@@ -28,6 +28,7 @@ public abstract class Renderer implements Disposable {
 	protected static boolean useDebugCamera = false;
 
 	public abstract void bind(Renderer previoustechnique);
+	public abstract void reset();
 	protected abstract void renderScene();
 	public abstract Texture getTexture();
 	public abstract FrameBuffer getBuffer();

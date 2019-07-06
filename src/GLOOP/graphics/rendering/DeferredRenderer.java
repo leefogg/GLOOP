@@ -169,6 +169,11 @@ public class DeferredRenderer extends Renderer {
 		GBuffers.bind();
 	}
 
+	@Override
+	public void reset() {
+		// Always fully writes over buffers so no need to clear
+	}
+
 	private void renderModels(boolean transparrent) {
 		for (Model3D model : scene.getModels()) {
 			if (!model.getMaterial().usesDeferredPipeline())

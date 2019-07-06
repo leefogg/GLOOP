@@ -91,4 +91,11 @@ public abstract class Model implements Renderable {
 
 		modelData.render();
 	}
+
+	public void render(Material materialOverride) {
+		Material currentmaterial = material;
+		material = materialOverride;
+		render();
+		material = currentmaterial;
+	}
 }
