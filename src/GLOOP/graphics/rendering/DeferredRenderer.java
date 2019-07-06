@@ -281,34 +281,31 @@ public class DeferredRenderer extends Renderer {
 	}
 
 	private void RenderSimpleLights() {
-		int renderedSpotLights = 0;
-		int renderedPointLights = 0;
-		int rendererdDirectionalLights = 0;
 		List<PointLight> pointLights = new ArrayList<>(Settings.MaxPointLights);
 		List<SpotLight> spotLights = new ArrayList<>(Settings.MaxSpotLights);
 		List<DirectionalLight> directionalLights = new ArrayList<>(Settings.MaxDirectionalLights);
+		int
+			pli = 0,
+			sli = 0,
+			dli = 0;
 		do {
 			// Load up the next batch
-			for (int i=0; i<Math.min(scene.getNumberOfPointLights()-renderedPointLights, Settings.MaxPointLights); i++)
-				pointLights.add(scene.getPointLight(renderedPointLights + i));
-			for (int i=0; i<Math.min(scene.getNumberOfSpotLights()-renderedSpotLights, Settings.MaxSpotLights); i++)
-				spotLights.add(scene.getSpotLight(renderedSpotLights + i));
-			for (int i=0; i<Math.min(scene.getNumberOfDirectionalLights()-rendererdDirectionalLights, Settings.MaxDirectionalLights); i++)
-				directionalLights.add(scene.getDirectionallight(rendererdDirectionalLights + i));
+			for (; pli<scene.getNumberOfPointLights() && pointLights.size() < Settings.MaxPointLights; pli++)
+				pointLights.add(scene.getPointLight(pli));
+			for (; sli<scene.getNumberOfSpotLights() && spotLights.size() < Settings.MaxSpotLights; sli++)
+				spotLights.add(scene.getSpotLight(sli));
+			for (; dli<scene.getNumberOfDirectionalLights() && directionalLights.size() < Settings.MaxDirectionalLights; dli++)
+				directionalLights.add(scene.getDirectionallight(dli));
 
 			lightingPosteffect.setDirectionalLights(directionalLights);
 			lightingPosteffect.setPointLights(pointLights);
 			lightingPosteffect.setSpotLights(spotLights);
-
 			PostProcessor.render(lightingPosteffect);
 
-			renderedPointLights += pointLights.size();
-			renderedSpotLights += spotLights.size();
-			rendererdDirectionalLights += directionalLights.size();
 			pointLights.clear();
 			spotLights.clear();
 			directionalLights.clear();
-		} while (renderedPointLights < scene.getNumberOfPointLights() || renderedSpotLights < scene.getNumberOfSpotLights() || rendererdDirectionalLights < scene.getNumberOfDirectionalLights());
+		} while (pli < scene.getNumberOfPointLights() || sli < scene.getNumberOfSpotLights() || dli < scene.getNumberOfDirectionalLights());
 	}
 
 	@Override
