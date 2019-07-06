@@ -2,7 +2,7 @@ package GLOOP.graphics.rendering.shading.lights;
 
 import org.lwjgl.util.vector.Vector3f;
 
-public final class DirectionalLight {
+public final class DirectionalLight extends Light {
 	private final Vector3f direction = new Vector3f(0,0,0);
 	private final Vector3f diffuseColor = new Vector3f(1,1,1);
 
@@ -22,5 +22,25 @@ public final class DirectionalLight {
 	public void setStrength(float strength) {
 		this.direction.normalise();
 		this.direction.scale(strength);
+	}
+
+	@Override
+	public boolean IsComplex() {
+		return IsShadowMapEnabled();
+	}
+
+	@Override
+	public boolean IsShadowMapEnabled() {
+		return false;
+	}
+
+	@Override
+	public void SetShadowMapEnabled(boolean enabled) {
+
+	}
+
+	@Override
+	public void UpdateShadowMap() {
+
 	}
 }

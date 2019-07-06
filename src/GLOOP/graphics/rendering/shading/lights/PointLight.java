@@ -2,7 +2,7 @@ package GLOOP.graphics.rendering.shading.lights;
 
 import org.lwjgl.util.vector.Vector3f;
 
-public final class PointLight {
+public final class PointLight extends Light {
 	private final Vector3f position = new Vector3f();
 	private final Vector3f color = new Vector3f(1,1,1);
 	public float quadraticAttenuation = Integer.MAX_VALUE;
@@ -27,5 +27,25 @@ public final class PointLight {
 	public final void setColor(float r, float g, float b) {
 		color.set(r,g,b);
 		color.normalise();
+	}
+
+	@Override
+	public boolean IsComplex() {
+		return IsShadowMapEnabled();
+	}
+
+	@Override
+	public boolean IsShadowMapEnabled() {
+		return false;
+	}
+
+	@Override
+	public void SetShadowMapEnabled(boolean enabled) {
+
+	}
+
+	@Override
+	public void UpdateShadowMap() {
+
 	}
 }

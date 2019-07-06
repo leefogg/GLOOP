@@ -2,7 +2,7 @@ package GLOOP.graphics.rendering.shading.lights;
 
 import org.lwjgl.util.vector.Vector3f;
 
-public final class SpotLight {
+public final class SpotLight extends Light {
 	private final Vector3f position = new Vector3f(0,0,0);
 	private final Vector3f direction = new Vector3f(0,-1,0); // TODO: Make Quaternion
 	private final Vector3f color = new Vector3f(1,1,1);
@@ -44,4 +44,24 @@ public final class SpotLight {
 	public void setColor(float r, float g, float b) { color.set(r, g, b); }
 	public void setInnerCone(float innerconedegrees) { innerCone = (float)Math.cos(Math.toRadians(innerconedegrees)); }
 	public void setOuterCone(float outerconedegrees) { outerCone = (float)Math.cos(Math.toRadians(outerconedegrees)); }
+
+	@Override
+	public boolean IsComplex() {
+		return IsShadowMapEnabled();
+	}
+
+	@Override
+	public boolean IsShadowMapEnabled() {
+		return false;
+	}
+
+	@Override
+	public void SetShadowMapEnabled(boolean enabled) {
+
+	}
+
+	@Override
+	public void UpdateShadowMap() {
+
+	}
 }
