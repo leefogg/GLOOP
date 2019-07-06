@@ -25,15 +25,16 @@ import static org.lwjgl.opengl.GL30.glEnablei;
 
 public class DeferredRenderer extends Renderer {
 	private static final Vector3f passthrough = new Vector3f();
+
 	private boolean isDisposed;
 	private FrameBuffer GBuffers, targetFBO;
 	private Texture
-			resolveTexture,
-			albedoTexture,
-			normalsTexture,
-			positionTexture,
-			specularTexture,
-			lightTexture;
+		resolveTexture,
+		albedoTexture,
+		normalsTexture,
+		positionTexture,
+		specularTexture,
+		lightTexture;
 	private static DeferredGBuffersShader GBuffersShader;
 	private GBufferDeferredLightingPassShader lightingshader;
 	private GBufferLightingPassPostEffect lightingPosteffect;
@@ -45,6 +46,10 @@ public class DeferredRenderer extends Renderer {
 	private FogGBufferPostEffect fogPostEffect;
 	private boolean HDREnabled;
 	private ArrayList<GBufferPostEffect> PostEffects = new ArrayList<>();
+	private final List<PointLight> pointLights = new ArrayList<>(Settings.MaxPointLights);
+	private final List<SpotLight> spotLights = new ArrayList<>(Settings.MaxSpotLights);
+	private final List<DirectionalLight> directionalLights = new ArrayList<>(Settings.MaxDirectionalLights);
+
 
 	private int debugGBufferColorIndex = 0;
 
@@ -289,9 +294,6 @@ public class DeferredRenderer extends Renderer {
 	}
 
 	private void RenderSimpleLights() {
-		List<PointLight> pointLights = new ArrayList<>(Settings.MaxPointLights);
-		List<SpotLight> spotLights = new ArrayList<>(Settings.MaxSpotLights);
-		List<DirectionalLight> directionalLights = new ArrayList<>(Settings.MaxDirectionalLights);
 		int
 			pli = 0,
 			sli = 0,
