@@ -23,6 +23,7 @@ import java.util.Hashtable;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Texture extends Buffer {
+	private static Texture CurrentTexture;
 	private static long
 		TotalBytes,
 		BytesAdded,
@@ -148,6 +149,7 @@ public class Texture extends Buffer {
 			return false;
 
 		glBindTexture(type.getGLEnum(), getID());
+		CurrentTexture = this;
 		return true;
 	}
 
@@ -319,6 +321,8 @@ public class Texture extends Buffer {
 
 		return newimage;
 	}
+
+	public static final Texture GetCurrentBoundTexture() { return CurrentTexture; }
 
 	@Override
 	public String toString() {
