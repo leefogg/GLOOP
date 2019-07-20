@@ -56,6 +56,8 @@ public class TextureManager {
 	public static void bindReflectionMap(CubeMap reflectionmap) { bindTextureToUnit(reflectionmap, TextureUnit.EnvironmentMap);	}
 
 	public static void bindTextureToUnit(Texture tex, int unit) {
+		if (tex == null || tex.isDisposed())
+			return;
 		if (unit >= numberOfTextureUnits)
 			return;
 
