@@ -3,12 +3,9 @@ package GLOOP.graphics.rendering.shading.lights;
 import GLOOP.graphics.cameras.Camera;
 import GLOOP.graphics.rendering.ForwardRenderer;
 import GLOOP.graphics.rendering.Renderer;
-import GLOOP.graphics.rendering.shading.materials.DepthMaterial;
 import GLOOP.graphics.rendering.texturing.*;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.util.vector.Vector3f;
-
-import java.io.IOException;
 
 import static org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT0;
 import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
@@ -18,9 +15,7 @@ public final class PointLight extends Light {
 	private static int CubeMapsCreatedProbe;
 
 	private class ShadowProbe extends EnvironmentProbe {
-		private DepthMaterial depthMaterial;
-
-		public ShadowProbe(int framesUntilRenew) throws IOException {
+		public ShadowProbe(int framesUntilRenew) {
 			super(
 				new CubeMap(
 					"DepthMapCProbe" + CubeMapsCreatedProbe++,
@@ -31,12 +26,6 @@ public final class PointLight extends Light {
 				),
 				framesUntilRenew
 			);
-
-			createDepthShader();
-		}
-
-		private void createDepthShader() throws IOException {
-			depthMaterial = new DepthMaterial();
 		}
 
 		@Override
@@ -71,7 +60,7 @@ public final class PointLight extends Light {
 				switchToFace(i);
 
 				renderer.reset();
-				renderer.render3DModels(depthMaterial);
+				renderer.renderShadowScene();
 			}
 
 			framesUntilRenew = renewDelayFrames;
@@ -123,7 +112,7 @@ public final class PointLight extends Light {
 	}
 
 	@Override
-	public void SetShadowMapEnabled(boolean enabled) throws IOException {
+	public void SetShadowMapEnabled(boolean enabled) {
 		if (enabled && isShadowMapEnabled()) // No Change
 			return;
 

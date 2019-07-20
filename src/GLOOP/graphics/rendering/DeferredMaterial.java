@@ -188,4 +188,10 @@ public final class DeferredMaterial extends Material<DeferredGBuffersShader> {
 
 	@Override
 	protected boolean hasTransparency() { return albedoMap != null && albedoMap.isTransparent(); }
+
+	@Override
+	public boolean SupportsShadowMaps() { return true; }
+
+	@Override
+	public Texture GetAlbedoTexture() { return albedoMap;	}
 }

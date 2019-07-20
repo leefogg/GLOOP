@@ -51,6 +51,9 @@ public class FontMaterial extends Material<FontShader> {
 		return true;
 	}
 
+	@Override
+	public boolean SupportsShadowMaps() { return false; }
+
 	public void setFontTextureAtlas(Texture fonttextureatlas) { TextureAtlas = fonttextureatlas; }
 	public void setScale(float width, float height) { Scale.set(width / TextureAtlas.getWidth(),  height / TextureAtlas.getHeight()); }
 	public void setOffset(float x, float y) { Offset.set(x / TextureAtlas.getWidth(), y / TextureAtlas.getHeight()); }

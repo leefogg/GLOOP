@@ -54,4 +54,9 @@ public final class LambartMaterial extends Material<LambartShader> {
 	@Override
 	protected boolean hasTransparency() { return albedo.isTransparent(); }
 
+	@Override
+	public boolean SupportsShadowMaps() { return true; }
+
+	@Override
+	public Texture GetAlbedoTexture() { return albedo; }
 }

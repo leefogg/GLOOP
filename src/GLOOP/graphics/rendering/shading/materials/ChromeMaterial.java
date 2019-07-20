@@ -49,4 +49,7 @@ public class ChromeMaterial extends Material<ChromeShader> {
 	protected boolean hasTransparency() {
 		return false;
 	}
+
+	@Override
+	public boolean SupportsShadowMaps() { return true; }
 }

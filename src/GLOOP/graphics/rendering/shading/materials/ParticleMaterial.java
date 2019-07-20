@@ -44,4 +44,12 @@ public class ParticleMaterial extends Material<ParticleShader> {
 	}
 
 	public static void setRadius(float radius) { Radius = radius; }
+
+	@Override
+	public boolean SupportsShadowMaps() { return true; }
+
+	@Override
+	public Texture GetAlbedoTexture() {
+		return texture;
+	}
 }

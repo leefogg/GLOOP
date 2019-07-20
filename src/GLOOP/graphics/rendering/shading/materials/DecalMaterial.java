@@ -81,4 +81,7 @@ public class DecalMaterial extends Material<DecalShader> {
 	protected boolean hasTransparency() {
 		return false;
 	}
+
+	@Override
+	public boolean SupportsShadowMaps() { return false; }
 }

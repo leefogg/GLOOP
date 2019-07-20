@@ -23,4 +23,7 @@ public class BasicMaterial<T extends ShaderProgram> extends Material<T> {
 	protected boolean hasTransparency() {
 		return shader.supportsTransparency();
 	}
+
+	@Override
+	public boolean SupportsShadowMaps() { return true; }
 }

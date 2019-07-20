@@ -3,6 +3,8 @@ package GLOOP.graphics.rendering;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER_SRGB;
 
+import GLOOP.graphics.Settings;
+import GLOOP.graphics.rendering.shading.materials.Material;
 import GLOOP.resources.Disposable;
 import GLOOP.general.collections.GenericStackable;
 import GLOOP.general.collections.Stack;
@@ -224,6 +226,11 @@ public abstract class Renderer implements Disposable {
 		glEnable(GL_FRAMEBUFFER_SRGB); // TODO: Pull this out to public methods
 
 		setRenderer(getForwardRenderer());
+	}
+
+	public static void Init() throws IOException {
+		if (Settings.EnableShadows)
+			Material.CreateShadowMapShader();
 	}
 
 	public static DeferredRenderer getDeferedRenderer() throws IOException, ShaderCompilationException {

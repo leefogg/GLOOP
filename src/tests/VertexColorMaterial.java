@@ -23,4 +23,7 @@ public class VertexColorMaterial extends Material<VertexColorShader> {
 	protected boolean hasTransparency() {
 		return false;
 	}
+
+	@Override
+	public boolean SupportsShadowMaps() { return true; }
 }

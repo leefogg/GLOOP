@@ -54,4 +54,7 @@ public class RayMarchMaterial extends Material<RayMarchShader> {
 
 	@Override
 	public boolean usesDeferredPipeline() { return true; }
+
+	@Override
+	public boolean SupportsShadowMaps() { return true; }
 }

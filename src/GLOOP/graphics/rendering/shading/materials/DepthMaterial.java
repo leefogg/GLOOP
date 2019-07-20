@@ -1,22 +1,14 @@
 package GLOOP.graphics.rendering.shading.materials;
 
-import GLOOP.graphics.cameras.Camera;
-import org.lwjgl.util.vector.Matrix4f;
-
-import java.io.IOException;
+import GLOOP.graphics.rendering.texturing.Texture;
+import GLOOP.graphics.rendering.texturing.TextureManager;
 
 public class DepthMaterial extends Material<DepthShader> {
 	private DepthShader shader;
+	private Texture AlbedoMap;
 
-	public DepthMaterial() throws IOException {
-		shader = getShaderSingleton();
-	}
-
-	private DepthShader getShaderSingleton() throws IOException {
-		if (shader == null)
-			shader = new DepthShader();
-
-		return shader;
+	public DepthMaterial(DepthShader depthShader) {
+		shader = depthShader;
 	}
 
 	@Override
@@ -26,17 +18,17 @@ public class DepthMaterial extends Material<DepthShader> {
 
 	@Override
 	public void commit() {
-
+		TextureManager.bindAlbedoMap(AlbedoMap);
 	}
 
-	@Override
-	public void setCameraAttributes(Camera currentcamera, Matrix4f modelmatrix) {
-		super.setCameraAttributes(currentcamera, modelmatrix);
-		shader.set(currentcamera);
-	}
+	public void setAlbedoMap(Texture albedoMap) { AlbedoMap = albedoMap; }
 
 	@Override
-	protected boolean hasTransparency() {
-		return false;
-	}
+	protected boolean hasTransparency() { return AlbedoMap.isTransparent(); }
+
+	@Override
+	public boolean SupportsShadowMaps() { return true; }
+
+	@Override
+	public Texture GetAlbedoTexture() { return AlbedoMap; }
 }

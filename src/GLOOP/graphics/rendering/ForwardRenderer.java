@@ -73,12 +73,13 @@ public class ForwardRenderer extends Renderer {
 				overlay.render();
 	}
 
-	public void render3DModels(Material materialOverride) {
-		if (materialOverride.usesDeferredPipeline())
-			return;
-
+	public void renderShadowScene() {
 		for (Model3D model : scene.getModels()) {
-			model.render(materialOverride);
+			Material modelMaterial = model.getMaterial();
+			if (!modelMaterial.SupportsShadowMaps())
+				continue;
+
+			model.render(modelMaterial.ToShadowMapMaterial());
 		}
 	}
 

@@ -9,7 +9,6 @@ import GLOOP.graphics.rendering.*;
 import GLOOP.graphics.rendering.shading.lights.PointLight;
 import GLOOP.graphics.rendering.shading.materials.SingleColorMaterial;
 import GLOOP.graphics.rendering.texturing.*;
-import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
@@ -19,14 +18,16 @@ import java.io.IOException;
 import java.util.Random;
 
 public class ShadowMappingTest {
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) {
 		try {
 			Viewport.create(1280, 720, "Engine Testing");
 			Viewport.show();
 			Settings.EnableHDR = true;
+			Settings.EnableShadows = true;
 			//Viewport.setVSyncEnabled(false);
 			//Viewport.limitFrameRate(false);
-		} catch (LWJGLException e) {
+			Renderer.Init();
+		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
@@ -54,7 +55,8 @@ public class ShadowMappingTest {
 
 		Model3D lightsphere = null;
 		try {
-			Texture albedomap = TextureManager.newTexture("res\\textures\\default.png", PixelComponents.RGB, PixelFormat.SRGB8);
+			Texture walltexture = TextureManager.newTexture("res\\textures\\default.png", PixelComponents.RGB, PixelFormat.SRGB8);
+			Texture fencetexture = TextureManager.newTexture("res\\textures\\fence.png", PixelComponents.RGBA, PixelFormat.SRGBA8);
 
 			Random r = new Random(2);
 			Vector3f randompos = new Vector3f();
@@ -69,6 +71,7 @@ public class ShadowMappingTest {
 
 				DeferredMaterial deferredmaterial = deferredrenderer.getNewMaterial();
 				deferredmaterial.setAlbedoColor(1,1,1,1);
+				deferredmaterial.setAlbedoMap(fencetexture);
 				Model3D cube2 = ModelFactory.getModel("res\\models\\cube.obj", deferredmaterial);
 				cube2.setPosition(randompos);
 				cube2.setRotation(randomrot);
@@ -78,7 +81,7 @@ public class ShadowMappingTest {
 
 			DeferredMaterial floormaterial = deferredrenderer.getNewMaterial();
 			floormaterial.setAlbedoColor(1, 1, 1, 1);
-			floormaterial.setAlbedoMap(albedomap);
+			floormaterial.setAlbedoMap(walltexture);
 			floormaterial.setAlbedoColor(1, 1, 1, 1);
 			floormaterial.setTextureRepeat(2, 2);
 			floormaterial.setSpecularity(1);

@@ -39,4 +39,7 @@ public final class CubeMapMaterial extends Material<CubeMapShader> {
 	@Override
 	protected boolean hasTransparency() { return false; }
 
+	@Override
+	public boolean SupportsShadowMaps() { return false; }
+
 }

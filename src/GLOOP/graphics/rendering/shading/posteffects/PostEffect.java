@@ -16,6 +16,11 @@ public abstract class PostEffect<T extends PostEffectShader> extends Material<T>
 	public boolean isEnabled() { return enabled; }
 	public void setEnabled(boolean enabled) { this.enabled = enabled; }
 
+	@Override
+	public boolean SupportsShadowMaps() {
+		return false;
+	}
+
 	public void render(FrameBuffer target, Texture lastframe) {
 		target.bind();
 		PostProcessor.render(lastframe, this);

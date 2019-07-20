@@ -46,4 +46,7 @@ public final class SingleColorMaterial extends Material<SingleColorShader> {
 	public void setColor(Vector3f color) { setColor(color.x, color.y, color.z);}
 
 	public void setColor(float red, float green, float blue) { color.set(red, green, blue);	}
+
+	@Override
+	public boolean SupportsShadowMaps() { return true; }
 }

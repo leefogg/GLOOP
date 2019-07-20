@@ -27,4 +27,7 @@ public class ShaderToyMaterial extends Material<ShaderToyShader> {
 	protected boolean hasTransparency() {
 		return false;
 	}
+
+	@Override
+	public boolean SupportsShadowMaps() { return false; }
 }
