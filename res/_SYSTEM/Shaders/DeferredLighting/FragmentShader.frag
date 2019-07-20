@@ -150,8 +150,9 @@ void main(void) {
 	} else {
 		albedocolor = AlbedoColor;
 	}
+	if (albedocolor.a < 1.0/255.0)
+		discard;
 	albedobuffer.rgb = albedocolor.rgb;
-
 	
 	// Calculate normal
 	vec3 norm;
