@@ -97,6 +97,7 @@ public class CubeMap extends Texture {
 	public void setSize(Vector3f size) { this.size.set(size); }
 	public void getSize(Vector3f out) { out.set(size); }
 
-	public void setPosition(Vector3f position) { this.position.set(position); }
+	public void setPosition(Vector3f position) { setPosition(position.x, position.y, position.z); }
+	public void setPosition(float x, float y, float z) { position.set(x, y, z); }
 	public void getPosition(Vector3f out){ out.set(position); }
 }

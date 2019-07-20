@@ -47,21 +47,16 @@ public final class SpotLight extends Light {
 
 	@Override
 	public boolean IsComplex() {
-		return IsShadowMapEnabled();
+		return isShadowMapEnabled();
 	}
 
 	@Override
-	public boolean IsShadowMapEnabled() {
+	public boolean isShadowMapEnabled() {
 		return false;
 	}
 
 	@Override
 	public void SetShadowMapEnabled(boolean enabled) {
-
-	}
-
-	@Override
-	public void UpdateShadowMap() {
 
 	}
 }

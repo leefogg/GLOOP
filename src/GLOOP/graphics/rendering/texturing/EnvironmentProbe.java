@@ -1,31 +1,33 @@
 package GLOOP.graphics.rendering.texturing;
 
+import GLOOP.resources.Disposable;
 import GLOOP.resources.Expirable;
 import GLOOP.graphics.cameras.Camera;
 import GLOOP.graphics.cameras.PerspectiveCamera;
 import GLOOP.graphics.rendering.Renderer;
 import GLOOP.graphics.rendering.Viewport;
+import GLOOP.resources.ResourceManager;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.util.vector.Vector3f;
 
 import static org.lwjgl.opengl.GL30.*;
 
-public class EnvironmentProbe implements Expirable {
-	private static final Vector3f Temp = new Vector3f();
-	private static final PerspectiveCamera RENDERCAM = new PerspectiveCamera(Viewport.getWidth(), Viewport.getHeight(), 90, 0.01f, 1000);
-	private static final int DefaultRenewDelayFrames = -1; // Default is static. Never update.
+public class EnvironmentProbe implements Expirable, Disposable {
+	protected static final Vector3f Temp = new Vector3f();
+	protected static final PerspectiveCamera RENDERCAM = new PerspectiveCamera(Viewport.getWidth(), Viewport.getHeight(), 90, 0.01f, 150);
+	private static final int DefaultRenewDelayFrames = -1; // Default is static. Never renew.
 
-	private final CubeMap environmentMap;
-	private final int faceSizePixels;
-	private final FrameBuffer frameBuffer;
-	private final int renewDelayFrames;
-	private int framesUntilRenew;
+	protected final CubeMap environmentMap;
+	protected final int faceSizePixels;
+	protected final FrameBuffer frameBuffer;
+	protected final int renewDelayFrames;
+	protected int framesUntilRenew;
 
 	public EnvironmentProbe(String name, int resolution, Vector3f position, Vector3f size)  {
 		this(name, resolution, position, size, DefaultRenewDelayFrames);
 	}
 	public EnvironmentProbe(String name, int resolution, Vector3f position, Vector3f size, int framesuntilrenew)  {
-		this(new CubeMap(name + "Cubemap", resolution, PixelFormat.SRGB8, position, size), framesuntilrenew);
+		this(new CubeMap(name + "Cubemap", resolution, PixelFormat.RGB16F, position, size), framesuntilrenew);
 	}
 	public EnvironmentProbe(CubeMap environmentmap) {
 		this(environmentmap, DefaultRenewDelayFrames);
@@ -36,10 +38,10 @@ public class EnvironmentProbe implements Expirable {
 		renewDelayFrames = framesuntilrenew;
 		// Leave framesUntilRenew at 0 so next frame we renew
 		// TODO: frameBuffer is available once we're done updating. Could reuse framebuffer for other env probes of same resolution
-		frameBuffer = new FrameBuffer(faceSizePixels, faceSizePixels, new PixelFormat[] {PixelFormat.RGB8}, true, false);
+		frameBuffer = new FrameBuffer(faceSizePixels, faceSizePixels, new PixelFormat[] {PixelFormat.RGB16F}, true, false);
 	}
 
-	private void switchToFace(int face) {
+	protected void switchToFace(int face) {
 		switch (face) {
 			case 0: RENDERCAM.setRotation(0,270,180);  break; // Left
 			case 1:	RENDERCAM.setRotation(0,90,180);   break; // Right
@@ -54,7 +56,7 @@ public class EnvironmentProbe implements Expirable {
 
 	public void setFramesUntilRenew(int numframes) { framesUntilRenew = numframes; }
 
-	//TODO: Implement Updatable and update every frame. Cant assume isExpired will be called every frame
+	//TODO: Implement Updatable and renew every frame. Cant assume isExpired will be called every frame
 	@Override
 	public boolean isExpired() {
 		if (framesUntilRenew > 0)
@@ -65,11 +67,17 @@ public class EnvironmentProbe implements Expirable {
 
 	@Override
 	public void renew() {
+		if (isDisposed())
+			return;
+		if (!isExpired())
+			return;
+
 		FrameBuffer previousframebuffer = frameBuffer.getCurrent();
 
 		// Use this camera
-		Camera backupcam = Renderer.getCurrentCamera();
-		Renderer.getRenderer().getScene().setGameCamera(RENDERCAM);
+		Renderer currentrenderer = Renderer.getRenderer();
+		Camera backupcam = currentrenderer.getScene().getGameCamera();
+		currentrenderer.getScene().setGameCamera(RENDERCAM);
 
 		RENDERCAM.setDimensions(faceSizePixels, faceSizePixels);
 		environmentMap.getPosition(Temp);
@@ -88,14 +96,30 @@ public class EnvironmentProbe implements Expirable {
 
 			switchToFace(i);
 
-			Renderer.clear(true, true, false);
+			currentrenderer.reset();
 			Renderer.render();
 		}
 
 		framesUntilRenew = renewDelayFrames;
 
-		Renderer.getRenderer().getScene().setGameCamera(backupcam);
+		currentrenderer.getScene().setGameCamera(backupcam);
 
 		previousframebuffer.bind();
+	}
+
+	@Override
+	public void requestDisposal() {
+		ResourceManager.queueDisposal(this);
+	}
+
+	@Override
+	public boolean isDisposed() {
+		return environmentMap.isDisposed() || frameBuffer.isDisposed();
+	}
+
+	@Override
+	public void dispose() {
+		environmentMap.dispose();
+		frameBuffer.dispose();
 	}
 }

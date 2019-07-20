@@ -2,7 +2,10 @@ package GLOOP.graphics.rendering;
 
 import GLOOP.graphics.rendering.shading.lights.PointLight;
 import GLOOP.graphics.rendering.shading.posteffects.GBufferPostEffect;
+import GLOOP.graphics.rendering.texturing.CubeMap;
 import GLOOP.graphics.rendering.texturing.Texture;
+import GLOOP.graphics.rendering.texturing.TextureManager;
+import GLOOP.graphics.rendering.texturing.TextureUnit;
 import org.lwjgl.util.vector.Vector3f;
 
 class PointLightGBufferPostEffect extends GBufferPostEffect<PointLightDeferredLightingPassShader> {
@@ -22,11 +25,16 @@ class PointLightGBufferPostEffect extends GBufferPostEffect<PointLightDeferredLi
 	public void commit() {
 		super.commit();
 
+		CubeMap t = light.getShadowMap();
+		TextureManager.bindReflectionMap(t);
+		t.bind();
+
 		// light
 		light.getColor(passthough);
 		shader.setColor(passthough);
 		light.getPosition(passthough);
 		shader.setPosition(passthough);
 		shader.setQuadraticAttenuation(light.quadraticAttenuation);
+		shader.setDepthMap(TextureUnit.EnvironmentMap);
 	}
 }

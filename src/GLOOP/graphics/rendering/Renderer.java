@@ -21,6 +21,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class Renderer implements Disposable {
@@ -283,7 +284,7 @@ public abstract class Renderer implements Disposable {
 		if (forwardRenderer != null)
 			sortModels(forwardRenderer.getScene().getModels(), forwardRenderer.getScene().getGameCamera());
 
-		updateEnvironemtnProbes();
+		updateEvnironmentProbes();
 
 		if (deferedRenderer != null)
 			CullingMethod.calculateSceneOcclusion(deferedRenderer.getScene().getModels());
@@ -291,7 +292,7 @@ public abstract class Renderer implements Disposable {
 			CullingMethod.calculateSceneOcclusion(forwardRenderer.getScene().getModels());
 	}
 
-	private static void updateEnvironemtnProbes() {
+	private static void updateEvnironmentProbes() {
 		//TODO: If both renderers use same scene and a probe is set to renew every frame, it will renew twice here
 		if (deferedRenderer != null)
 			updateEnvironmentProbes(deferedRenderer);
@@ -300,11 +301,8 @@ public abstract class Renderer implements Disposable {
 	}
 	private static void updateEnvironmentProbes(Renderer renderer) {
 		int numprobes = renderer.getScene().GetNumberOfEnvironmentProbes();
-		for (int i=0; i<numprobes; i++) {
-			EnvironmentProbe probe = renderer.getScene().GetEnvironmentProbe(i);
-			if (probe.isExpired())
-				probe.renew();
-		}
+		for (int i=0; i<numprobes; i++)
+			renderer.getScene().GetEnvironmentProbe(i).renew();
 	}
 
 	//TODO: Only really need to sort transparrent objects by z
@@ -538,8 +536,10 @@ public abstract class Renderer implements Disposable {
 					errorinfo = "An attempt has been made to perform an operation that would cause an internal stack to overflow.";
 					break;
 			}
-			if (errorinfo != null)
+			if (errorinfo != null) {
 				System.err.println(errorinfo);
+				System.err.println(Arrays.toString(Thread.currentThread().getStackTrace()));
+			}
 		} while (errorcode != GL11.GL_NO_ERROR);
 	}
 

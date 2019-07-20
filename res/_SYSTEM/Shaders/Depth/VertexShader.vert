@@ -3,10 +3,12 @@
 in vec3 Position;
 
 uniform mat4
-	ProjectionMatrix,
-	ViewMatrix,
+	VPMatrix,
 	ModelMatrix;
+	
+out vec4 worldSpacePosition;
 
 void main(void) {
-	gl_Position = ProjectionMatrix * ViewMatrix * ModelMatrix * vec4(Position, 1.0);
+	worldSpacePosition = ModelMatrix * vec4(Position, 1.0);
+	gl_Position = VPMatrix * worldSpacePosition;
 }

@@ -35,7 +35,6 @@ public class ForwardRenderer extends Renderer {
 
 	@Override
 	public void reset() {
-		buffer.bind();
 		clear(true, true, true);
 	}
 
@@ -79,9 +78,6 @@ public class ForwardRenderer extends Renderer {
 			return;
 
 		for (Model3D model : scene.getModels()) {
-			if (model.visibility() == Model.Visibility.NotVisible)
-				continue;
-
 			model.render(materialOverride);
 		}
 	}

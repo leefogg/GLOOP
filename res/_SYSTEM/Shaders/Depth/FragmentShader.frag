@@ -1,11 +1,16 @@
 #version 150
 
+in vec4 worldSpacePosition;
+
+uniform float znear = 0.01, zfar = 1000;
+uniform vec3 campos;
+
 out vec4 out_Color;
 
-uniform float znear, zfar;
 
 void main(void) {
-	float depth = gl_FragCoord.z / gl_FragCoord.w;
+	float depth = length(worldSpacePosition.xyz - campos);
+	//float depth = gl_FragCoord.z / gl_FragCoord.w;
 	depth += znear;
 	depth /= zfar - znear;
 	
