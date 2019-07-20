@@ -65,7 +65,7 @@ public class HDRTest {
 					"res\\textures\\skyboxes\\stormydays\\back.png",
 					"res\\textures\\skyboxes\\stormydays\\front.png",
 			};
-			CubeMap cubemap = new CubeMap("cubemap", skyboxpaths, PixelComponents.RGBA, PixelFormat.SRGB8);
+			CubeMap cubemap = new CubeMap("cubemap", skyboxpaths, PixelComponents.RGB, PixelFormat.SRGB8);
 			Skybox skybox = new Skybox(cubemap);
 			scene.add(skybox);
 

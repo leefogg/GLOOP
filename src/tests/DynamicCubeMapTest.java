@@ -85,14 +85,6 @@ public final class DynamicCubeMapTest {
 			scene.add(plane);
 
 
-			normalmap = TextureManager.newTexture("res\\textures\\6624-normal.jpg", PixelComponents.RGB, PixelFormat.RGB8);
-			deferredmaterail = deferredRenderer.getNewMaterial();
-			deferredmaterail.setAlbedoColor(1,1,1,1);
-			deferredmaterail.setRefractivity(0);
-			deferredmaterail.setEnvironmentMap(envmap);
-			deferredmaterail.setReflectivity(1);
-			deferredmaterail.setNormalMap(normalmap);
-			deferredmaterail.setTextureRepeat(5,5);
 			cube = ModelFactory.getModel("res/models/cube.obj", new ChromeMaterial(envmap));
 			cube.setScale(4,4,4);
 			cube.setPosition(probepos);
