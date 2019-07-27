@@ -5,6 +5,6 @@ import GLOOP.general.math.MathFunctions;
 public class OrthographicCamera extends Camera {
 
 	public OrthographicCamera(int width, int height, float znear, float zfar) {
-		MathFunctions.createOrthoProjectionMatrix(0, width, 0, height, znear, zfar, ProjectionMatrix);
+		MathFunctions.createOrthoProjectionMatrix(-width/2f, width/2f, -height/2f, height/2f, znear, zfar, ProjectionMatrix);
 	}
 }

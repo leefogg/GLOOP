@@ -168,7 +168,7 @@ public class MathFunctions {
 		out.m03 = 0.0f;
 
 		out.m10 = 0.0f;
-		out.m11 = 2.0f / (top - bottom);
+		out.m11 = -2.0f / (top - bottom);
 		out.m12 = 0.0f;
 		out.m13 = 0.0f;
 
