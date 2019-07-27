@@ -149,8 +149,10 @@ public final class DebugCamera extends PerspectiveCamera {
         if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE))
             Mouse.setGrabbed(false);
 
-        if (Keyboard.isKeyDown(Keyboard.KEY_P))
-            System.out.println("X: " + Position.x + "\tY: " + Position.y + "\tZ: " + Position.z);
+        if (Keyboard.isKeyDown(Keyboard.KEY_P)) {
+	        System.out.println("X: " + Position.x + "\tY: " + Position.y + "\tZ: " + Position.z);
+	        System.out.println("Pitch: " + Rotation.x + " Yaw: " + Rotation.y + " Roll: " + Rotation.z);
+        }
         if (Keyboard.isKeyDown(Keyboard.KEY_R)) {
             Position.set(0.1f, 0.1f, 0.1f);
             Velocity.set(0,0,0);
