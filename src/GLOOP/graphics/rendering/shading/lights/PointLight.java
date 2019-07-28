@@ -35,7 +35,7 @@ public final class PointLight extends Light {
 			if (!isExpired())
 				return;
 
-			FrameBuffer previousframebuffer = frameBuffer.getCurrent();
+			FrameBuffer previousframebuffer = FrameBuffer.getCurrent();
 
 			ForwardRenderer renderer = Renderer.getForwardRenderer();
 			Camera backupcam = Renderer.getCurrentCamera();
@@ -113,16 +113,23 @@ public final class PointLight extends Light {
 
 	@Override
 	public void SetShadowMapEnabled(boolean enabled) {
-		if (enabled && isShadowMapEnabled()) // No Change
+		if (isShadowMapEnabled() == enabled) // No Change
 			return;
 
 		if (enabled) {
 			probe = new ShadowProbe(1);
-			Renderer.getForwardRenderer().getScene().add(probe);
 		} else {
 			probe.dispose();
 			probe = null;
 		}
+	}
+
+	@Override
+	public void RenderShadowMap() {
+		if (!isShadowMapEnabled())
+			return;
+
+		probe.renew();
 	}
 
 	public CubeMap getShadowMap() {

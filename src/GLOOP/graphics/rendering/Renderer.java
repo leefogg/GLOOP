@@ -291,7 +291,12 @@ public abstract class Renderer implements Disposable {
 		if (forwardRenderer != null)
 			sortModels(forwardRenderer.getScene().getModels(), forwardRenderer.getScene().getGameCamera());
 
-		updateEvnironmentProbes();
+		updateEnvironmentProbes();
+
+		if (deferedRenderer != null)
+			updateShadowMaps(deferedRenderer.getScene());
+		if (forwardRenderer != null)
+			updateShadowMaps(forwardRenderer.getScene());
 
 		if (deferedRenderer != null)
 			CullingMethod.calculateSceneOcclusion(deferedRenderer.getScene().getModels());
@@ -299,17 +304,27 @@ public abstract class Renderer implements Disposable {
 			CullingMethod.calculateSceneOcclusion(forwardRenderer.getScene().getModels());
 	}
 
-	private static void updateEvnironmentProbes() {
+	private static void updateEnvironmentProbes() {
 		//TODO: If both renderers use same scene and a probe is set to renew every frame, it will renew twice here
 		if (deferedRenderer != null)
 			updateEnvironmentProbes(deferedRenderer);
 		if (forwardRenderer != null)
 			updateEnvironmentProbes(forwardRenderer);
 	}
+
 	private static void updateEnvironmentProbes(Renderer renderer) {
 		int numprobes = renderer.getScene().GetNumberOfEnvironmentProbes();
 		for (int i=0; i<numprobes; i++)
 			renderer.getScene().GetEnvironmentProbe(i).renew();
+	}
+
+	private static void updateShadowMaps(Scene scene) {
+		for (int i=0; i<scene.getNumberOfSpotLights(); i++)
+			scene.getSpotLight(i).RenderShadowMap();
+		for (int i=0; i<scene.getNumberOfPointLights(); i++)
+			scene.getPointLight(i).RenderShadowMap();
+		for (int i=0; i<scene.getNumberOfDirectionalLights(); i++)
+			scene.getDirectionallight(i).RenderShadowMap();
 	}
 
 	//TODO: Only really need to sort transparrent objects by z

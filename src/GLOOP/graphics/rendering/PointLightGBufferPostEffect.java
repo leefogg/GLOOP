@@ -25,9 +25,8 @@ class PointLightGBufferPostEffect extends GBufferPostEffect<PointLightDeferredLi
 	public void commit() {
 		super.commit();
 
-		CubeMap t = light.getShadowMap();
-		TextureManager.bindReflectionMap(t);
-		t.bind();
+		CubeMap shadowMap = light.getShadowMap();
+		TextureManager.bindReflectionMap(shadowMap);
 
 		// light
 		light.getColor(passthough);

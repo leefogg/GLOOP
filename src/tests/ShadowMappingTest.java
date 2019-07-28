@@ -3,10 +3,13 @@ package tests;
 import GLOOP.general.exceptions.UnsupportedException;
 import GLOOP.graphics.Settings;
 import GLOOP.graphics.cameras.DebugCamera;
+import GLOOP.graphics.data.models.Model2D;
 import GLOOP.graphics.data.models.Model3D;
 import GLOOP.graphics.data.models.ModelFactory;
 import GLOOP.graphics.rendering.*;
+import GLOOP.graphics.rendering.shading.lights.DirectionalLight;
 import GLOOP.graphics.rendering.shading.lights.PointLight;
+import GLOOP.graphics.rendering.shading.materials.FullBrightMaterial;
 import GLOOP.graphics.rendering.shading.materials.SingleColorMaterial;
 import GLOOP.graphics.rendering.texturing.*;
 import org.lwjgl.input.Keyboard;
@@ -46,17 +49,26 @@ public class ShadowMappingTest {
 		forwardRenderer.setScene(scene);
 		scene.getAmbientlight().setColor(0.03f, 0.03f, 0.03f);
 
+		DirectionalLight dl = new DirectionalLight();
 		PointLight shadowlight = new PointLight();
-		//shadowlight.setPosition(20,20,-20);
-		shadowlight.SetShadowMapEnabled(true);
-		shadowlight.setColor(0.5f,0.5f,1);
-		shadowlight.quadraticAttenuation = 0.001f;
-		scene.add(shadowlight);
+		{
+			//shadowlight.setPosition(20,20,-20);
+			shadowlight.SetShadowMapEnabled(true);
+			shadowlight.setColor(0.5f, 0.5f, 1);
+			shadowlight.quadraticAttenuation = 0.001f;
+			scene.add(shadowlight);
+
+			dl.SetShadowMapEnabled(true);
+			dl.setDiffuseColor(1,1,1);
+			dl.setDirection(0.5f,-0.5f,0);
+			scene.add(dl);
+		}
 
 		Model3D lightsphere = null;
+		Model2D shadowTexture = null;
+		Model3D charizard = null;
 		try {
-			Texture walltexture = TextureManager.newTexture("res\\textures\\default.png", PixelComponents.RGB, PixelFormat.SRGB8);
-			Texture fencetexture = TextureManager.newTexture("res\\textures\\fence.png", PixelComponents.RGBA, PixelFormat.SRGBA8);
+			Texture defaulttextre = TextureManager.newTexture("res\\textures\\default.png", PixelComponents.RGB, PixelFormat.SRGB8);
 
 			Random r = new Random(2);
 			Vector3f randompos = new Vector3f();
@@ -71,7 +83,7 @@ public class ShadowMappingTest {
 
 				DeferredMaterial deferredmaterial = deferredrenderer.getNewMaterial();
 				deferredmaterial.setAlbedoColor(1,1,1,1);
-				deferredmaterial.setAlbedoMap(fencetexture);
+				deferredmaterial.setAlbedoMap(defaulttextre);
 				Model3D cube2 = ModelFactory.getModel("res\\models\\cube.obj", deferredmaterial);
 				cube2.setPosition(randompos);
 				cube2.setRotation(randomrot);
@@ -81,21 +93,39 @@ public class ShadowMappingTest {
 
 			DeferredMaterial floormaterial = deferredrenderer.getNewMaterial();
 			floormaterial.setAlbedoColor(1, 1, 1, 1);
-			floormaterial.setAlbedoMap(walltexture);
+			floormaterial.setAlbedoMap(defaulttextre);
 			floormaterial.setAlbedoColor(1, 1, 1, 1);
 			floormaterial.setTextureRepeat(2, 2);
 			floormaterial.setSpecularity(1);
 			floormaterial.setRoughness(0.5f);
-			Model3D floor = ModelFactory.getModel("res\\models\\insideout box.obj", floormaterial);
-			floor.setScale(50,50,50);
-			scene.add(floor);
+			Model3D box = ModelFactory.getModel("res\\models\\insideout box.obj", floormaterial);
+			box.setScale(50,50,50);
+			scene.add(box);
 
 			SingleColorMaterial white =  new SingleColorMaterial();
 			white.setColor(1,1,1);
 			lightsphere = ModelFactory.getModel("res\\models\\sphere.obj", white);
 			scene.add(lightsphere);
 
-			//scene.add(new Skybox(shadowlight.getShadowMap()));
+			// Directional light tests scene
+			DeferredMaterial deferredMaterial = deferredrenderer.getNewMaterial();
+			Texture albedo = TextureManager.newTexture("res\\textures\\brick.png", PixelComponents.RGB, PixelFormat.SRGB8);
+			deferredMaterial.setAlbedoMap(albedo);
+			deferredMaterial.setTextureRepeat(5,5);
+			Model3D floor = ModelFactory.getModel("res/models/plane.obj", deferredMaterial);
+			floor.setPosition(100,0,0);
+			scene.add(floor);
+
+			albedo = TextureManager.newTexture("res/textures/charizard.png", PixelComponents.RGB, PixelFormat.SRGB8);
+			deferredMaterial = deferredrenderer.getNewMaterial();
+			deferredMaterial.setAlbedoMap(albedo);
+			charizard = ModelFactory.getModel("res/models/charizard.obj", deferredMaterial);
+			charizard.setPosition(100,0,0);
+			scene.add(charizard);
+
+			shadowTexture = new Model2D(0,0,1280/4, 720/4);
+			((FullBrightMaterial)shadowTexture.getMaterial()).setAlbedoTexture(dl.getShadowMap());
+			scene.add(shadowTexture);
 		} catch (IOException e) {
 			System.err.println("Couldn't load Model!");
 			e.printStackTrace(System.err);
@@ -109,7 +139,8 @@ public class ShadowMappingTest {
 		DebugCamera camera = new DebugCamera();
 		scene.setDebugCamera(camera);
 		scene.setGameCamera(camera);
-		camera.setPosition(0, 0, 70);
+		camera.setPosition(98, 12, 30);
+		camera.setRotation(12,3,0);
 
 
 		System.gc();
@@ -118,6 +149,7 @@ public class ShadowMappingTest {
 		float sincos = 0;
 		float step = (float)Math.PI / 360;
 		Vector3f lightpos = new Vector3f();
+		Quaternion rotation = new Quaternion();
 		while(isrunning) {
 			Viewport.update();
 			float delta = Renderer.getTimeDelta();
@@ -129,6 +161,9 @@ public class ShadowMappingTest {
 			lightpos.set((float)Math.sin(sincos * 0.98) * 20, (float)Math.sin(sincos * 1.23f) * 20, (float)Math.cos(sincos * 1.17) * 20);
 			shadowlight.setPosition(lightpos);
 			lightsphere.setPosition(lightpos);
+			rotation.rotate(0, 0.4f * timescaler, 0);
+			charizard.setRotation(rotation);
+			//charizard.setPosition(100 + (float)Math.cos(sincos) * 30, 0, (float)Math.sin(sincos) * 30);
 
 			Renderer.update();
 

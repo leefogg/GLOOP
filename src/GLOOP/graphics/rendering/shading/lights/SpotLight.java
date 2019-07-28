@@ -59,4 +59,9 @@ public final class SpotLight extends Light {
 	public void SetShadowMapEnabled(boolean enabled) {
 
 	}
+
+	@Override
+	public void RenderShadowMap() {
+
+	}
 }
