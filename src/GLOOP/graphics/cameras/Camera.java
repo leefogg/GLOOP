@@ -2,11 +2,10 @@ package GLOOP.graphics.cameras;
 
 import GLOOP.general.math.MathFunctions;
 import GLOOP.physics.data.AABB;
-import org.lwjgl.util.vector.Matrix4f;
-import org.lwjgl.util.vector.Vector3f;
-import org.lwjgl.util.vector.Vector4f;
+import org.lwjgl.util.vector.*;
 
 public abstract class Camera {
+	private static final Matrix4f INVERSEVP = new Matrix4f();
 	public static final float
 		DEFAULT_ZNEAR = 0.01F,
 		DEFAULT_ZFAR = 1000;
@@ -114,6 +113,35 @@ public abstract class Camera {
 				c6++;
 		}
 		return !(c1 == 8 || c2 == 8 || c3 == 8 || c4 == 8 || c5 == 8 || c6 == 8);
+	}
+
+	public void getFrustumVerts(Vector3f[] verts) {
+		if (verts.length < 8)
+			throw new IllegalArgumentException("Provided vertex array not long enough to store 8 vertcies");
+
+		verts[0].set(-1,-1,1);  // Far top left
+		verts[1].set(1,-1,1);   // Far top right
+		verts[2].set(1,1,1);    // Far bottom right
+		verts[3].set(-1,1,1);   // Far bottom left
+		verts[4].set(-1,-1,0);  // Near top left
+		verts[5].set(1,-1,0);   // Near top right
+		verts[6].set(1,1,0);    // Near bottom right
+		verts[7].set(-1,1,0);   // Near bottom left
+
+		Matrix4f.invert(getProjectionMatrix(), INVERSEVP);
+		Vector4f temp = new Vector4f();
+		for (Vector3f vert : verts) {
+			temp.set(vert.x, vert.y, vert.z, 1);
+			Matrix4f.transform(INVERSEVP, temp, temp);
+			float inverse = 1f / temp.w;
+			vert.set(temp.x * inverse, temp.y * inverse, -temp.z * inverse);
+		}
+	}
+
+	public void getViewDirection(WritableVector3f out) {
+		Matrix4f viewmatrix = getViewMatrix();
+		// TODO: Make getForward(), getLeft(), getUp() and getPosition() in matrix
+		out.set(viewmatrix.m02, viewmatrix.m12, viewmatrix.m22);
 	}
 
 	public static Vector4f transform(Matrix4f left, float x, float y, float z, Vector4f dest) {

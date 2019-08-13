@@ -5,11 +5,12 @@ uniform vec3 diffuseColor;
 uniform sampler2D shadowMap;
 uniform mat4 shadowmapVPMatrix;
 uniform vec3 shadowCameraPos;
+uniform float zFar;
 
 #include <GBuffers.include.glsl>
 
 vec3 calculateDiffuse(vec3 facenormal) {
-	float directiondiff = max(dot(direction, facenormal), 0.0);
+	float directiondiff = max(dot(-direction, facenormal), 0.0);
 	vec3 diffusecolor = diffuseColor * directiondiff;
 	
 	return diffusecolor;
@@ -26,15 +27,15 @@ float calculateShadowAmount(vec3 worldspaceposition, vec3 facenormal) {
 	
 	float bias = max(0.006 * (1.0 - dot(facenormal, topixel)), 0.000);
 	float z = texture(shadowMap, shadowUV.xy).r;
-	z *= 150;
+	z *= zFar;
 	z += 0.1;
 	
-	float shadow = actualDist - bias > z ? 1.0 : 0.0;
-	
+	float shadow = actualDist - bias > z ? 0.0 : 1.0;
+
 	float distfromcenter = max(abs(clipspaceposition.x), abs(clipspaceposition.y));
 	float visibility = 	max((distfromcenter - 0.9) * 10.0, 0.0);
 	
-	return clamp(shadow, 0.0, 1.0);
+	return clamp(shadow + visibility, 0.0, 1.0);
 }
 
 void main(void) {
@@ -52,5 +53,5 @@ void main(void) {
 	vec3 worldspaceposition = cameraspaceposition.xyz + campos;
 	float shadowAmount = calculateShadowAmount(worldspaceposition, normal);
 		
-	pixelColor = vec4(diffuse - shadowAmount, 1.0);
+	pixelColor = vec4(diffuse * shadowAmount, 1.0);
 }

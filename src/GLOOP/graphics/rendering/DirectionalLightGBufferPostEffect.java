@@ -28,6 +28,7 @@ public class DirectionalLightGBufferPostEffect extends GBufferPostEffect<Directi
 		shader.setShadowCameraVPMatrix(passthroughVPMatrix);
 		light.renderCam.getPosition(passthough);
 		shader.setShadowCameraPosition(passthough);
+		shader.setShadowMapZFar(light.renderCam.getzfar());
 		TextureManager.bindAlbedoMap(light.getShadowMap());
 		shader.setShadowMapTextureUnit(TextureUnit.AlbedoMap);
 

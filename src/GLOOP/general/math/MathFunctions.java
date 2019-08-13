@@ -116,24 +116,30 @@ public class MathFunctions {
 	public static Matrix4f createViewMatrix(Vector3f eye, Vector3f target, Vector3f up, Matrix4f out) { // TODO: Optimize object creation
 		if (out == null)
 			out = new Matrix4f();
-		else
-			out.setIdentity();
 
 		Vector3f
 			zaxis = new Vector3f(),
 			xaxis = new Vector3f(),
 			yaxis = new Vector3f();
 		Vector3f.sub(eye, target, zaxis);
-		zaxis.normalise();
+		if (zaxis.lengthSquared() != 0f)
+			zaxis.normalise();
 		Vector3f.cross(up, zaxis, xaxis);
-		xaxis.normalise();
+		if (xaxis.lengthSquared() != 0f)
+			xaxis.normalise();
 		Vector3f.cross(zaxis, xaxis, yaxis);
-		yaxis.normalise();
+		if (yaxis.lengthSquared() != 0f)
+			yaxis.normalise();
 		float
 			ex = -Vector3f.dot(xaxis, eye),
 			ey = -Vector3f.dot(yaxis, eye),
 			ez = -Vector3f.dot(zaxis, eye);
-		out.load(DataConversion.toGLBuffer(new float[] {xaxis.x, yaxis.x, zaxis.x, 0, xaxis.y, yaxis.y, zaxis.y, 0, xaxis.z, yaxis.z, zaxis.z, 0, ex, ey, ez, 1f}));
+		out.load(DataConversion.toGLBuffer(new float[] {
+			xaxis.x,    yaxis.x,   zaxis.x,    0,
+			xaxis.y,	yaxis.y,    zaxis.y,   0,
+			xaxis.z,    yaxis.z,   	zaxis.z,    0,
+			ex,         ey,         ez,        1}
+		));
 		return out;
 	}
 

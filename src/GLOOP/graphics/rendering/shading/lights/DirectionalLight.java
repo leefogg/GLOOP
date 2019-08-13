@@ -7,9 +7,23 @@ import GLOOP.graphics.rendering.Renderer;
 import GLOOP.graphics.rendering.texturing.FrameBuffer;
 import GLOOP.graphics.rendering.texturing.PixelFormat;
 import GLOOP.graphics.rendering.texturing.Texture;
+import GLOOP.physics.data.AABB;
+import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
+import org.lwjgl.util.vector.Vector4f;
 
 public final class DirectionalLight extends Light {
+	private static final AABB FRUSTUM_AABB = new AABB(0,0,0,0,0,0);
+	private static final Vector3f[] FRUSTUM_VERTS = new Vector3f[8];
+	private static final Vector3f FRUSTUM_CENTER = new Vector3f();
+	private static final Vector3f CAMERAPOSITION = new Vector3f();
+	private static final Vector4f TEMPVECTOR = new Vector4f();
+
+	static {
+		for (int i = 0; i< FRUSTUM_VERTS.length; i++)
+			FRUSTUM_VERTS[i] = new Vector3f();
+	}
+
 	private final Vector3f direction = new Vector3f(0,0,0);
 	private final Vector3f diffuseColor = new Vector3f(1,1,1);
 	public OrthographicCamera renderCam;
@@ -30,8 +44,7 @@ public final class DirectionalLight extends Light {
 
 	public void setDirection(float x, float y, float z) { setDirection(new Vector3f(x, y, z)); }
 	public void setDirection(Vector3f direction) {
-		direction.negate(); // Optimisation. Instead of the pixel shader negating it for each pixel
-		this.direction.set(direction);
+		direction.normalise(this.direction);
 	}
 	public void setDiffuseColor(float r, float g, float b) { diffuseColor.set(r,g,b); }
 	public void setDiffuseColor(Vector3f diffusecolor) { setDiffuseColor(diffusecolor.x, diffusecolor.y, diffusecolor.z); }
@@ -56,10 +69,8 @@ public final class DirectionalLight extends Light {
 			return;
 
 		if (enabled) {
-			shadowBuffer = new FrameBuffer(1024,1024, PixelFormat.R8);
+			shadowBuffer = new FrameBuffer(2048,2048, PixelFormat.R8);
 			renderCam = new OrthographicCamera(40,40,0.1f,150);
-			renderCam.setPosition(62,31,26);
-			renderCam.setRotation(29,59,0);
 		} else {
 			shadowBuffer.requestDisposal();
 			shadowBuffer = null;
@@ -68,6 +79,8 @@ public final class DirectionalLight extends Light {
 
 	@Override
 	public void RenderShadowMap() {
+		if (!isShadowMapEnabled())
+			return;
 		FramesSinceShadowRender++;
 		if (FramesSinceShadowRender != ShadowRefreshFrequency)
 			return;
@@ -75,8 +88,8 @@ public final class DirectionalLight extends Light {
 		FrameBuffer previousframebuffer = FrameBuffer.getCurrent();
 		ForwardRenderer renderer = Renderer.getForwardRenderer();
 		Camera backupcam = renderer.getScene().getGameCamera();
-		renderer.getScene().setGameCamera(renderCam);
 		recalibrateCamera(backupcam);
+		renderer.getScene().setGameCamera(renderCam);
 		shadowBuffer.bind();
 
 		renderer.reset();
@@ -88,8 +101,43 @@ public final class DirectionalLight extends Light {
 		FramesSinceShadowRender = 0;
 	}
 
-	private void recalibrateCamera(Camera gamecam) {
+	private void recalibrateCamera(Camera camera) {
+		camera.getFrustumVerts(FRUSTUM_VERTS);
 
+		camera.getPosition(CAMERAPOSITION);
+		camera.getViewDirection(TEMPVECTOR);
+		float halfzfar = camera.getzfar() / 2f;
+		FRUSTUM_CENTER.set(
+			CAMERAPOSITION.x - TEMPVECTOR.x * halfzfar,
+			CAMERAPOSITION.y - TEMPVECTOR.y * halfzfar,
+			CAMERAPOSITION.z - TEMPVECTOR.z * halfzfar
+		);
+
+		// Spin frustum to simulate AABB being aligned to camera direction
+		// Approximate location
+		renderCam.setPosition(
+			FRUSTUM_CENTER.x + direction.x * 75,
+			FRUSTUM_CENTER.y + direction.y * 75,
+			FRUSTUM_CENTER.z + direction.z * 75
+		);
+		Matrix4f viewmatrix = camera.getViewMatrix();
+		for (Vector3f vert : FRUSTUM_VERTS) {
+			TEMPVECTOR.set(vert.x, vert.y, vert.z, 1);
+			Matrix4f.transform(viewmatrix, TEMPVECTOR, TEMPVECTOR);
+			vert.set(TEMPVECTOR);
+		}
+
+		float backPadding = 25;
+		AABB.create(FRUSTUM_VERTS, FRUSTUM_AABB);
+		renderCam.setSize(FRUSTUM_AABB.width, FRUSTUM_AABB.height);
+		renderCam.setzfar(FRUSTUM_AABB.depth + backPadding);
+
+		renderCam.setPosition(
+			FRUSTUM_CENTER.x - direction.x * ((FRUSTUM_AABB.depth / 2f) + backPadding),
+			FRUSTUM_CENTER.y - direction.y * ((FRUSTUM_AABB.depth / 2f) + backPadding),
+			FRUSTUM_CENTER.z - direction.z * ((FRUSTUM_AABB.depth / 2f) + backPadding)
+		);
+		renderCam.lookAt(FRUSTUM_CENTER);
 	}
 
 	public Texture getShadowMap() {
