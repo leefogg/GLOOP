@@ -1,6 +1,5 @@
 package GLOOP.general.math;
 
-import GLOOP.graphics.data.DataConversion;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
@@ -10,6 +9,10 @@ public class MathFunctions {
 		right = new Vector3f(1, 0, 0),
 		up = new Vector3f(0, 1, 0),
 		in = new Vector3f(0, 0, 1);
+	private static final Vector3f
+		zaxis = new Vector3f(),
+		xaxis = new Vector3f(),
+		yaxis = new Vector3f();
 	private static final Vector3f passthroughVector = new Vector3f();
 	private static final Matrix4f passthoughMatrix = new Matrix4f();
 
@@ -117,10 +120,6 @@ public class MathFunctions {
 		if (out == null)
 			out = new Matrix4f();
 
-		Vector3f
-			zaxis = new Vector3f(),
-			xaxis = new Vector3f(),
-			yaxis = new Vector3f();
 		Vector3f.sub(eye, target, zaxis);
 		if (zaxis.lengthSquared() != 0f)
 			zaxis.normalise();
@@ -134,12 +133,30 @@ public class MathFunctions {
 			ex = -Vector3f.dot(xaxis, eye),
 			ey = -Vector3f.dot(yaxis, eye),
 			ez = -Vector3f.dot(zaxis, eye);
-		out.load(DataConversion.toGLBuffer(new float[] {
+
+		/*
 			xaxis.x,    yaxis.x,   zaxis.x,    0,
 			xaxis.y,	yaxis.y,    zaxis.y,   0,
 			xaxis.z,    yaxis.z,   	zaxis.z,    0,
-			ex,         ey,         ez,        1}
-		));
+			ex,         ey,         ez,        1
+		*/
+		out.m00 = xaxis.x;
+		out.m01 = yaxis.x;
+		out.m02 = zaxis.x;
+		out.m03 = 0;
+		out.m10 = xaxis.y;
+		out.m11 = yaxis.y;
+		out.m12 = zaxis.y;
+		out.m13 = 0;
+		out.m20 = xaxis.z;
+		out.m21 = yaxis.z;
+		out.m22 = zaxis.z;
+		out.m23 = 0;
+		out.m30 = ex;
+		out.m31 = ey;
+		out.m32 = ez;
+		out.m33 = 1;
+
 		return out;
 	}
 
