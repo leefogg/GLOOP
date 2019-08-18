@@ -1,13 +1,28 @@
 package GLOOP.graphics.rendering.shading.lights;
 
+import GLOOP.graphics.cameras.Camera;
+import GLOOP.graphics.cameras.PerspectiveCamera;
+import GLOOP.graphics.rendering.ForwardRenderer;
+import GLOOP.graphics.rendering.Renderer;
+import GLOOP.graphics.rendering.texturing.FrameBuffer;
+import GLOOP.graphics.rendering.texturing.PixelFormat;
+import GLOOP.graphics.rendering.texturing.Texture;
+import GLOOP.graphics.rendering.texturing.TextureWrapMode;
 import org.lwjgl.util.vector.Vector3f;
 
 public final class SpotLight extends Light {
+	private final Vector3f temp = new Vector3f();
+
 	private final Vector3f position = new Vector3f(0,0,0);
 	private final Vector3f direction = new Vector3f(0,-1,0); // TODO: Make Quaternion
 	private final Vector3f color = new Vector3f(1,1,1);
 	private float innerCone, outerCone;
 	private float QuadraticAttenuation;
+
+	private FrameBuffer shadowBuffer;
+	public PerspectiveCamera renderCam;
+	private int framesSinceShadowRender = 0;
+	private int shadowRefreshFrequency = 1;
 
 	public SpotLight() {
 		setInnerCone(45);
@@ -42,8 +57,8 @@ public final class SpotLight extends Light {
 	public void setPosition(float x, float y, float z) { position.set(x,y,z); }
 	public void setColor(Vector3f diffusecolor) { setColor(diffusecolor.x, diffusecolor.y, diffusecolor.z); }
 	public void setColor(float r, float g, float b) { color.set(r, g, b); }
-	public void setInnerCone(float innerconedegrees) { innerCone = (float)Math.cos(Math.toRadians(innerconedegrees)); }
-	public void setOuterCone(float outerconedegrees) { outerCone = (float)Math.cos(Math.toRadians(outerconedegrees)); }
+	public void setInnerCone(float innerconedegrees) { innerCone = Math.min(outerCone, innerconedegrees); }
+	public void setOuterCone(float outerconedegrees) { outerCone = Math.min(179f, outerconedegrees); }
 
 	@Override
 	public boolean IsComplex() {
@@ -52,16 +67,59 @@ public final class SpotLight extends Light {
 
 	@Override
 	public boolean isShadowMapEnabled() {
-		return false;
+		return shadowBuffer != null && !shadowBuffer.isDisposed();
 	}
 
 	@Override
 	public void SetShadowMapEnabled(boolean enabled) {
+		if (isShadowMapEnabled() == enabled)
+			return;
 
+		if (enabled) {
+			shadowBuffer = new FrameBuffer(2048, 2048, PixelFormat.RGB16); // TODO: Use depth attachmen
+			Texture attachment = shadowBuffer.getColorTexture(0);
+			attachment.setWrapMode(TextureWrapMode.BorderClamp);
+			attachment.setBorderColor(1,1,1);
+			renderCam = new PerspectiveCamera();
+		} else {
+			shadowBuffer.requestDisposal();
+			renderCam = null;
+		}
 	}
 
 	@Override
 	public void RenderShadowMap() {
+		if (!isShadowMapEnabled())
+			return;
+		framesSinceShadowRender++;
+		if (framesSinceShadowRender != shadowRefreshFrequency)
+			return;
 
+		renderCam.setPosition(position);
+		temp.set(
+			position.x + direction.x,
+			position.y + direction.y,
+			position.z + direction.z
+		);
+		renderCam.lookAt(temp);
+		renderCam.setFov(outerCone);
+
+		FrameBuffer previousframebuffer = FrameBuffer.getCurrent();
+		ForwardRenderer renderer = Renderer.getForwardRenderer();
+		Camera backupcam = renderer.getScene().getGameCamera();
+		renderer.getScene().setGameCamera(renderCam);
+		shadowBuffer.bind();
+
+		renderer.reset();
+		renderer.renderShadowScene();
+
+		renderer.getScene().setGameCamera(backupcam);
+		previousframebuffer.bind();
+
+		framesSinceShadowRender = 0;
+	}
+
+	public Texture getShadowMap() {
+		return shadowBuffer.getColorTexture(0);
 	}
 }

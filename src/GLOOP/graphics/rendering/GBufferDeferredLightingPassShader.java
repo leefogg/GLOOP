@@ -99,8 +99,8 @@ final class GBufferDeferredLightingPassShader extends GBufferLightingShader {
 			direction.set(passthrough);
 			spotlight.getColor(passthrough);
 			color.set(passthrough);
-			innerCone.set(spotlight.getInnerCone());
-			outerCone.set(spotlight.getOuterCone());
+			innerCone.set((float)Math.cos(Math.toRadians(spotlight.getInnerCone())));
+			outerCone.set((float)Math.cos(Math.toRadians(spotlight.getOuterCone())));
 			quadraticAttenuation.set(spotlight.getQuadraticAttenuation());
 		}
 	}

@@ -9,6 +9,9 @@ uniform float
 	outerCone,
 	quadraticAttenuation,
 	VolumetricLightStrength = 2.0;
+uniform sampler2D shadowMap;
+uniform mat4 shadowmapVPMatrix;
+uniform float zFar;
 
 #include <GBuffers.include.glsl>
 #include <Diffuse.include.glsl>
@@ -30,6 +33,29 @@ vec3 calculateDiffuse(vec3 worldspaceposition, vec3 facenormal) {
 	float diffuse = calculateDiffuse(facenormal, worldspaceposition, position);
 	
 	return color * intensity * diffuse;
+}
+
+float calculateShadowAmount(vec3 worldspaceposition, vec3 facenormal) {
+	vec4 clipspaceposition = shadowmapVPMatrix * vec4(worldspaceposition, 1.0);
+	clipspaceposition /= clipspaceposition.w;
+	if (clipspaceposition.x < -1 ||  clipspaceposition.x > 1 || clipspaceposition.y < -1 || clipspaceposition.y > 1)
+		return 1.0;
+	vec4 shadowUV = (clipspaceposition + 1.0) / 2.0;
+	
+	vec3 topixel = worldspaceposition - position;
+	float actualDist = length(topixel);
+	
+	float bias = max(0.006 * (1.0 - dot(facenormal, topixel)), 0.000);
+	float z = texture(shadowMap, shadowUV.xy).r;
+	z *= zFar;
+	z += 0.1;
+	
+	float shadow = actualDist - bias > z ? 0.0 : 1.0;
+
+	float distfromcenter = max(abs(clipspaceposition.x), abs(clipspaceposition.y));
+	float visibility = max((distfromcenter - 0.9) * 10.0, 0.0);
+	
+	return clamp(shadow + visibility, 0.0, 1.0);
 }
 
 void main(void) {
@@ -78,8 +104,10 @@ void main(void) {
 	halo *= VolumetricLightStrength;
 	#endif
 	
+	float shadowAmount = calculateShadowAmount(worldspaceposition, facenormal);
 	
 	diffusecolor *= luminosity;
+	diffusecolor *= shadowAmount;
 	// Specular has luminosity built in
 	pixelColor = vec4(diffusecolor + specularcolor + halo, 1.0);
 }

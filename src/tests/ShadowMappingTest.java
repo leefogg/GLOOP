@@ -9,6 +9,7 @@ import GLOOP.graphics.data.models.ModelFactory;
 import GLOOP.graphics.rendering.*;
 import GLOOP.graphics.rendering.shading.lights.DirectionalLight;
 import GLOOP.graphics.rendering.shading.lights.PointLight;
+import GLOOP.graphics.rendering.shading.lights.SpotLight;
 import GLOOP.graphics.rendering.shading.materials.FullBrightMaterial;
 import GLOOP.graphics.rendering.shading.materials.SingleColorMaterial;
 import GLOOP.graphics.rendering.texturing.*;
@@ -51,7 +52,9 @@ public class ShadowMappingTest {
 
 		DirectionalLight dl = new DirectionalLight();
 		PointLight shadowlight = new PointLight();
+		SpotLight spotLight = new SpotLight();
 		{
+
 			//shadowlight.setPosition(20,20,-20);
 			shadowlight.SetShadowMapEnabled(true);
 			shadowlight.setColor(0.5f, 0.5f, 1);
@@ -62,6 +65,13 @@ public class ShadowMappingTest {
 			dl.setDirection(0.01f, -0.5f, 0.5f);
 			dl.SetShadowMapEnabled(true);
 			scene.add(dl);
+
+			spotLight.setPosition(125,50,50);
+			spotLight.lookAt(125,0,0);
+			spotLight.SetShadowMapEnabled(true);
+			spotLight.setColor(0,1,1);
+			spotLight.setQuadraticAttenuation(0.001f);
+			scene.add(spotLight);
 		}
 
 		Model3D lightsphere = null;
@@ -117,13 +127,21 @@ public class ShadowMappingTest {
 			scene.add(floor);
 
 			deferredMaterial = deferredrenderer.getNewMaterial();
+			deferredMaterial.setAlbedoColor(1,1,1,1);
 			teapot = ModelFactory.getModel("res/models/teapot.obj", deferredMaterial);
-			teapot.setPosition(100,0,0);
+			teapot.setPosition(75,0,0);
 			teapot.setScale(24,24,24);
 			scene.add(teapot);
 
+			deferredMaterial = deferredrenderer.getNewMaterial();
+			deferredMaterial.setAlbedoColor(1,1,1,1);
+			Model3D bunny = ModelFactory.getModel("res/models/bunny.obj", deferredMaterial);
+			bunny.setPosition(125,0,0);
+			bunny.setScale(25,25,25);
+			scene.add(bunny);
+
 			shadowTexture = new Model2D(0,0,1280/4, 720/4);
-			((FullBrightMaterial)shadowTexture.getMaterial()).setAlbedoTexture(dl.getShadowMap());
+			((FullBrightMaterial)shadowTexture.getMaterial()).setAlbedoTexture(spotLight.getShadowMap());
 			scene.add(shadowTexture);
 		} catch (IOException e) {
 			System.err.println("Couldn't load Model!");
@@ -135,7 +153,7 @@ public class ShadowMappingTest {
 		}
 
 		DebugCamera camera = new DebugCamera();
-		camera.setzfar(300);
+		camera.setzfar(100);
 		scene.setDebugCamera(camera);
 		scene.setGameCamera(camera);
 		camera.setPosition(100, 12, 50);
@@ -158,6 +176,9 @@ public class ShadowMappingTest {
 			lightpos.set((float)Math.sin(sincos * 0.98) * 20, (float)Math.sin(sincos * 1.23f) * 20, (float)Math.cos(sincos * 1.17) * 20);
 			shadowlight.setPosition(lightpos);
 			lightsphere.setPosition(lightpos);
+			//spotLight.setOuterCone(170);
+			//spotLight.setPosition(100 + (float)Math.sin(sincos) * 25,100,50);
+			//spotLight.lookAt(100,0,0);
 
 			Renderer.update();
 
