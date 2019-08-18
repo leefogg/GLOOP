@@ -28,8 +28,8 @@ public final class DirectionalLight extends Light {
 	private final Vector3f diffuseColor = new Vector3f(1,1,1);
 	public OrthographicCamera renderCam;
 	private FrameBuffer shadowBuffer;
-	private int FramesSinceShadowRender = 0;
-	private int ShadowRefreshFrequency = 1;
+	private int framesSinceShadowRender = 0;
+	private int shadowRefreshFrequency = 1;
 
 	public DirectionalLight() {}
 	public DirectionalLight(Vector3f direction) {
@@ -81,8 +81,8 @@ public final class DirectionalLight extends Light {
 	public void RenderShadowMap() {
 		if (!isShadowMapEnabled())
 			return;
-		FramesSinceShadowRender++;
-		if (FramesSinceShadowRender != ShadowRefreshFrequency)
+		framesSinceShadowRender++;
+		if (framesSinceShadowRender != shadowRefreshFrequency)
 			return;
 
 		FrameBuffer previousframebuffer = FrameBuffer.getCurrent();
@@ -98,7 +98,7 @@ public final class DirectionalLight extends Light {
 		renderer.getScene().setGameCamera(backupcam);
 		previousframebuffer.bind();
 
-		FramesSinceShadowRender = 0;
+		framesSinceShadowRender = 0;
 	}
 
 	private void recalibrateCamera(Camera camera) {

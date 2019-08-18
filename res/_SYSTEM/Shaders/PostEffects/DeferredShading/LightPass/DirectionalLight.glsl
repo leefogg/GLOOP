@@ -19,7 +19,7 @@ vec3 calculateDiffuse(vec3 facenormal) {
 float calculateShadowAmount(vec3 worldspaceposition, vec3 facenormal) {
 	vec4 clipspaceposition = shadowmapVPMatrix * vec4(worldspaceposition, 1.0);
 	if (clipspaceposition.x < -1 ||  clipspaceposition.x > 1 || clipspaceposition.y < -1 || clipspaceposition.y > 1)
-		return 0;
+		return 1.0;
 	vec4 shadowUV = (clipspaceposition + 1.0) / 2.0;
 	
 	vec3 topixel = worldspaceposition - shadowCameraPos;
