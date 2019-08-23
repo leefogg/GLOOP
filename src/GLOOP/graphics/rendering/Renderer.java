@@ -321,11 +321,11 @@ public abstract class Renderer implements Disposable {
 
 	private static void updateShadowMaps(Scene scene) {
 		for (int i=0; i<scene.getNumberOfSpotLights(); i++)
-			scene.getSpotLight(i).RenderShadowMap();
+			scene.getSpotLight(i).updateShadowMap();
 		for (int i=0; i<scene.getNumberOfPointLights(); i++)
-			scene.getPointLight(i).RenderShadowMap();
+			scene.getPointLight(i).updateShadowMap();
 		for (int i=0; i<scene.getNumberOfDirectionalLights(); i++)
-			scene.getDirectionallight(i).RenderShadowMap();
+			scene.getDirectionallight(i).updateShadowMap();
 	}
 
 	//TODO: Only really need to sort transparrent objects by z

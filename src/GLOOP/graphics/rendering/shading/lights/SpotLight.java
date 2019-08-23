@@ -61,7 +61,7 @@ public final class SpotLight extends Light {
 	public void setOuterCone(float outerconedegrees) { outerCone = Math.min(179f, outerconedegrees); }
 
 	@Override
-	public boolean IsComplex() {
+	public boolean isComplex() {
 		return isShadowMapEnabled();
 	}
 
@@ -71,24 +71,24 @@ public final class SpotLight extends Light {
 	}
 
 	@Override
-	public void SetShadowMapEnabled(boolean enabled) {
-		if (isShadowMapEnabled() == enabled)
-			return;
-
-		if (enabled) {
-			shadowBuffer = new FrameBuffer(2048, 2048, PixelFormat.RGB16); // TODO: Use depth attachmen
-			Texture attachment = shadowBuffer.getColorTexture(0);
-			attachment.setWrapMode(TextureWrapMode.BorderClamp);
-			attachment.setBorderColor(1,1,1);
-			renderCam = new PerspectiveCamera();
-		} else {
-			shadowBuffer.requestDisposal();
-			renderCam = null;
-		}
+	public void enableShadows(int resolution, int refreshRate, float zfar) {
+		shadowRefreshFrequency = refreshRate;
+		shadowBuffer = new FrameBuffer(resolution, resolution, PixelFormat.RGB16); // TODO: Use depth attachment
+		Texture attachment = shadowBuffer.getColorTexture(0);
+		attachment.setWrapMode(TextureWrapMode.BorderClamp);
+		attachment.setBorderColor(1,1,1);
+		renderCam = new PerspectiveCamera();
+		renderCam.setzfar(zfar);
 	}
 
 	@Override
-	public void RenderShadowMap() {
+	public void disableShadows() {
+		shadowBuffer.requestDisposal();
+		renderCam = null;
+	}
+
+	@Override
+	public void updateShadowMap() {
 		if (!isShadowMapEnabled())
 			return;
 		framesSinceShadowRender++;
@@ -119,6 +119,7 @@ public final class SpotLight extends Light {
 		framesSinceShadowRender = 0;
 	}
 
+	@Override
 	public Texture getShadowMap() {
 		return shadowBuffer.getColorTexture(0);
 	}

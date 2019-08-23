@@ -272,21 +272,21 @@ public class DeferredRenderer extends Renderer {
 	private void RenderComplexLights() {
 		for (int i=0; i<scene.getNumberOfPointLights(); i++) {
 			PointLight light = scene.getPointLight(i);
-			if (light.IsComplex()) {
+			if (light.isComplex()) {
 				pointlightLightingPost.set(light);
 				pointlightLightingPost.render();
 			}
 		}
 		for (int i=0; i<scene.getNumberOfSpotLights(); i++) {
 			SpotLight light = scene.getSpotLight(i);
-			if (light.IsComplex()) {
+			if (light.isComplex()) {
 				spotLightLightingPost.set(light);
 				spotLightLightingPost.render();
 			}
 		}
 		for (int i=0; i<scene.getNumberOfDirectionalLights(); i++) {
 			DirectionalLight light = scene.getDirectionallight(i);
-			if (light.IsComplex()) {
+			if (light.isComplex()) {
 				directionalLightPostEffect.set(scene.getDirectionallight(i));
 				directionalLightPostEffect.render();
 			}
@@ -302,17 +302,17 @@ public class DeferredRenderer extends Renderer {
 			// Load up the next batch
 			for (; pli<scene.getNumberOfPointLights() && pointLights.size() < Settings.MaxPointLights; pli++) {
 				PointLight light = scene.getPointLight(pli);
-				if (!light.IsComplex())
+				if (!light.isComplex())
 					pointLights.add(light);
 			}
 			for (; sli<scene.getNumberOfSpotLights() && spotLights.size() < Settings.MaxSpotLights; sli++) {
 				SpotLight light = scene.getSpotLight(sli);
-				if (!light.IsComplex())
+				if (!light.isComplex())
 					spotLights.add(light);
 			}
 			for (; dli<scene.getNumberOfDirectionalLights() && directionalLights.size() < Settings.MaxDirectionalLights; dli++) {
 				DirectionalLight light = scene.getDirectionallight(dli);
-				if (!light.IsComplex())
+				if (!light.isComplex())
 					directionalLights.add(light);
 			}
 

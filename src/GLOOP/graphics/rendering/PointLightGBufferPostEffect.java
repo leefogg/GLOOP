@@ -35,5 +35,6 @@ class PointLightGBufferPostEffect extends GBufferPostEffect<PointLightDeferredLi
 		shader.setPosition(passthough);
 		shader.setQuadraticAttenuation(light.quadraticAttenuation);
 		shader.setDepthMap(TextureUnit.EnvironmentMap);
+		shader.setzFar(light.getzFar());
 	}
 }

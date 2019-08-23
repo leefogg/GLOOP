@@ -15,17 +15,19 @@ public final class PointLight extends Light {
 	private static int CubeMapsCreatedProbe;
 
 	private class ShadowProbe extends EnvironmentProbe {
-		public ShadowProbe(int framesUntilRenew) {
+		public ShadowProbe(int resolution, int framesUntilRenew, float zfar) {
 			super(
 				new CubeMap(
 					"DepthMapCProbe" + CubeMapsCreatedProbe++,
-					512,
+					resolution,
 					PixelFormat.R8,
 					position,
 					new Vector3f(100,100,100) // This doesn't matter
 				),
 				framesUntilRenew
 			);
+
+			RENDERCAM.setzfar(zfar);
 		}
 
 		@Override
@@ -69,11 +71,13 @@ public final class PointLight extends Light {
 
 			previousframebuffer.bind();
 		}
+
+		public float getzFar() { return RENDERCAM.getzfar(); }
 	}
 
 	private final Vector3f position = new Vector3f();
 	private final Vector3f color = new Vector3f(1,1,1);
-	private EnvironmentProbe probe;
+	private ShadowProbe probe;
 	public float quadraticAttenuation = Integer.MAX_VALUE;
 
 	public final Vector3f getPosition(Vector3f destination) {
@@ -102,7 +106,7 @@ public final class PointLight extends Light {
 	}
 
 	@Override
-	public boolean IsComplex() {
+	public boolean isComplex() {
 		return isShadowMapEnabled();
 	}
 
@@ -112,27 +116,28 @@ public final class PointLight extends Light {
 	}
 
 	@Override
-	public void SetShadowMapEnabled(boolean enabled) {
-		if (isShadowMapEnabled() == enabled) // No Change
-			return;
-
-		if (enabled) {
-			probe = new ShadowProbe(1);
-		} else {
-			probe.dispose();
-			probe = null;
-		}
+	public void enableShadows(int resolution, int refreshRate, float zfar) {
+		probe = new ShadowProbe(resolution, refreshRate, zfar);
 	}
 
 	@Override
-	public void RenderShadowMap() {
+	public void disableShadows() {
+		probe.dispose();
+		probe = null;
+	}
+
+
+	@Override
+	public void updateShadowMap() {
 		if (!isShadowMapEnabled())
 			return;
 
 		probe.renew();
 	}
 
+	@Override
 	public CubeMap getShadowMap() {
 		return probe.getEnvironmentMap();
 	}
+	public float getzFar() { return probe.getzFar(); }
 }

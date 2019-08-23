@@ -1,11 +1,12 @@
 package GLOOP.graphics.rendering.shading.lights;
 
-import java.io.IOException;
+import GLOOP.graphics.rendering.texturing.Texture;
 
 public abstract class Light {
-	public abstract boolean IsComplex();
+	public abstract boolean isComplex();
 	public abstract boolean isShadowMapEnabled();
-	public abstract void SetShadowMapEnabled(boolean enabled) throws IOException;
-	//public abstract void enableShadowMap(int resolution, int refreshRate, float zfar); //TODO: Replace above with this
-	public abstract void RenderShadowMap();
+	public abstract void enableShadows(int resolution, int refreshRate, float zfar);
+	public abstract void disableShadows();
+	public abstract void updateShadowMap();
+	public abstract Texture getShadowMap();
 }

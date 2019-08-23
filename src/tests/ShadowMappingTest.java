@@ -50,28 +50,28 @@ public class ShadowMappingTest {
 		forwardRenderer.setScene(scene);
 		scene.getAmbientlight().setColor(0.1f, 0.03f, 0.03f);
 
-		DirectionalLight dl = new DirectionalLight();
-		PointLight shadowlight = new PointLight();
-		SpotLight spotLight = new SpotLight();
+		DirectionalLight directionallight = new DirectionalLight();
+		PointLight pointlight = new PointLight();
+		SpotLight spotlight = new SpotLight();
 		{
 
 			//shadowlight.setPosition(20,20,-20);
-			shadowlight.SetShadowMapEnabled(true);
-			shadowlight.setColor(0.5f, 0.5f, 1);
-			shadowlight.quadraticAttenuation = 0.001f;
-			scene.add(shadowlight);
+			pointlight.enableShadows(256, 1, 200);
+			pointlight.setColor(0.5f, 0.5f, 1);
+			pointlight.quadraticAttenuation = 0.001f;
+			scene.add(pointlight);
 
-			dl.setDiffuseColor(0.1f,0.1f,0.1f);
-			dl.setDirection(0.01f, -0.5f, 0.5f);
-			dl.SetShadowMapEnabled(true);
-			scene.add(dl);
+			directionallight.setDiffuseColor(0.1f,0.1f,0.1f);
+			directionallight.setDirection(0.01f, -0.5f, 0.5f);
+			directionallight.enableShadows(2048, 10,100);
+			scene.add(directionallight);
 
-			spotLight.setPosition(125,50,50);
-			spotLight.lookAt(125,0,0);
-			spotLight.SetShadowMapEnabled(true);
-			spotLight.setColor(0,1,1);
-			spotLight.setQuadraticAttenuation(0.001f);
-			scene.add(spotLight);
+			spotlight.setPosition(125,50,50);
+			spotlight.lookAt(125,0,0);
+			spotlight.enableShadows(2048,10,300);
+			spotlight.setColor(0,1,1);
+			spotlight.setQuadraticAttenuation(0.001f);
+			scene.add(spotlight);
 		}
 
 		Model3D lightsphere = null;
@@ -141,7 +141,7 @@ public class ShadowMappingTest {
 			scene.add(bunny);
 
 			shadowTexture = new Model2D(0,0,1280/4, 720/4);
-			((FullBrightMaterial)shadowTexture.getMaterial()).setAlbedoTexture(spotLight.getShadowMap());
+			((FullBrightMaterial)shadowTexture.getMaterial()).setAlbedoTexture(spotlight.getShadowMap());
 			scene.add(shadowTexture);
 		} catch (IOException e) {
 			System.err.println("Couldn't load Model!");
@@ -174,7 +174,7 @@ public class ShadowMappingTest {
 			sincos += step;
 
 			lightpos.set((float)Math.sin(sincos * 0.98) * 20, (float)Math.sin(sincos * 1.23f) * 20, (float)Math.cos(sincos * 1.17) * 20);
-			shadowlight.setPosition(lightpos);
+			pointlight.setPosition(lightpos);
 			lightsphere.setPosition(lightpos);
 			//spotLight.setOuterCone(170);
 			//spotLight.setPosition(100 + (float)Math.sin(sincos) * 25,100,50);

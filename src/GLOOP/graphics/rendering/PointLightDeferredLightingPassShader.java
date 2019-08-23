@@ -13,6 +13,7 @@ class PointLightDeferredLightingPassShader extends GBufferLightingShader {
 	private Uniform3f position, color;
 	private Uniform1f quadraticAttenuation;
 	private Uniform1i depthMap;
+	private Uniform1f zFar;
 
 	PointLightDeferredLightingPassShader() throws ShaderCompilationException, IOException {
 		super(
@@ -29,10 +30,12 @@ class PointLightDeferredLightingPassShader extends GBufferLightingShader {
 		color = new Uniform3f(this, "color");
 		quadraticAttenuation = new Uniform1f(this, "quadraticAttenuation");
 		depthMap = new Uniform1i(this, "depthMap");
+		zFar = new Uniform1f(this, "zFar");
 	}
 
 	public void setPosition(Vector3f pos) { position.set(pos); }
 	public void setColor(Vector3f color) { this.color.set(color); }
 	public void setQuadraticAttenuation(float attenuation) { quadraticAttenuation.set(attenuation); }
 	public void setDepthMap(int unit) { this.depthMap.set(unit); }
+	public void setzFar(float zfar) { zFar.set(zfar); }
 }

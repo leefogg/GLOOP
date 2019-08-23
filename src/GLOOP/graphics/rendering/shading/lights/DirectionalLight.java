@@ -54,7 +54,7 @@ public final class DirectionalLight extends Light {
 	}
 
 	@Override
-	public boolean IsComplex() {
+	public boolean isComplex() {
 		return isShadowMapEnabled();
 	}
 
@@ -64,21 +64,21 @@ public final class DirectionalLight extends Light {
 	}
 
 	@Override
-	public void SetShadowMapEnabled(boolean enabled) {
-		if (isShadowMapEnabled() == enabled)
-			return;
-
-		if (enabled) {
-			shadowBuffer = new FrameBuffer(2048,2048, PixelFormat.R8);
-			renderCam = new OrthographicCamera(40,40,0.1f,150);
-		} else {
-			shadowBuffer.requestDisposal();
-			shadowBuffer = null;
-		}
+	public void enableShadows(int resolution, int refreshRate, float zfar) {
+		shadowRefreshFrequency = refreshRate;
+		// zFar is recallibrated each frame
+		shadowBuffer = new FrameBuffer(resolution,resolution, PixelFormat.R8);
+		renderCam = new OrthographicCamera(40,40,0.1f,150);
 	}
 
 	@Override
-	public void RenderShadowMap() {
+	public void disableShadows() {
+		shadowBuffer.requestDisposal();
+		shadowBuffer = null;
+	}
+
+	@Override
+	public void updateShadowMap() {
 		if (!isShadowMapEnabled())
 			return;
 		framesSinceShadowRender++;
@@ -140,6 +140,7 @@ public final class DirectionalLight extends Light {
 		renderCam.lookAt(FRUSTUM_CENTER);
 	}
 
+	@Override
 	public Texture getShadowMap() {
 		return shadowBuffer.getColorTexture(0);
 	}

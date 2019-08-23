@@ -6,6 +6,7 @@ uniform vec3
 uniform float
 	quadraticAttenuation;
 uniform samplerCube depthMap;
+uniform float zFar;
 
 #include <GBuffers.include.glsl>
 #include <Diffuse.include.glsl>
@@ -43,16 +44,19 @@ vec3 pointLighting(float specularity, float roughness, vec3 facenormal, vec3 wor
 }
 
 float getShadowAmount(vec3 worldspaceposition, vec3 facenormal) {
-	float zfar = 150;
-	
 	vec3 topixel =  worldspaceposition - position;
 	float shadowmap = texture(depthMap, topixel).r;
 	float actualdepth = length(topixel);
-	actualdepth /= zfar;
+	if (actualdepth > zFar)
+		return 1.0;
+	actualdepth /= zFar;
 	
 	float bias = max(0.001 * (1.0 - dot(facenormal, topixel)), 0.000);  
 	
-	return actualdepth - bias > shadowmap ? 0.0 : 1.0;
+	float lightamount = actualdepth - bias > shadowmap ? 0.0 : 1.0;
+	float visibility = max((actualdepth - 0.9) * 10.0, 0.0);
+	
+	return clamp(lightamount + visibility, 0.0, 1.0);
 }
 
 void main(void) {
