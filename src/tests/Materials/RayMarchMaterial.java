@@ -1,49 +1,49 @@
 package tests.Materials;
 
-import GLOOP.graphics.cameras.PerspectiveCamera;
-import GLOOP.graphics.rendering.Renderer;
-import GLOOP.graphics.rendering.Viewport;
-import GLOOP.graphics.rendering.shading.materials.Material;
+import gloop.graphics.cameras.PerspectiveCamera;
+import gloop.graphics.rendering.Renderer;
+import gloop.graphics.rendering.Viewport;
+import gloop.graphics.rendering.shading.materials.Material;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.io.IOException;
 
 public class RayMarchMaterial extends Material<RayMarchShader> {
-	private static RayMarchShader shader;
-	private static Vector3f temp = new Vector3f();
+	private static RayMarchShader Shader;
+	private static final Vector3f TEMP = new Vector3f();
 
 	public RayMarchMaterial() throws IOException {
-		this.shader = getShaderSingleton();
+		Shader = getShaderSingleton();
 	}
 
-	private static final RayMarchShader getShaderSingleton() throws IOException {
-		if (shader == null)
-			shader = new RayMarchShader();
+	private static RayMarchShader getShaderSingleton() throws IOException {
+		if (Shader == null)
+			Shader = new RayMarchShader();
 
-		return shader;
+		return Shader;
 	}
 
 	@Override
 	public RayMarchShader getShader() {
-		return shader;
+		return Shader;
 	}
 
 	Matrix4f vpmatrix = new Matrix4f();
 	@Override
 	public void commit() {
-		shader.setResolution(Viewport.getWidth(), Viewport.getHeight());
-		shader.setTime(Viewport.getElapsedSeconds());
+		Shader.setResolution(Viewport.getWidth(), Viewport.getHeight());
+		Shader.setTime(Viewport.getElapsedSeconds());
 
 		PerspectiveCamera currentCamera = (PerspectiveCamera)Renderer.getCurrentCamera();
 		Matrix4f.mul(currentCamera.getProjectionMatrix(), currentCamera.getViewMatrix(), vpmatrix);
-		shader.setViewMatrix(vpmatrix);
-		currentCamera.getPosition(temp);
-		shader.setCameraPosition(temp);
-		currentCamera.getRotation(temp);
-		shader.setCameraRotation(temp);
-		shader.setCameraFOV(currentCamera.getFov());
-		shader.setzfar(currentCamera.getzfar());
+		Shader.setViewMatrix(vpmatrix);
+		currentCamera.getPosition(TEMP);
+		Shader.setCameraPosition(TEMP);
+		currentCamera.getRotation(TEMP);
+		Shader.setCameraRotation(TEMP);
+		Shader.setCameraFOV(currentCamera.getFov());
+		Shader.setzfar(currentCamera.getzfar());
 		//TODO: Update mouse corordinates
 	}
 
@@ -56,5 +56,5 @@ public class RayMarchMaterial extends Material<RayMarchShader> {
 	public boolean usesDeferredPipeline() { return true; }
 
 	@Override
-	public boolean SupportsShadowMaps() { return true; }
+	public boolean supportsShadowMaps() { return true; }
 }

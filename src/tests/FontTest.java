@@ -1,14 +1,14 @@
 package tests;
 
-import GLOOP.graphics.cameras.DebugCamera;
-import GLOOP.graphics.data.models.Font;
-import GLOOP.graphics.rendering.ForwardRenderer;
-import GLOOP.graphics.rendering.Renderer;
-import GLOOP.graphics.rendering.Scene;
-import GLOOP.graphics.rendering.Viewport;
-import GLOOP.graphics.rendering.shading.ShaderCompilationException;
-import GLOOP.graphics.rendering.shading.lights.PointLight;
-import GLOOP.graphics.rendering.texturing.*;
+import gloop.graphics.cameras.DebugCamera;
+import gloop.graphics.data.models.Font;
+import gloop.graphics.rendering.ForwardRenderer;
+import gloop.graphics.rendering.Renderer;
+import gloop.graphics.rendering.Scene;
+import gloop.graphics.rendering.Viewport;
+import gloop.graphics.rendering.shading.ShaderCompilationException;
+import gloop.graphics.rendering.shading.lights.PointLight;
+import gloop.graphics.rendering.texturing.*;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;

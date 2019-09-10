@@ -1,15 +1,15 @@
 package tests;
 
-import GLOOP.graphics.rendering.ForwardRenderer;
-import GLOOP.graphics.rendering.Renderer;
-import GLOOP.graphics.rendering.Viewport;
-import GLOOP.graphics.cameras.DebugCamera;
-import GLOOP.graphics.data.models.Model3D;
-import GLOOP.graphics.data.models.RenderMode;
-import GLOOP.graphics.data.models.VertexArray;
-import GLOOP.graphics.rendering.shading.ShaderCompilationException;
-import GLOOP.graphics.rendering.shading.materials.FullBrightMaterial;
-import GLOOP.graphics.rendering.shading.materials.FullBrightShader;
+import gloop.graphics.rendering.ForwardRenderer;
+import gloop.graphics.rendering.Renderer;
+import gloop.graphics.rendering.Viewport;
+import gloop.graphics.cameras.DebugCamera;
+import gloop.graphics.data.models.Model3D;
+import gloop.graphics.data.models.RenderMode;
+import gloop.graphics.data.models.VertexArray;
+import gloop.graphics.rendering.shading.ShaderCompilationException;
+import gloop.graphics.rendering.shading.materials.FullBrightMaterial;
+import gloop.graphics.rendering.shading.materials.FullBrightShader;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;

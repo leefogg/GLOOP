@@ -1,17 +1,17 @@
 package tests;
 
-import GLOOP.general.exceptions.UnsupportedException;
-import GLOOP.graphics.Settings;
-import GLOOP.graphics.cameras.DebugCamera;
-import GLOOP.graphics.data.models.Model3D;
-import GLOOP.graphics.data.models.ModelFactory;
-import GLOOP.graphics.data.models.Skybox;
-import GLOOP.graphics.rendering.*;
-import GLOOP.graphics.rendering.shading.ShaderCompilationException;
-import GLOOP.graphics.rendering.shading.lights.PointLight;
-import GLOOP.graphics.rendering.shading.materials.SingleColorMaterial;
-import GLOOP.graphics.rendering.shading.posteffects.SSAOGBufferPostEffect;
-import GLOOP.graphics.rendering.texturing.*;
+import gloop.general.exceptions.UnsupportedException;
+import gloop.graphics.Settings;
+import gloop.graphics.cameras.DebugCamera;
+import gloop.graphics.data.models.Model3D;
+import gloop.graphics.data.models.ModelFactory;
+import gloop.graphics.data.models.Skybox;
+import gloop.graphics.rendering.*;
+import gloop.graphics.rendering.shading.ShaderCompilationException;
+import gloop.graphics.rendering.shading.lights.PointLight;
+import gloop.graphics.rendering.shading.materials.SingleColorMaterial;
+import gloop.graphics.rendering.shading.posteffects.SSAOGBufferPostEffect;
+import gloop.graphics.rendering.texturing.*;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -21,7 +21,7 @@ import org.lwjgl.util.vector.Vector3f;
 import java.io.IOException;
 
 public class AOTest {
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) {
 		try {
 			Viewport.create(1280, 720, "Engine Testing");
 			Viewport.show();

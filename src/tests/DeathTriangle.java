@@ -1,14 +1,14 @@
 package tests;
 
-import GLOOP.graphics.data.DataConversion;
-import GLOOP.graphics.data.models.GLArrayType;
-import GLOOP.graphics.data.models.Model3D;
-import GLOOP.graphics.data.models.VertexArray;
-import GLOOP.graphics.data.models.VertexBuffer;
-import GLOOP.graphics.rendering.ForwardRenderer;
-import GLOOP.graphics.rendering.Renderer;
-import GLOOP.graphics.rendering.Scene;
-import GLOOP.graphics.rendering.Viewport;
+import gloop.graphics.data.DataConversion;
+import gloop.graphics.data.models.GLArrayType;
+import gloop.graphics.data.models.Model3D;
+import gloop.graphics.data.models.VertexArray;
+import gloop.graphics.data.models.VertexBuffer;
+import gloop.graphics.rendering.ForwardRenderer;
+import gloop.graphics.rendering.Renderer;
+import gloop.graphics.rendering.Scene;
+import gloop.graphics.rendering.Viewport;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;

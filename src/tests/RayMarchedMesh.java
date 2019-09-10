@@ -1,11 +1,11 @@
 package tests;
 
-import GLOOP.graphics.data.models.Model3D;
-import GLOOP.graphics.data.models.ModelFactory;
-import GLOOP.graphics.rendering.*;
-import GLOOP.graphics.cameras.DebugCamera;
-import GLOOP.graphics.rendering.shading.lights.PointLight;
-import GLOOP.graphics.rendering.texturing.*;
+import gloop.graphics.data.models.Model3D;
+import gloop.graphics.data.models.ModelFactory;
+import gloop.graphics.rendering.*;
+import gloop.graphics.cameras.DebugCamera;
+import gloop.graphics.rendering.shading.lights.PointLight;
+import gloop.graphics.rendering.texturing.*;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;

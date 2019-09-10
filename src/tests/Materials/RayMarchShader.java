@@ -1,14 +1,12 @@
 package tests.Materials;
 
-import GLOOP.graphics.cameras.PerspectiveCamera;
-import GLOOP.graphics.data.models.VertexArray;
-import GLOOP.graphics.rendering.GBufferShader;
-import GLOOP.graphics.rendering.shading.GLSL.Uniform16f;
-import GLOOP.graphics.rendering.shading.GLSL.Uniform1f;
-import GLOOP.graphics.rendering.shading.GLSL.Uniform2f;
-import GLOOP.graphics.rendering.shading.GLSL.Uniform3f;
-import GLOOP.graphics.rendering.shading.ShaderProgram;
-import GLOOP.graphics.rendering.shading.materials.ShaderToyShader;
+import gloop.graphics.cameras.PerspectiveCamera;
+import gloop.graphics.data.models.VertexArray;
+import gloop.graphics.rendering.GBufferShader;
+import gloop.graphics.rendering.shading.glsl.Uniform16f;
+import gloop.graphics.rendering.shading.glsl.Uniform1f;
+import gloop.graphics.rendering.shading.glsl.Uniform2f;
+import gloop.graphics.rendering.shading.glsl.Uniform3f;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -17,20 +15,20 @@ import java.io.IOException;
 // Basically a ShaderToyShader but with a 3D vertex shader
 public class RayMarchShader extends GBufferShader {
 	private Uniform16f viewMatrix;
-	private Uniform3f CameraRotation;
-	private Uniform1f CameraFOV;
-	private Uniform2f Resolution;
+	private Uniform3f cameraRotation;
+	private Uniform1f cameraFOV;
+	private Uniform2f resolution;
 
 	public RayMarchShader() throws IOException {
 		super(
-				"res\\shaders\\Tests\\RayMarching\\VertexShader.vert",
-				"res\\shaders\\Tests\\RayMarching\\raymarching.frag"
+			"res\\shaders\\Tests\\RayMarching\\VertexShader.vert",
+			"res\\shaders\\Tests\\RayMarching\\raymarching.frag"
 		);
 	}
 
 	@Override
 	protected void bindAttributes() {
-		bindAttribute("Position", VertexArray.VertciesIndex);
+		bindAttribute("Position", VertexArray.VERTCIES_INDEX);
 	}
 
 	@Override
@@ -38,24 +36,24 @@ public class RayMarchShader extends GBufferShader {
 		super.getCustomUniformLocations();
 
 		viewMatrix = new Uniform16f(this, "ViewMatrix");
-		CameraRotation = new Uniform3f(this, "CameraRotation");
-		CameraFOV = new Uniform1f(this, "CameraFOV");
-		Resolution = new Uniform2f(this, "Resolution");
+		cameraRotation = new Uniform3f(this, "CameraRotation");
+		cameraFOV = new Uniform1f(this, "CameraFOV");
+		resolution = new Uniform2f(this, "Resolution");
 	}
 
 	public void setViewMatrix(Matrix4f viewmatrix) { viewMatrix.set(viewmatrix);}
 
-	public void setCameraRotation(Vector3f rotation) { CameraRotation.set(rotation); }
+	public void setCameraRotation(Vector3f rotation) { cameraRotation.set(rotation); }
 
-	public void setCameraFOV(float fov) { CameraFOV.set(fov); }
+	public void setCameraFOV(float fov) { cameraFOV.set(fov); }
 
-	public void setResolution(int width, int height) {	Resolution.set(width, height); }
+	public void setResolution(int width, int height) {	resolution.set(width, height); }
 
 	@Override
 	protected void setDefaultCustomUniformValues() {
 		super.setDefaultCustomUniformValues();
 
-		CameraFOV.set(PerspectiveCamera.DEFAULT_FOV);
+		cameraFOV.set(PerspectiveCamera.DEFAULT_FOV);
 	}
 
 	@Override

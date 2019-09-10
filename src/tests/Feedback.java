@@ -1,13 +1,13 @@
 package tests;
 
-import GLOOP.general.exceptions.UnsupportedException;
-import GLOOP.graphics.cameras.DebugCamera;
-import GLOOP.graphics.data.models.Model3D;
-import GLOOP.graphics.data.models.ModelFactory;
-import GLOOP.graphics.rendering.*;
-import GLOOP.graphics.rendering.shading.ShaderCompilationException;
-import GLOOP.graphics.rendering.texturing.*;
-import GLOOP.general.math.Quaternion;
+import gloop.general.exceptions.UnsupportedException;
+import gloop.graphics.cameras.DebugCamera;
+import gloop.graphics.data.models.Model3D;
+import gloop.graphics.data.models.ModelFactory;
+import gloop.graphics.rendering.*;
+import gloop.graphics.rendering.shading.ShaderCompilationException;
+import gloop.graphics.rendering.texturing.*;
+import gloop.general.math.Quaternion;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;

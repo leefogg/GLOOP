@@ -1,22 +1,19 @@
 package tests;
 
-import GLOOP.general.exceptions.UnsupportedException;
-import GLOOP.general.math.Quaternion;
-import GLOOP.graphics.cameras.Camera;
-import GLOOP.graphics.cameras.DebugCamera;
-import GLOOP.graphics.cameras.PerspectiveCamera;
-import GLOOP.graphics.data.models.Model2D;
-import GLOOP.graphics.data.models.Model3D;
-import GLOOP.graphics.data.models.ModelFactory;
-import GLOOP.graphics.rendering.*;
-import GLOOP.graphics.rendering.shading.ShaderCompilationException;
-import GLOOP.graphics.rendering.shading.lights.PointLight;
-import GLOOP.graphics.rendering.shading.materials.FullBrightMaterial;
-import GLOOP.graphics.rendering.shading.materials.LambartMaterial;
-import GLOOP.graphics.rendering.shading.materials.SingleColorMaterial;
-import GLOOP.graphics.rendering.shading.posteffects.PostProcess;
-import GLOOP.graphics.rendering.shading.posteffects.PostProcessor;
-import GLOOP.graphics.rendering.texturing.*;
+import gloop.general.exceptions.UnsupportedException;
+import gloop.general.math.Quaternion;
+import gloop.graphics.cameras.Camera;
+import gloop.graphics.cameras.DebugCamera;
+import gloop.graphics.data.models.Model2D;
+import gloop.graphics.data.models.Model3D;
+import gloop.graphics.data.models.ModelFactory;
+import gloop.graphics.rendering.*;
+import gloop.graphics.rendering.shading.ShaderCompilationException;
+import gloop.graphics.rendering.shading.lights.PointLight;
+import gloop.graphics.rendering.shading.materials.FullBrightMaterial;
+import gloop.graphics.rendering.shading.materials.LambartMaterial;
+import gloop.graphics.rendering.shading.materials.SingleColorMaterial;
+import gloop.graphics.rendering.texturing.*;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -24,7 +21,6 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 public class PortalTest {

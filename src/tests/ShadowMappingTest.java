@@ -1,23 +1,23 @@
 package tests;
 
-import GLOOP.general.exceptions.UnsupportedException;
-import GLOOP.graphics.Settings;
-import GLOOP.graphics.cameras.DebugCamera;
-import GLOOP.graphics.data.models.Model2D;
-import GLOOP.graphics.data.models.Model3D;
-import GLOOP.graphics.data.models.ModelFactory;
-import GLOOP.graphics.rendering.*;
-import GLOOP.graphics.rendering.shading.lights.DirectionalLight;
-import GLOOP.graphics.rendering.shading.lights.PointLight;
-import GLOOP.graphics.rendering.shading.lights.SpotLight;
-import GLOOP.graphics.rendering.shading.materials.FullBrightMaterial;
-import GLOOP.graphics.rendering.shading.materials.SingleColorMaterial;
-import GLOOP.graphics.rendering.texturing.*;
+import gloop.general.exceptions.UnsupportedException;
+import gloop.graphics.Settings;
+import gloop.graphics.cameras.DebugCamera;
+import gloop.graphics.data.models.Model2D;
+import gloop.graphics.data.models.Model3D;
+import gloop.graphics.data.models.ModelFactory;
+import gloop.graphics.rendering.*;
+import gloop.graphics.rendering.shading.lights.DirectionalLight;
+import gloop.graphics.rendering.shading.lights.PointLight;
+import gloop.graphics.rendering.shading.lights.SpotLight;
+import gloop.graphics.rendering.shading.materials.FullBrightMaterial;
+import gloop.graphics.rendering.shading.materials.SingleColorMaterial;
+import gloop.graphics.rendering.texturing.*;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector3f;
-import GLOOP.general.math.Quaternion;
+import gloop.general.math.Quaternion;
 import java.io.IOException;
 import java.util.Random;
 
@@ -30,7 +30,7 @@ public class ShadowMappingTest {
 			Settings.EnableShadows = true;
 			//Viewport.setVSyncEnabled(false);
 			//Viewport.limitFrameRate(false);
-			Renderer.Init();
+			Renderer.init();
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(1);

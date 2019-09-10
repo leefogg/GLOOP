@@ -1,20 +1,20 @@
 package tests;
 
-import GLOOP.general.exceptions.UnsupportedException;
-import GLOOP.graphics.Settings;
-import GLOOP.graphics.cameras.DebugCamera;
-import GLOOP.graphics.data.models.Model3D;
-import GLOOP.graphics.data.models.ModelFactory;
-import GLOOP.graphics.rendering.*;
-import GLOOP.graphics.rendering.DeferredMaterial;
-import GLOOP.graphics.rendering.DeferredRenderer;
-import GLOOP.graphics.rendering.shading.lights.PointLight;
-import GLOOP.graphics.rendering.shading.materials.SingleColorMaterial;
-import GLOOP.graphics.rendering.shading.posteffects.BloomPostEffect;
-import GLOOP.graphics.rendering.texturing.PixelComponents;
-import GLOOP.graphics.rendering.texturing.PixelFormat;
-import GLOOP.graphics.rendering.texturing.Texture;
-import GLOOP.graphics.rendering.texturing.TextureManager;
+import gloop.general.exceptions.UnsupportedException;
+import gloop.graphics.Settings;
+import gloop.graphics.cameras.DebugCamera;
+import gloop.graphics.data.models.Model3D;
+import gloop.graphics.data.models.ModelFactory;
+import gloop.graphics.rendering.*;
+import gloop.graphics.rendering.DeferredMaterial;
+import gloop.graphics.rendering.DeferredRenderer;
+import gloop.graphics.rendering.shading.lights.PointLight;
+import gloop.graphics.rendering.shading.materials.SingleColorMaterial;
+import gloop.graphics.rendering.shading.posteffects.BloomPostEffect;
+import gloop.graphics.rendering.texturing.PixelComponents;
+import gloop.graphics.rendering.texturing.PixelFormat;
+import gloop.graphics.rendering.texturing.Texture;
+import gloop.graphics.rendering.texturing.TextureManager;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -31,8 +31,8 @@ public final class Lighting {
 		Vector3f position = new Vector3f(r.nextFloat() * 50 - 25, r.nextFloat() * 50, r.nextFloat() * 50 - 25);
 		Vector3f vecolcity = new Vector3f(r.nextFloat()-0.5f, r.nextFloat()-0.5f, r.nextFloat()-0.5f);
 		Vector3f color = new Vector3f();
-		private PointLight light = new PointLight();
-		private Model3D model;
+		private final PointLight light = new PointLight();
+		private final Model3D model;
 
 		public LightBall(Scene scene, Model3D model) {
 			vecolcity.scale(0.3f);

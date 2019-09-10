@@ -1,8 +1,8 @@
 package tests;
 
-import GLOOP.graphics.data.models.VertexArray;
-import GLOOP.graphics.rendering.shading.ShaderCompilationException;
-import GLOOP.graphics.rendering.shading.ShaderProgram;
+import gloop.graphics.data.models.VertexArray;
+import gloop.graphics.rendering.shading.ShaderCompilationException;
+import gloop.graphics.rendering.shading.ShaderProgram;
 
 import java.io.IOException;
 
@@ -16,7 +16,7 @@ public class VertexColorShader extends ShaderProgram {
 
 	@Override
 	protected void bindAttributes() {
-		bindAttribute("Position", VertexArray.VertciesIndex);
+		bindAttribute("Position", VertexArray.VERTCIES_INDEX);
 		bindAttribute("Color", 2);
 	}
 

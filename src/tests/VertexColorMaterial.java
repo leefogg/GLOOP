@@ -1,6 +1,6 @@
 package tests;
 
-import GLOOP.graphics.rendering.shading.materials.Material;
+import gloop.graphics.rendering.shading.materials.Material;
 
 public class VertexColorMaterial extends Material<VertexColorShader> {
 	public VertexColorShader shader;
@@ -25,5 +25,5 @@ public class VertexColorMaterial extends Material<VertexColorShader> {
 	}
 
 	@Override
-	public boolean SupportsShadowMaps() { return true; }
+	public boolean supportsShadowMaps() { return true; }
 }
