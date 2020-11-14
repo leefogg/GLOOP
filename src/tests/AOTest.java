@@ -41,42 +41,16 @@ public class AOTest {
 		}
 		Scene scene = deferredrenderer.getScene();
 		forwardrenderer.setScene(scene);
+		scene.getAmbientlight().setColor(1,1,1);
 
-		PointLight light1 = new PointLight();
-		light1.quadraticAttenuation = 0.03f;
-		scene.add(light1);
-
-		scene.getAmbientlight().setColor(0.04f, 0.04f, .04f);
-
-		Model3D lightmodel = null;
 		try {
-			String[] skyboxpaths = new String[] {
-					"res\\textures\\skyboxes\\stormydays\\right.png",
-					"res\\textures\\skyboxes\\stormydays\\left.png",
-					"res\\textures\\skyboxes\\stormydays\\up.png",
-					"res\\textures\\skyboxes\\stormydays\\down.png",
-					"res\\textures\\skyboxes\\stormydays\\back.png",
-					"res\\textures\\skyboxes\\stormydays\\front.png",
-			};
-			CubeMap cubemap = new CubeMap("cubemap", skyboxpaths, PixelComponents.RGBA, PixelFormat.SRGB8);
-			Skybox skybox = new Skybox(cubemap);
-			scene.add(skybox);
-
 			DeferredMaterial material = deferredrenderer.getNewMaterial();
-			Texture albedo = TextureManager.newTexture("res\\models\\SOMA\\ark\\albedo.bmp", PixelComponents.RGB, PixelFormat.SRGB8);
+			Texture albedo = TextureManager.newTexture("res\\models\\Summers Forest\\s2-1_016-n.png", PixelComponents.RGB, PixelFormat.SRGB8);
 			material.setAlbedoMap(albedo);
-			Texture specular = TextureManager.newTexture("res\\models\\SOMA\\ark\\specular.png", PixelComponents.R, PixelFormat.R8);
-			material.setSpecularMap(specular);
-			material.setRoughness(0.2f);
-			material.setEnvironmentMap(cubemap);
 			material.setReflectivity(0.2f);
-			Model3D model = ModelFactory.getModel("res\\models\\matrixlobby.obj", material);
+			Model3D model = ModelFactory.getModel("res\\models\\Summers Forest\\Summer Forest.obj", material);
 
 			scene.add(model);
-
-			SingleColorMaterial fullbright = new SingleColorMaterial();
-			lightmodel = ModelFactory.getModel("res\\models\\sphere.obj", fullbright);
-			scene.add(lightmodel);
 		} catch (IOException | ShaderCompilationException e) {
 			System.err.println("Couldn't load Model!");
 			e.printStackTrace(System.err);
@@ -92,9 +66,11 @@ public class AOTest {
 		camera.setzfar(100);
 		camera.setPosition(-1,7,19);
 
+		float intensity = 2;
+		SSAOGBufferPostEffect ssao = null;
 		try {
-			SSAOGBufferPostEffect ssao = new SSAOGBufferPostEffect();
-			ssao.setIntensity(2);
+			ssao = new SSAOGBufferPostEffect();
+			ssao.setIntensity(intensity);
 			Renderer.addPostEffect(ssao);
 			deferredrenderer.addPostEffect(ssao);
 		} catch (IOException e) {
@@ -105,18 +81,20 @@ public class AOTest {
 		System.gc();
 
 		boolean isrunning = true;
-		double sincos = (float)Math.PI, step = (float)Math.PI/300f;
-		Vector3f lightposition = new Vector3f();
 		while(isrunning) {
 			Renderer.updateTimeDelta();
 			float delta = Renderer.getTimeDelta();
 			float timescaler = Renderer.getTimeScaler();
 			camera.update(delta, timescaler);
 
-			sincos += step * timescaler;
-			lightposition.set((float)Math.sin(sincos)*22,5, (float)Math.cos(sincos)*22);
-			light1.setPosition(lightposition);
-			lightmodel.setPosition(lightposition);
+			if (Keyboard.isKeyDown(Keyboard.KEY_UP)) {
+				intensity += 0.1;
+				System.out.println(intensity);
+			} else if (Keyboard.isKeyDown(Keyboard.KEY_DOWN)){
+				intensity -= 0.1;
+				System.out.println(intensity);
+			}
+			ssao.setIntensity(intensity);
 
 			Renderer.setRenderer(deferredrenderer);
 			Renderer.render();

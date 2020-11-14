@@ -43,6 +43,8 @@ public final class RayMarchedMesh {
 		light1.quadraticAttenuation = 0.01f;
 		scene.add(light1);
 
+		scene.getAmbientlight().setColor(0.7f,0.7f,0.7f);
+
 		try {
 			DeferredMaterial material = deferredrenderer.getNewMaterial();
 			Texture albedo = TextureManager.newTexture("res/textures/154.JPG", PixelComponents.RGB, PixelFormat.SRGB8);
