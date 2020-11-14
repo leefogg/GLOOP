@@ -3,10 +3,12 @@ package gloop.graphics.rendering.shading.materials;
 import gloop.graphics.data.models.VertexArray;
 import gloop.graphics.rendering.shading.glsl.Uniform1f;
 import gloop.graphics.rendering.shading.glsl.Uniform1i;
+import gloop.graphics.rendering.shading.glsl.Uniform2f;
 import gloop.graphics.rendering.shading.glsl.Uniform3f;
 import gloop.graphics.rendering.shading.ShaderCompilationException;
 import gloop.graphics.rendering.shading.ShaderProgram;
 import gloop.graphics.rendering.texturing.TextureUnit;
+import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.io.IOException;
@@ -18,6 +20,7 @@ public class LambartShader extends ShaderProgram {
 	private Uniform1f lightQuadraticAttenuation;
 	private Uniform1i texture;
 	private Uniform3f textureTint;
+	private Uniform2f textureRepeat;
 
 	public LambartShader() throws ShaderCompilationException, IOException {
 		super(
@@ -37,6 +40,7 @@ public class LambartShader extends ShaderProgram {
 	protected void getCustomUniformLocations() {
 		texture = new Uniform1i(this, "Texture");
 		textureTint = new Uniform3f(this, "TextureTint");
+		textureRepeat = new Uniform2f(this, "TextureRepeat");
 
 		lightColor = new Uniform3f(this, "LightColor");
 		lightPosition = new Uniform3f(this, "LightPosition");
@@ -54,6 +58,7 @@ public class LambartShader extends ShaderProgram {
 	}
 
 	public void setTextureTint(Vector3f tint) { textureTint.set(tint); }
+	public void setTextureRepeat(Vector2f repeat) { textureRepeat.set(repeat); }
 	public void setLightPosition(Vector3f position) {
 		setLightPosition(position.x, position.y, position.z);
 	}

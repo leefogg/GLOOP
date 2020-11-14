@@ -4,6 +4,7 @@ import gloop.graphics.rendering.Renderer;
 import gloop.graphics.rendering.shading.lights.PointLight;
 import gloop.graphics.rendering.texturing.Texture;
 import gloop.graphics.rendering.texturing.TextureManager;
+import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.io.IOException;
@@ -14,6 +15,7 @@ public final class LambartMaterial extends Material<LambartShader> {
 
 	private Texture albedo = Texture.Blank;
 	private Vector3f textureTint = new Vector3f(1,1,1);
+	private Vector2f textureRepeat = new Vector2f(1,1);
 
 
 	public LambartMaterial(Texture albedomap) throws IOException {
@@ -35,6 +37,7 @@ public final class LambartMaterial extends Material<LambartShader> {
 		albedo = texture;
 	}
 	public void setTextureTint(Vector3f tint) { textureTint.set(tint); }
+	public void setTextureRepeat(Vector2f repeat) { textureRepeat.set(repeat); }
 
 	@Override
 	public LambartShader getShader() {
@@ -52,6 +55,7 @@ public final class LambartMaterial extends Material<LambartShader> {
 		Shader.setLightColor(lightcolor.x, lightcolor.y, lightcolor.z);
 		Shader.setLightquadraticAttenuation(light1.quadraticAttenuation);
 		Shader.setTextureTint(textureTint);
+		Shader.setTextureRepeat(textureRepeat);
 	}
 
 	@Override
