@@ -1,5 +1,6 @@
 package gloop.graphics.cameras;
 
+import gloop.general.Lazy;
 import gloop.general.math.MathFunctions;
 import gloop.physics.data.AABB;
 import org.lwjgl.util.vector.*;
@@ -13,13 +14,15 @@ public abstract class Camera {
 	private static final Vector4f[] AABB_VERTS = new Vector4f[8]; // For Frustum cull
 
 	protected float znear, zfar;
-	protected Matrix4f
-		projectionMatrix = new Matrix4f(),
-		viewMatrix = new Matrix4f();
+	protected Lazy<Matrix4f> viewMatrix, projectionMatrix;
 	protected Vector3f
 		position = new Vector3f(),
 		rotation = new Vector3f(); // TODO: Change to quaternion
-	protected boolean viewMatrixIsDirty = true; // Flag to update the view matrix only once per frame
+
+	public Camera() {
+		viewMatrix = new Lazy<>(viewmatrix -> MathFunctions.createViewMatrix(position, rotation, viewmatrix));
+		projectionMatrix = new Lazy<>(projectionMatrix -> updateProjectionMatrix(projectionMatrix));
+	}
 
 	public void update(float delta, float timescaler) {}
 
@@ -29,7 +32,7 @@ public abstract class Camera {
 	public void setPosition(float x, float y, float z) {
 		position.set(x, y, z);
 
-		viewMatrixIsDirty = true;
+		viewMatrix.expire();
 	}
 	public void getPosition(Vector3f clone) {
 		clone.set(position);
@@ -43,18 +46,22 @@ public abstract class Camera {
 	public void setRotation(float pitch, float yaw, float roll) {
 		rotation.set(pitch, yaw, roll);
 
-		viewMatrixIsDirty = true;
+		viewMatrix.expire();
 	}
 
-	public void  setznear(float znear) {
+	public void setznear(float znear) {
 		this.znear = znear;
+
+		projectionMatrix.expire();
 	}
 	public float getznear() {
 		return znear;
 	}
 
-	public void  setzfar(float zfar) {
+	public void setzfar(float zfar) {
 		this.zfar = zfar;
+
+		projectionMatrix.expire();
 	}
 	public float getzfar() {
 		return zfar;
@@ -62,21 +69,13 @@ public abstract class Camera {
 
 	// Note: this does not change Rotation field
 	public void lookAt(Vector3f target) {
-		MathFunctions.createViewMatrix(position, target, new Vector3f(0,1,0), viewMatrix);
-		viewMatrixIsDirty = false;
+		viewMatrix.set(MathFunctions.createViewMatrix(position, target, new Vector3f(0,1,0), viewMatrix.get()));
 	}
 
-	public Matrix4f getProjectionMatrix() {
-		return projectionMatrix;
-	}
+	public Matrix4f getProjectionMatrix() { return projectionMatrix.get(); }
+	protected abstract Matrix4f updateProjectionMatrix(Matrix4f projectionMatrix);
 
-	public Matrix4f getViewMatrix() {
-		if (viewMatrixIsDirty)
-			viewMatrix = MathFunctions.createViewMatrix(position, rotation, viewMatrix);
-
-		viewMatrixIsDirty = false;
-		return viewMatrix;
-	}
+	public Matrix4f getViewMatrix() { return viewMatrix.get(); }
 
 	public final boolean isInsideFrustum(AABB aabb, Matrix4f modelmatrix) {
 		Matrix4f.mul(getProjectionMatrix(), getViewMatrix(), MVP_MATRIX);

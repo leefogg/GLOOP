@@ -42,10 +42,10 @@ public final class DebugCamera extends PerspectiveCamera {
             }
         }
 
-        boolean forward = Keyboard.isKeyDown(Keyboard.KEY_UP) || Keyboard.isKeyDown(Keyboard.KEY_W);
-        boolean backward = Keyboard.isKeyDown(Keyboard.KEY_DOWN) || Keyboard.isKeyDown(Keyboard.KEY_S);
-        boolean left = Keyboard.isKeyDown(Keyboard.KEY_LEFT) || Keyboard.isKeyDown(Keyboard.KEY_A);
-        boolean right = Keyboard.isKeyDown(Keyboard.KEY_RIGHT) || Keyboard.isKeyDown(Keyboard.KEY_D);
+        boolean forward = Keyboard.isKeyDown(Keyboard.KEY_W);
+        boolean backward =  Keyboard.isKeyDown(Keyboard.KEY_S);
+        boolean left =  Keyboard.isKeyDown(Keyboard.KEY_A);
+        boolean right = Keyboard.isKeyDown(Keyboard.KEY_D);
         boolean up = Keyboard.isKeyDown(Keyboard.KEY_SPACE);
         boolean down = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT);
         boolean movefaster = Keyboard.isKeyDown(Keyboard.KEY_LCONTROL);
@@ -158,6 +158,6 @@ public final class DebugCamera extends PerspectiveCamera {
             velocity.set(0,0,0);
         }
 
-        viewMatrixIsDirty = true;
+		viewMatrix.expire();
 	}
 }

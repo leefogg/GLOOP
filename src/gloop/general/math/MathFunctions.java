@@ -161,7 +161,7 @@ public abstract class MathFunctions {
 		return out;
 	}
 
-	public static void createProjectionMatrix(int width, int height, float fov, float znear, float zfar, Matrix4f out) {
+	public static Matrix4f createProjectionMatrix(int width, int height, float fov, float znear, float zfar, Matrix4f out) {
 		if (out == null)
 			out = new Matrix4f();
 		else
@@ -178,6 +178,8 @@ public abstract class MathFunctions {
 		out.m23 = -1f;
 		out.m32 = -(2f * znear * zfar / frustumlength);
 		out.m33 = 0f;
+
+		return out;
 	}
 
 	public static Matrix4f createOrthoProjectionMatrix(float left, float right, float top, float bottom, float near, float far, Matrix4f out) {

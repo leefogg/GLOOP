@@ -24,6 +24,6 @@ public class PerspectiveCameraWithTarget extends PerspectiveCamera {
 	public Matrix4f getViewMatrix() {
 		lookAt(rotation);
 
-		return viewMatrix;
+		return viewMatrix.get();
 	}
 }

@@ -1,10 +1,12 @@
 package gloop.graphics.cameras;
 
 import gloop.general.math.MathFunctions;
+import org.lwjgl.util.vector.Matrix4f;
 
 public class OrthographicCamera extends Camera {
-	float width, height;
+	private float width, height;
 	public OrthographicCamera(int width, int height, float znear, float zfar) {
+		super();
 
 		this.znear = znear;
 		this.zfar = zfar;
@@ -14,24 +16,12 @@ public class OrthographicCamera extends Camera {
 	public void setSize(float width, float height) {
 		this.width = width;
 		this.height = height;
-		updateProjectionMatrix();
+
+		projectionMatrix.expire();
 	}
 
 	@Override
-	public void setznear(float znear) {
-		super.setznear(znear);
-
-		updateProjectionMatrix();
-	}
-
-	@Override
-	public void setzfar(float zfar) {
-		super.setzfar(zfar);
-
-		updateProjectionMatrix();
-	}
-
-	private void updateProjectionMatrix() {
-		MathFunctions.createOrthoProjectionMatrix(-width /2f, width /2f, -height /2f, height /2f, znear, zfar, projectionMatrix);
+	protected Matrix4f updateProjectionMatrix(Matrix4f projectionMatrix) {
+		return MathFunctions.createOrthoProjectionMatrix(-width /2f, width /2f, -height /2f, height /2f, znear, zfar, projectionMatrix);
 	}
 }
