@@ -17,6 +17,7 @@ public class LambartShader extends ShaderProgram {
 		lightColor;
 	private Uniform1f lightQuadraticAttenuation;
 	private Uniform1i texture;
+	private Uniform3f textureTint;
 
 	public LambartShader() throws ShaderCompilationException, IOException {
 		super(
@@ -35,6 +36,7 @@ public class LambartShader extends ShaderProgram {
 	@Override
 	protected void getCustomUniformLocations() {
 		texture = new Uniform1i(this, "Texture");
+		textureTint = new Uniform3f(this, "TextureTint");
 
 		lightColor = new Uniform3f(this, "LightColor");
 		lightPosition = new Uniform3f(this, "LightPosition");
@@ -51,6 +53,7 @@ public class LambartShader extends ShaderProgram {
 		return true;
 	}
 
+	public void setTextureTint(Vector3f tint) { textureTint.set(tint); }
 	public void setLightPosition(Vector3f position) {
 		setLightPosition(position.x, position.y, position.z);
 	}

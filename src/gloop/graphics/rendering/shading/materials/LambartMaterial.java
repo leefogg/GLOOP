@@ -13,6 +13,7 @@ public final class LambartMaterial extends Material<LambartShader> {
 	private static LambartShader Shader;
 
 	private Texture albedo = Texture.Blank;
+	private Vector3f textureTint = new Vector3f(1,1,1);
 
 
 	public LambartMaterial(Texture albedomap) throws IOException {
@@ -33,6 +34,7 @@ public final class LambartMaterial extends Material<LambartShader> {
 	public void setAlbedoTexture(Texture texture) {
 		albedo = texture;
 	}
+	public void setTextureTint(Vector3f tint) { textureTint.set(tint); }
 
 	@Override
 	public LambartShader getShader() {
@@ -49,6 +51,7 @@ public final class LambartMaterial extends Material<LambartShader> {
 		Vector3f lightcolor = light1.getColor(PASSTHROUGH);
 		Shader.setLightColor(lightcolor.x, lightcolor.y, lightcolor.z);
 		Shader.setLightquadraticAttenuation(light1.quadraticAttenuation);
+		Shader.setTextureTint(textureTint);
 	}
 
 	@Override

@@ -5,6 +5,7 @@ in vec3 fragLocation;
 in vec3 FaceNormal;
 
 uniform sampler2D Texture;
+uniform vec3 TextureTint = vec3(1.0, 1.0, 1.0);
 uniform vec3 LightPosition;
 uniform vec3 ambientLight = vec3(0.5);
 uniform vec3 LightColor = vec3(1.0,1.0,1.0);
@@ -15,7 +16,7 @@ uniform float
 out vec4 outColor;
 
 void main(void) {
-	vec4 texcolor = texture(Texture, textureCoord);
+	vec4 texcolor = texture(Texture, textureCoord) * vec4(TextureTint, 1.0);
 	if (texcolor.a < 1.0/255.0)
 		discard;
 	
