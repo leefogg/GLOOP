@@ -53,6 +53,10 @@ public class ForwardRenderer extends Renderer {
 
 	@Override
 	protected void renderScene() {
+		//TODO: Move to first thing for efficiency
+		for (Model2D overlay : scene.getOverlays())
+			if (!cannotRenderModel(overlay))
+				overlay.render();
 		renderModels(false);
 		enableBlending(true);
 		setBlendFunctionsState(BlendFunction.SourceAlpha, BlendFunction.OneMinusSourceAlpha);
@@ -67,10 +71,6 @@ public class ForwardRenderer extends Renderer {
 			Renderer.popFaceCullingEnabledState();
 		}
 
-		//TODO: Move to first thing for efficiency
-		for (Model2D overlay : scene.getOverlays())
-			if (!cannotRenderModel(overlay))
-				overlay.render();
 	}
 
 	public void renderShadowScene() {
